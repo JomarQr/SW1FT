@@ -1,0 +1,6 @@
+{
+  "name": "AegisAML Dashboard",
+  "description": "Internal Fraud/AML Analyst Dashboard for a high-risk EU-regulated PSP, featuring real-time behavioral signal extraction and risk analysis.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
