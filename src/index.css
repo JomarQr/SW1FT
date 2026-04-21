@@ -1,1 +1,201 @@
 @import "tailwindcss";
+
+@theme {
+  --color-bg: #0A0A0B;
+  --color-surface: #0F0F12;
+  --color-card: #111115;
+  --color-border: #1E1E22;
+  --color-border-strong: #2A2A32;
+  --color-accent: #00E5CC;
+  --color-primary: #E8E8ED;
+  --color-muted: #6B6B7A;
+  --color-danger: #FF3B5C;
+  --color-warning: #FFB800;
+  --color-safe: #00CC7A;
+  --color-orange: #FF8C00;
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #0A0A0B;
+  color: #E8E8ED;
+  font-family: "DM Sans", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0A0B;
+}
+::-webkit-scrollbar-thumb {
+  background: #2A2A32;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3A3A44;
+}
+
+/* Animations */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+@keyframes row-flash {
+  0% { background-color: rgba(0, 229, 204, 0.12); }
+  100% { background-color: transparent; }
+}
+
+@keyframes glow-fade {
+  0% { box-shadow: 0 0 0 0 rgba(0, 229, 204, 0.25); }
+  70% { box-shadow: 0 0 0 8px rgba(0, 229, 204, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 229, 204, 0); }
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.row-flash {
+  animation: row-flash 0.6s ease-out forwards;
+}
+
+.animate-slide-in {
+  animation: slide-in 0.25s ease-out forwards;
+}
+
+/* Radial glow behind KPI area */
+.kpi-glow {
+  background: radial-gradient(ellipse 80% 300px at 50% -60px, rgba(0, 229, 204, 0.06) 0%, transparent 70%);
+}
+
+/* Table styles */
+.sl-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.sl-table th {
+  text-align: left;
+  padding: 8px 12px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6B6B7A;
+  border-bottom: 1px solid #1E1E22;
+  white-space: nowrap;
+}
+
+.sl-table td {
+  padding: 9px 12px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  color: #E8E8ED;
+  border-bottom: 1px solid #1E1E22;
+  white-space: nowrap;
+}
+
+.sl-table tr:hover td {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Risk score bar */
+.risk-bar-fill {
+  height: 100%;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Landing page styles ──────────────────────────────────────────────── */
+
+@keyframes landing-radar {
+  0%   { transform: translateX(-220px); opacity: 1; }
+  82%  { opacity: 1; }
+  100% { transform: translateX(calc(100vw + 220px)); opacity: 0; }
+}
+
+.landing-radar-beam {
+  position: absolute;
+  top: 0; left: 0;
+  width: 220px; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #00E5CC 35%, #00E5CC 65%, transparent 100%);
+  transform: translateX(-220px);
+  animation: landing-radar 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s both;
+}
+
+.landing-fade-up {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.75s ease var(--fd, 0s), transform 0.75s ease var(--fd, 0s);
+}
+.landing-fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.landing-btn {
+  display: inline-block;
+  padding: 11px 24px;
+  border: 1px solid #00E5CC;
+  color: #00E5CC;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  -webkit-appearance: none;
+}
+.landing-btn:hover {
+  background: #00E5CC;
+  color: #0D0D0D;
+}
+
+.signal-chip-item {
+  padding: 9px 18px;
+  border: 1px solid #D8D8D8;
+  color: #999;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.18s, color 0.18s, background 0.18s;
+  user-select: none;
+  background: transparent;
+  -webkit-appearance: none;
+}
+.signal-chip-item:hover { border-color: #888; color: #333; }
+.signal-chip-item.chip-active {
+  border-color: #00E5CC;
+  color: #0D0D0D;
+  background: #00E5CC;
+}
+
+.landing-persona-card {
+  border: 1px solid #0D0D0D;
+  padding: clamp(28px, 3vw, 40px) clamp(22px, 2.5vw, 36px);
+  transition: border-color 0.2s;
+}
+.landing-persona-card:hover { border-color: #00E5CC; }
