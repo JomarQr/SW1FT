@@ -1,5 +1,5 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Shield, LayoutDashboard, Bell, BarChart2, Users, Activity, LogOut } from 'lucide-react';
+import { Shield, LayoutDashboard, Bell, BarChart2, Users, Activity, LogOut, MousePointer2 } from 'lucide-react';
 import { logout } from '../lib/auth';
 
 const NAV_ITEMS = [
@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { to: '/dashboard/alerts', icon: Bell, label: 'Alerts' },
   { to: '/dashboard/analytics', icon: BarChart2, label: 'Analytics' },
   { to: '/dashboard/baselines', icon: Users, label: 'Baselines' },
+  { to: '/dashboard/payment-capture', icon: MousePointer2, label: 'Capture' },
 ];
 
 export default function Sidebar() {
@@ -63,7 +64,9 @@ export default function Sidebar() {
       {/* Nav items */}
       <nav style={{ flex: 1, padding: '0 8px' }}>
         {NAV_ITEMS.map(({ to, icon: Icon, label }) => {
-          const isActive = to === '/dashboard' ? location.pathname === '/dashboard' : location.pathname.startsWith(to);
+          const isActive = to === '/dashboard'
+            ? location.pathname === '/dashboard'
+            : location.pathname.startsWith(to);
           return (
             <NavLink
               key={to}
