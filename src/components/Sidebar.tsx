@@ -1,5 +1,5 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Shield, LayoutDashboard, Bell, BarChart2, Users, Activity, LogOut, MousePointer2 } from 'lucide-react';
+import { Shield, LayoutDashboard, Bell, BarChart2, Users, Activity, LogOut, MousePointer2, Database } from 'lucide-react';
 import { logout } from '../lib/auth';
 
 const NAV_ITEMS = [
@@ -7,7 +7,8 @@ const NAV_ITEMS = [
   { to: '/dashboard/alerts', icon: Bell, label: 'Alerts' },
   { to: '/dashboard/analytics', icon: BarChart2, label: 'Analytics' },
   { to: '/dashboard/baselines', icon: Users, label: 'Baselines' },
-  { to: '/dashboard/payment-capture', icon: MousePointer2, label: 'Capture' },
+  { to: '/dashboard/payment-capture',   icon: MousePointer2, label: 'Capture' },
+  { to: '/dashboard/captured-sessions', icon: Database,      label: 'Sessions' },
 ];
 
 export default function Sidebar() {

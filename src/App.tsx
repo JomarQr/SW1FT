@@ -8,6 +8,7 @@ import Baselines from './pages/Baselines';
 import Login from './pages/Login';
 import Landing from './pages/Landing';
 import PaymentCapture from './pages/PaymentCapture';
+import CapturedSessions from './pages/CapturedSessions';
 import { isAuthenticated } from './lib/auth';
 
 function ProtectedLayout() {
@@ -36,7 +37,8 @@ export default function App() {
           <Route path="alerts"      element={<Alerts />} />
           <Route path="analytics"   element={<Analytics />} />
           <Route path="baselines"        element={<Baselines />} />
-          <Route path="payment-capture" element={<PaymentCapture />} />
+          <Route path="payment-capture"   element={<PaymentCapture />} />
+          <Route path="captured-sessions" element={<CapturedSessions />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

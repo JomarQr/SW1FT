@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Lock, Shield, CheckCircle, Download, Save, CreditCard, Eye, EyeOff } from 'lucide-react';
 import { useBehaviorCapture, type BehaviorSnapshot, type LiveMetrics } from '../lib/useBehaviorCapture';
-import { saveSession, getSessions } from '../lib/behaviorStore';
+import { saveSession } from '../lib/behaviorStore';
 import { getUsername } from '../lib/auth';
 import { COLORS } from '../lib/mockData';
 
@@ -548,60 +548,6 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
   );
 }
 
-// ─── Saved sessions list ──────────────────────────────────────────────────────
-
-function SessionsList({ refreshKey }: { refreshKey: number }) {
-  const sessions = getSessions();
-  if (sessions.length === 0) return null;
-  return (
-    <div style={{ marginTop: '24px', background: '#111115', border: '1px solid #1E1E22' }}>
-      <div style={{ padding: '10px 16px', borderBottom: '1px solid #1E1E22' }}>
-        <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-          Saved Sessions ({sessions.length})
-        </span>
-      </div>
-      <div style={{ overflowX: 'auto' }}>
-        <table className="sl-table">
-          <thead>
-            <tr>
-              <th>Session ID</th>
-              <th>Captured</th>
-              <th>Analyst</th>
-              <th>Features</th>
-              <th>Keys</th>
-              <th>Clicks</th>
-              <th>Error Rate</th>
-              <th>Pastes</th>
-              <th>Tab Switches</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sessions.map(s => (
-              <tr key={s.session_id}>
-                <td style={{ color: COLORS.accent }}>{s.session_id}</td>
-                <td style={{ color: COLORS.muted }}>{new Date(s.captured_at).toLocaleString()}</td>
-                <td>{s.analyst}</td>
-                <td style={{ color: COLORS.accent }}>{s.total_features}</td>
-                <td>{s.metrics.keyboard.total_keys}</td>
-                <td>{s.metrics.mouse.click_count}</td>
-                <td style={{ color: s.metrics.keyboard.error_rate > 0.1 ? COLORS.warning : COLORS.primary }}>
-                  {(s.metrics.keyboard.error_rate * 100).toFixed(1)}%
-                </td>
-                <td style={{ color: s.metrics.clipboard.paste_total > 2 ? COLORS.warning : COLORS.primary }}>
-                  {s.metrics.clipboard.paste_total}
-                </td>
-                <td style={{ color: s.metrics.attention.tab_switch_count > 2 ? COLORS.danger : COLORS.primary }}>
-                  {s.metrics.attention.tab_switch_count}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function PaymentCapture() {
@@ -611,7 +557,6 @@ export default function PaymentCapture() {
   const [submitted, setSubmitted] = useState(false);
   const [snapshot, setSnapshot] = useState<BehaviorSnapshot | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const startRef = useRef(Date.now());
 
@@ -629,7 +574,6 @@ export default function PaymentCapture() {
 
   function handleCloseModal() {
     setShowModal(false);
-    setRefreshKey(k => k + 1);
   }
 
   const sessionId = `SL-${startRef.current.toString(36).toUpperCase().slice(-6)}`;
@@ -668,7 +612,16 @@ export default function PaymentCapture() {
             onSubmitHoverEnd={onSubmitHoverEnd}
             submitted={submitted}
           />
-          <SessionsList refreshKey={refreshKey} />
+          {submitted && (
+            <div style={{ marginTop: '16px', textAlign: 'center' }}>
+              <button
+                onClick={() => navigate('/dashboard/captured-sessions')}
+                style={{ background: 'transparent', border: `1px solid ${COLORS.accent}`, color: COLORS.accent, fontFamily: 'IBM Plex Mono', fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '9px 20px', cursor: 'pointer' }}
+              >
+                View saved sessions →
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Right: live signal panel (sticky) */}
