@@ -550,26 +550,75 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 
+// ─── Idle / ready panel ───────────────────────────────────────────────────────
+
+function IdlePanel({ onStart }: { onStart: () => void }) {
+  return (
+    <div style={{ background: '#111115', border: '1px solid #1E1E22', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 32px', textAlign: 'center', gap: '0' }}>
+      {/* Icon ring */}
+      <div style={{ width: '56px', height: '56px', borderRadius: '50%', border: '1px solid #2A2A32', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+        <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#2A2A32' }} />
+      </div>
+      <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.primary, letterSpacing: '0.1em', marginBottom: '8px' }}>RECORDING PAUSED</div>
+      <div style={{ fontFamily: 'DM Sans', fontSize: '12px', color: COLORS.muted, lineHeight: 1.6, marginBottom: '32px', maxWidth: '260px' }}>
+        Press start to begin capturing behavioral signals from the payment form.
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%', marginBottom: '32px', textAlign: 'left' }}>
+        {['Mouse movement & clicks', 'Keystroke timing & rhythm', 'Field focus & duration', 'Clipboard activity', 'Tab switches & attention'].map(s => (
+          <div key={s} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#2A2A32', flexShrink: 0 }} />
+            <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: '#3A3A4A' }}>{s}</span>
+          </div>
+        ))}
+      </div>
+      <button
+        onClick={onStart}
+        style={{ width: '100%', background: COLORS.accent, border: 'none', color: '#0A0A0B', fontFamily: 'IBM Plex Mono', fontSize: '11px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '13px', cursor: 'pointer', transition: 'opacity 0.2s' }}
+      >
+        ▶ Start Recording
+      </button>
+    </div>
+  );
+}
+
+// ─── Main page ────────────────────────────────────────────────────────────────
+
 export default function PaymentCapture() {
   const navigate = useNavigate();
   const analyst = getUsername();
-  const { metrics, finalize, onSubmitHoverStart, onSubmitHoverEnd } = useBehaviorCapture();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [recording, setRecording] = useState(false);
+  const { metrics, finalize, onSubmitHoverStart, onSubmitHoverEnd } = useBehaviorCapture({
+    enabled: recording,
+    containerRef,
+  });
   const [submitted, setSubmitted] = useState(false);
   const [snapshot, setSnapshot] = useState<BehaviorSnapshot | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [elapsed, setElapsed] = useState(0);
+  const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startRef = useRef(Date.now());
 
-  useEffect(() => {
-    const t = setInterval(() => setElapsed(Date.now() - startRef.current), 1000);
-    return () => clearInterval(t);
-  }, []);
+  function handleStart() {
+    startRef.current = Date.now();
+    setElapsed(0);
+    setRecording(true);
+    elapsedRef.current = setInterval(() => setElapsed(Date.now() - startRef.current), 1000);
+  }
+
+  function handleStop() {
+    setRecording(false);
+    if (elapsedRef.current) { clearInterval(elapsedRef.current); elapsedRef.current = null; }
+  }
+
+  useEffect(() => () => { if (elapsedRef.current) clearInterval(elapsedRef.current); }, []);
 
   function handlePay() {
     const snap = finalize(analyst);
     setSnapshot(snap);
     setSubmitted(true);
     setShowModal(true);
+    handleStop();
   }
 
   function handleCloseModal() {
@@ -589,7 +638,9 @@ export default function PaymentCapture() {
           <div style={{ width: '1px', height: '16px', background: '#1E1E22' }} />
           <div>
             <div style={{ fontFamily: 'DM Sans', fontSize: '15px', fontWeight: 600, color: COLORS.primary }}>Behavioral Capture</div>
-            <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted }}>Live payment session · All interactions recorded</div>
+            <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted }}>
+              {recording ? 'Recording — interactions captured from payment form only' : 'Not recording — press Start to begin'}
+            </div>
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -599,13 +650,32 @@ export default function PaymentCapture() {
           <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted }}>
             Analyst: <span style={{ color: COLORS.primary }}>{analyst}</span>
           </div>
+          {/* Start / Stop button */}
+          {!submitted && (
+            recording ? (
+              <button
+                onClick={handleStop}
+                style={{ display: 'flex', alignItems: 'center', gap: '7px', background: 'rgba(255,59,92,0.08)', border: '1px solid rgba(255,59,92,0.3)', color: COLORS.danger, fontFamily: 'IBM Plex Mono', fontSize: '10px', letterSpacing: '0.1em', padding: '7px 14px', cursor: 'pointer' }}
+              >
+                <span className="animate-pulse-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: COLORS.danger, display: 'inline-block', flexShrink: 0 }} />
+                RECORDING · STOP
+              </button>
+            ) : (
+              <button
+                onClick={handleStart}
+                style={{ display: 'flex', alignItems: 'center', gap: '7px', background: COLORS.accent, border: 'none', color: '#0A0A0B', fontFamily: 'IBM Plex Mono', fontSize: '10px', fontWeight: 600, letterSpacing: '0.1em', padding: '8px 16px', cursor: 'pointer' }}
+              >
+                ▶ START RECORDING
+              </button>
+            )
+          )}
         </div>
       </div>
 
       {/* Main grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '20px', alignItems: 'start' }}>
-        {/* Left: payment widget */}
-        <div>
+        {/* Left: payment widget — containerRef wraps only this area */}
+        <div ref={containerRef}>
           <PaymentWidget
             onPay={handlePay}
             onSubmitHoverStart={onSubmitHoverStart}
@@ -624,9 +694,12 @@ export default function PaymentCapture() {
           )}
         </div>
 
-        {/* Right: live signal panel (sticky) */}
+        {/* Right: signal panel or idle state (sticky) */}
         <div style={{ position: 'sticky', top: '24px', maxHeight: 'calc(100vh - 96px)', overflowY: 'auto' }}>
-          <SignalPanel metrics={metrics} elapsed={elapsed} />
+          {recording || submitted
+            ? <SignalPanel metrics={metrics} elapsed={elapsed} />
+            : <IdlePanel onStart={handleStart} />
+          }
         </div>
       </div>
 
