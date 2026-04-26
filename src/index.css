@@ -199,3 +199,38 @@ body {
   transition: border-color 0.2s;
 }
 .landing-persona-card:hover { border-color: #AA55E3; }
+
+/* Hero monitor card */
+@keyframes hero-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+@keyframes hero-ring {
+  0% { opacity: 0.5; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2.2); }
+}
+@keyframes hero-card-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.hero-pulse-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #AA55E3;
+  animation: hero-pulse 2s ease-in-out infinite;
+}
+
+.hero-ring-pulse {
+  animation: hero-ring 2s ease-out infinite;
+}
+
+.hero-monitor-card {
+  animation: hero-card-float 5s ease-in-out infinite;
+}
+
+/* Responsive hero grid */
+@media (max-width: 768px) {
+  .hero-monitor-card { display: none; }
+}
