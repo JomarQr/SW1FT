@@ -110,7 +110,7 @@ function SectionLabel({ n, title }: { n: string; title: string }) {
 export default function Landing() {
   const [scrolled, setScrolled]           = useState(false);
   const [radarDone, setRadarDone]         = useState(false);
-  const [activeSignal, setActiveSignal]   = useState<string | null>(null);
+  const [activeSignal, setActiveSignal]   = useState<string | null>(SIGNALS[0].id);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   // Nav scroll effect
@@ -164,9 +164,9 @@ export default function Landing() {
             <img src="/logo.png" alt="SW1FT" style={{ height: '36px', display: 'block' }} />
           </a>
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <Link to="/dashboard" style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: C.g600, textDecoration: 'none', letterSpacing: '0.08em', transition: 'color 0.2s' }}
-              onMouseEnter={e => (e.currentTarget.style.color = C.black)}
-              onMouseLeave={e => (e.currentTarget.style.color = C.g600)}>
+            <Link to="/dashboard" style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: scrolled ? C.g600 : 'rgba(255,255,255,0.55)', textDecoration: 'none', letterSpacing: '0.08em', transition: 'color 0.2s' }}
+              onMouseEnter={e => (e.currentTarget.style.color = scrolled ? C.black : C.white)}
+              onMouseLeave={e => (e.currentTarget.style.color = scrolled ? C.g600 : 'rgba(255,255,255,0.55)')}>
               Dashboard →
             </Link>
             <a href="#contact" className="landing-btn">Request access</a>
@@ -175,18 +175,18 @@ export default function Landing() {
       </nav>
 
       {/* ── Hero ────────────────────────────────────────────────────── */}
-      <section style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', overflow: 'hidden', background: C.white }}>
+      <section style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', overflow: 'hidden', background: C.black }}>
         {/* Noise texture */}
         <div style={{
           position: 'absolute', inset: '-80px', pointerEvents: 'none',
           backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
-          opacity: 0.035,
+          opacity: 0.06,
         }} />
         {/* Dot grid */}
         <div style={{
           position: 'absolute', inset: 0, pointerEvents: 'none',
-          backgroundImage: 'radial-gradient(circle, #0D0D0D 1px, transparent 1px)',
-          backgroundSize: '32px 32px', opacity: 0.04,
+          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1px)',
+          backgroundSize: '32px 32px', opacity: 0.18,
         }} />
 
         <div style={{ ...container, position: 'relative', zIndex: 1, padding: `120px ${pad} 80px`, width: '100%' }}>
@@ -200,15 +200,15 @@ export default function Landing() {
                   Behavioral fraud intelligence
                 </span>
               </div>
-              <h1 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 800, fontSize: 'clamp(44px, 5.5vw, 80px)', color: C.black, lineHeight: 1.0, letterSpacing: '-0.02em', marginBottom: '32px' }}>
+              <h1 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 800, fontSize: 'clamp(44px, 5.5vw, 80px)', color: C.white, lineHeight: 1.0, letterSpacing: '-0.02em', marginBottom: '32px' }}>
                 Behavioral<br />signals<br />don't lie.
               </h1>
-              <p style={{ fontFamily: 'Georgia, serif', fontSize: '19px', color: C.g600, maxWidth: '400px', lineHeight: 1.65, marginBottom: '48px' }}>
+              <p style={{ fontFamily: 'Georgia, serif', fontSize: '19px', color: 'rgba(255,255,255,0.55)', maxWidth: '400px', lineHeight: 1.65, marginBottom: '48px' }}>
                 Real-time fraud detection that reads intent, not just identity.
               </p>
               <div style={{ display: 'flex', alignItems: 'center', gap: '28px', flexWrap: 'wrap' as const }}>
                 <a href="#contact" className="landing-btn">Request access</a>
-                <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '10px', color: C.g400, letterSpacing: '0.08em' }}>
+                <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '10px', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.08em' }}>
                   EU-hosted &nbsp;·&nbsp; GDPR compliant &nbsp;·&nbsp; PSD3 aligned
                 </span>
               </div>
@@ -288,7 +288,7 @@ export default function Landing() {
               <img
                 src="/layers.png"
                 alt="Three layers diagram"
-                style={{ width: '100%', display: 'block', borderRadius: '2px' }}
+                style={{ width: '75%', display: 'block', borderRadius: '2px', margin: '0 auto' }}
               />
             </div>
           </div>
