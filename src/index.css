@@ -215,14 +215,10 @@ body {
   .landing-signals-header { padding-left: 0 !important; }
   .landing-metrics-head   { text-align: left !important; }
 
-  /* Nav: hide dashboard link, shrink button */
-  .landing-nav-link       { display: none; }
-  .landing-btn            { padding: 9px 16px; font-size: 10px; }
+  /* Nav: hide desktop links, show burger */
+  .landing-nav-link       { display: none !important; }
+  .landing-burger         { display: flex !important; }
 
-  /* Problem section: reverse so text comes first */
-  .landing-problem-grid   { direction: ltr; }
-  .landing-problem-img    { order: -1; }
-
-  /* Tighten section spacing on mobile */
-  .landing-section-mobile-pad { padding-left: 20px !important; padding-right: 20px !important; }
+  /* Problem section: image below text */
+  .landing-problem-img    { order: 1; }
 }

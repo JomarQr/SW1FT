@@ -111,6 +111,7 @@ export default function Landing() {
   const [scrolled, setScrolled]           = useState(false);
   const [radarDone, setRadarDone]         = useState(false);
   const [activeSignal, setActiveSignal]   = useState<string | null>(SIGNALS[0].id);
+  const [menuOpen, setMenuOpen]           = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   // Nav scroll effect
@@ -152,42 +153,55 @@ export default function Landing() {
       {/* ── Nav ─────────────────────────────────────────────────────── */}
       <nav style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-        height: '64px', display: 'flex', alignItems: 'center',
         background: scrolled ? 'rgba(255,255,255,0.95)' : 'transparent',
         backdropFilter: scrolled ? 'blur(10px)' : 'none',
         WebkitBackdropFilter: scrolled ? 'blur(10px)' : 'none',
         borderBottom: `1px solid ${scrolled ? C.g200 : 'transparent'}`,
-        transition: 'background 0.3s, border-color 0.3s, backdrop-filter 0.3s',
+        transition: 'background 0.3s, border-color 0.3s',
       }}>
-        <div style={{ ...container, display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-          <a href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-            <img src={scrolled ? '/logo.png' : '/logo_white.png'} alt="SW1FT" style={{ height: '52px', display: 'block' }} />
-          </a>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <Link to="/dashboard" className="landing-nav-link" style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: scrolled ? C.g600 : 'rgba(255,255,255,0.55)', textDecoration: 'none', letterSpacing: '0.08em', transition: 'color 0.2s' }}
-              onMouseEnter={e => (e.currentTarget.style.color = scrolled ? C.black : C.white)}
-              onMouseLeave={e => (e.currentTarget.style.color = scrolled ? C.g600 : 'rgba(255,255,255,0.55)')}>
-              Dashboard →
-            </Link>
-            <a href="#contact" className="landing-btn">Request access</a>
+        {/* Main bar */}
+        <div style={{ height: '76px', display: 'flex', alignItems: 'center' }}>
+          <div style={{ ...container, display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+            <a href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+              <img src={scrolled ? '/logo.png' : '/logo_white.png'} alt="SW1FT" style={{ height: '52px', display: 'block' }} />
+            </a>
+            {/* Desktop links */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <Link to="/dashboard" className="landing-nav-link" style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: scrolled ? C.g600 : 'rgba(255,255,255,0.55)', textDecoration: 'none', letterSpacing: '0.08em', transition: 'color 0.2s' }}
+                onMouseEnter={e => (e.currentTarget.style.color = scrolled ? C.black : C.white)}
+                onMouseLeave={e => (e.currentTarget.style.color = scrolled ? C.g600 : 'rgba(255,255,255,0.55)')}>
+                Dashboard →
+              </Link>
+              <a href="#contact" className="landing-btn landing-nav-link">Request access</a>
+            </div>
+            {/* Mobile hamburger */}
+            <button
+              className="landing-burger"
+              onClick={() => setMenuOpen(o => !o)}
+              aria-label="Menu"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', display: 'none', flexDirection: 'column', gap: '5px' }}
+            >
+              <span style={{ display: 'block', width: '22px', height: '2px', background: scrolled ? C.black : C.white, transition: 'transform 0.2s, opacity 0.2s', transform: menuOpen ? 'translateY(7px) rotate(45deg)' : 'none' }} />
+              <span style={{ display: 'block', width: '22px', height: '2px', background: scrolled ? C.black : C.white, transition: 'opacity 0.2s', opacity: menuOpen ? 0 : 1 }} />
+              <span style={{ display: 'block', width: '22px', height: '2px', background: scrolled ? C.black : C.white, transition: 'transform 0.2s, opacity 0.2s', transform: menuOpen ? 'translateY(-7px) rotate(-45deg)' : 'none' }} />
+            </button>
           </div>
         </div>
+        {/* Mobile dropdown */}
+        {menuOpen && (
+          <div style={{ background: scrolled ? 'rgba(255,255,255,0.97)' : 'rgba(0,0,0,0.95)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderTop: `1px solid ${scrolled ? C.g200 : '#222'}`, padding: '20px clamp(20px, 5.5vw, 80px)' }}>
+            <Link to="/dashboard" onClick={() => setMenuOpen(false)} style={{ display: 'block', fontFamily: '"JetBrains Mono", monospace', fontSize: '13px', letterSpacing: '0.08em', color: scrolled ? C.black : C.white, textDecoration: 'none', padding: '14px 0', borderBottom: `1px solid ${scrolled ? C.g200 : '#222'}` }}>
+              Dashboard →
+            </Link>
+            <a href="#contact" onClick={() => setMenuOpen(false)} style={{ display: 'block', fontFamily: '"JetBrains Mono", monospace', fontSize: '13px', letterSpacing: '0.08em', color: C.accent, textDecoration: 'none', padding: '14px 0' }}>
+              Request access
+            </a>
+          </div>
+        )}
       </nav>
 
       {/* ── Hero ────────────────────────────────────────────────────── */}
-      <section style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', overflow: 'hidden', background: C.black }}>
-        {/* Noise texture */}
-        <div style={{
-          position: 'absolute', inset: '-80px', pointerEvents: 'none',
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
-          opacity: 0.06,
-        }} />
-        {/* Dot grid */}
-        <div style={{
-          position: 'absolute', inset: 0, pointerEvents: 'none',
-          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1px)',
-          backgroundSize: '32px 32px', opacity: 0.18,
-        }} />
+      <section style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', overflow: 'hidden', background: '#000' }}>
 
         <div style={{ ...container, position: 'relative', zIndex: 1, padding: `120px ${pad} 80px`, width: '100%' }}>
           <div className="landing-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(48px, 6vw, 96px)', alignItems: 'center' }}>
