@@ -161,7 +161,7 @@ export default function Landing() {
       }}>
         <div style={{ ...container, display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
           <a href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-            <img src="/logo.png" alt="SW1FT" style={{ height: '36px', display: 'block' }} />
+            <img src={scrolled ? '/logo.png' : '/logo_white.png'} alt="SW1FT" style={{ height: '36px', display: 'block' }} />
           </a>
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
             <Link to="/dashboard" style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: scrolled ? C.g600 : 'rgba(255,255,255,0.55)', textDecoration: 'none', letterSpacing: '0.08em', transition: 'color 0.2s' }}
