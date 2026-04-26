@@ -241,23 +241,32 @@ export default function Landing() {
       {/* ── Problem ─────────────────────────────────────────────────── */}
       <section style={{ padding: `${sectionPad} 0`, borderTop: `1px solid ${C.g200}` }}>
         <div style={container}>
-          <div className="landing-fade-up" style={{ maxWidth: '640px' }}>
-            <SectionLabel n="01" title="The problem" />
-            <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(34px, 4.5vw, 54px)', marginBottom: '44px', lineHeight: 1.1 }}>
-              The authentication paradox.
-            </h2>
-            <p style={{ color: C.g800, lineHeight: 1.85, marginBottom: '26px' }}>
-              Strong Customer Authentication was designed to verify identity. It was not designed to detect a user who is being coached, pressured, or deceived by someone on the other end of a phone call. Every SCA requirement can be satisfied by a legitimate customer who is not acting freely.
-            </p>
-            <p style={{ color: C.g800, lineHeight: 1.85, marginBottom: '26px' }}>
-              The fraud industry has spent two decades asking "is this the right person?" It is the wrong question. Modern authorised push payment scams succeed precisely because the person completing the transaction is exactly who they claim to be. The credential is authentic. The consent is manufactured.
-            </p>
-            <p style={{ color: C.g800, lineHeight: 1.85 }}>
-              Behavioral biometrics have traditionally served as a passive identity layer — verifying that the typing pattern belongs to the registered user. This is valuable but insufficient. The human element is the last unprotected layer in any payment stack. We protect that layer.
-            </p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(48px, 6vw, 96px)', alignItems: 'center', marginBottom: '80px' }}>
+            <div className="landing-fade-up">
+              <SectionLabel n="01" title="The problem" />
+              <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(34px, 4.5vw, 54px)', marginBottom: '44px', lineHeight: 1.1 }}>
+                The authentication paradox.
+              </h2>
+              <p style={{ color: C.g800, lineHeight: 1.85, marginBottom: '26px' }}>
+                Strong Customer Authentication was designed to verify identity. It was not designed to detect a user who is being coached, pressured, or deceived by someone on the other end of a phone call. Every SCA requirement can be satisfied by a legitimate customer who is not acting freely.
+              </p>
+              <p style={{ color: C.g800, lineHeight: 1.85, marginBottom: '26px' }}>
+                The fraud industry has spent two decades asking "is this the right person?" It is the wrong question. Modern authorised push payment scams succeed precisely because the person completing the transaction is exactly who they claim to be. The credential is authentic. The consent is manufactured.
+              </p>
+              <p style={{ color: C.g800, lineHeight: 1.85 }}>
+                Behavioral biometrics have traditionally served as a passive identity layer — verifying that the typing pattern belongs to the registered user. This is valuable but insufficient. The human element is the last unprotected layer in any payment stack. We protect that layer.
+              </p>
+            </div>
+            <div className="landing-fade-up" style={{ '--fd': '0.12s' } as React.CSSProperties}>
+              <img
+                src="/security.png"
+                alt="Security layers illustration"
+                style={{ width: '100%', display: 'block', borderRadius: '2px' }}
+              />
+            </div>
           </div>
 
-          <div className="landing-fade-up" style={{ textAlign: 'center', maxWidth: '760px', margin: '80px auto 0', padding: '64px 0', borderTop: `1px solid ${C.g200}`, borderBottom: `1px solid ${C.g200}`, '--fd': '0.15s' } as React.CSSProperties}>
+          <div className="landing-fade-up" style={{ textAlign: 'center', maxWidth: '760px', margin: '0 auto', padding: '64px 0', borderTop: `1px solid ${C.g200}`, borderBottom: `1px solid ${C.g200}`, '--fd': '0.15s' } as React.CSSProperties}>
             <p style={{ fontFamily: '"Inter", sans-serif', fontWeight: 600, fontSize: 'clamp(22px, 3.2vw, 38px)', color: C.black, lineHeight: 1.3 }}>
               "Fraudsters don't break your login.<br />They convince your customer to do it for them."
             </p>
@@ -268,11 +277,20 @@ export default function Landing() {
       {/* ── How It Works ────────────────────────────────────────────── */}
       <section style={{ padding: `${sectionPad} 0`, background: C.g100 }}>
         <div style={container}>
-          <div className="landing-fade-up" style={{ paddingLeft: 'clamp(0px, 8vw, 120px)', marginBottom: '72px' }}>
-            <SectionLabel n="02" title="How it works" />
-            <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', maxWidth: '460px', lineHeight: 1.1 }}>
-              Three layers.<br />No friction added.
-            </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(48px, 6vw, 96px)', alignItems: 'center', marginBottom: '72px' }}>
+            <div className="landing-fade-up">
+              <SectionLabel n="02" title="How it works" />
+              <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', maxWidth: '460px', lineHeight: 1.1 }}>
+                Three layers.<br />No friction added.
+              </h2>
+            </div>
+            <div className="landing-fade-up" style={{ '--fd': '0.12s' } as React.CSSProperties}>
+              <img
+                src="/layers.png"
+                alt="Three layers diagram"
+                style={{ width: '100%', display: 'block', borderRadius: '2px' }}
+              />
+            </div>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(28px, 4vw, 52px)' }}>
             {HOW_COLS.map((col, i) => (
