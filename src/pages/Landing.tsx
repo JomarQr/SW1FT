@@ -160,8 +160,8 @@ export default function Landing() {
         transition: 'background 0.3s, border-color 0.3s, backdrop-filter 0.3s',
       }}>
         <div style={{ ...container, display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-          <a href="/" style={{ fontFamily: '"Syne", sans-serif', fontSize: '16px', fontWeight: 700, color: C.black, textDecoration: 'none', letterSpacing: '0.01em' }}>
-            SentinelLayer
+          <a href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+            <img src="/logo.png" alt="SW1FT" style={{ height: '36px', display: 'block' }} />
           </a>
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
             <Link to="/dashboard" style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', color: C.g600, textDecoration: 'none', letterSpacing: '0.08em', transition: 'color 0.2s' }}

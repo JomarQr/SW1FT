@@ -1,5 +1,5 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Shield, LayoutDashboard, Bell, BarChart2, Users, Activity, LogOut, MousePointer2, Database } from 'lucide-react';
+import { LayoutDashboard, Bell, BarChart2, Users, Activity, LogOut, MousePointer2, Database } from 'lucide-react';
 import { logout } from '../lib/auth';
 
 const NAV_ITEMS = [
@@ -36,19 +36,12 @@ export default function Sidebar() {
       }}
     >
       {/* Logo */}
-      <div style={{ padding: '20px 16px 16px', borderBottom: '1px solid #1E1E22' }}>
+      <div style={{ padding: '16px 16px 14px', borderBottom: '1px solid #1E1E22' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{
-            width: '30px', height: '30px',
-            background: 'rgba(0, 229, 204, 0.1)',
-            border: '1px solid rgba(0, 229, 204, 0.3)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <Shield size={16} color="#00E5CC" />
-          </div>
+          <img src="/logo_chrome.png" alt="SW1FT" style={{ width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0 }} />
           <div>
             <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '13px', fontWeight: 600, color: '#E8E8ED', letterSpacing: '0.02em' }}>
-              SentinelLayer
+              SW1FT
             </div>
             <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '9px', color: '#6B6B7A', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '1px' }}>
               v2.4.1 · EU-PSP
