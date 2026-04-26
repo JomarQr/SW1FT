@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Shield, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Eye, EyeOff, AlertCircle, ArrowLeft } from 'lucide-react';
 import { login, isAuthenticated } from '../lib/auth';
 import { COLORS } from '../lib/mockData';
 
@@ -63,23 +63,18 @@ export default function Login() {
 
       <div style={{ position: 'relative', width: '100%', maxWidth: '380px', padding: '0 24px' }}>
 
+        {/* Back arrow */}
+        <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted, textDecoration: 'none', marginBottom: '40px', letterSpacing: '0.06em', transition: 'color 0.2s' }}
+          onMouseEnter={e => (e.currentTarget.style.color = COLORS.primary)}
+          onMouseLeave={e => (e.currentTarget.style.color = COLORS.muted)}>
+          <ArrowLeft size={13} /> Back to site
+        </Link>
+
         {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '48px', justifyContent: 'center' }}>
-          <div style={{
-            width: '36px', height: '36px',
-            background: 'rgba(170,85,227,0.08)',
-            border: '1px solid rgba(170,85,227,0.25)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <Shield size={18} color={COLORS.accent} />
-          </div>
-          <div>
-            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '15px', fontWeight: 600, color: COLORS.primary, letterSpacing: '0.02em' }}>
-              SW1FT
-            </div>
-            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-              Analyst Access
-            </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', marginBottom: '48px' }}>
+          <img src="/logo_white.png" alt="SW1FT" style={{ height: '48px', display: 'block' }} />
+          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: '#FFFFFF', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
+            Analyst Access
           </div>
         </div>
 
