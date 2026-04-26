@@ -214,92 +214,25 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Right: live session monitor visual */}
-            <div style={{ position: 'relative' }}>
-              {/* Glow behind card */}
-              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '340px', height: '340px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(170,85,227,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
-              <div className="hero-monitor-card" style={{
-                background: '#0D0D10', border: '1px solid #1E1E22',
-                padding: '24px', borderRadius: '2px',
-                boxShadow: '0 32px 80px rgba(0,0,0,0.22), 0 0 0 1px rgba(170,85,227,0.08)',
-                position: 'relative',
-              }}>
-                {/* Card header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid #1A1A1E' }}>
-                  <div>
-                    <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '9px', color: '#4A4A5A', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '4px' }}>Live session</div>
-                    <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '12px', color: '#E0E0E0' }}>sess_9f2a1c</div>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                    <span className="hero-pulse-dot" />
-                    <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '10px', color: '#AA55E3' }}>ANALYZING</span>
-                  </div>
-                </div>
-
-                {/* Mouse path SVG */}
-                <div style={{ marginBottom: '20px', background: '#0A0A0C', border: '1px solid #16161A', padding: '12px', position: 'relative', overflow: 'hidden' }}>
-                  <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '9px', color: '#4A4A5A', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '10px' }}>Mouse path</div>
-                  <svg viewBox="0 0 320 100" width="100%" height="80" style={{ display: 'block', overflow: 'visible' }}>
-                    <defs>
-                      <linearGradient id="pathGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#AA55E3" stopOpacity="0.1" />
-                        <stop offset="100%" stopColor="#AA55E3" stopOpacity="0.8" />
-                      </linearGradient>
-                    </defs>
-                    {/* Grid lines */}
-                    {[20,40,60,80].map(y => <line key={y} x1="0" y1={y} x2="320" y2={y} stroke="#1A1A20" strokeWidth="1" />)}
-                    {[64,128,192,256].map(x => <line key={x} x1={x} y1="0" x2={x} y2="100" stroke="#1A1A20" strokeWidth="1" />)}
-                    {/* Mouse trail */}
-                    <path d="M10 72 C28 68 36 42 54 38 S80 55 95 50 S118 28 136 24 S162 42 178 46 S202 62 220 58 S248 30 268 26 S292 44 310 48" stroke="url(#pathGrad)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-                    {/* Anomaly spike */}
-                    <path d="M178 46 L184 14 L190 58" stroke="#AA55E3" strokeWidth="2" fill="none" strokeLinecap="round" />
-                    <circle cx="184" cy="14" r="3" fill="#AA55E3" opacity="0.9" />
-                    {/* Current position */}
-                    <circle cx="310" cy="48" r="4" fill="#AA55E3" />
-                    <circle cx="310" cy="48" r="8" fill="#AA55E3" opacity="0.2" className="hero-ring-pulse" />
-                  </svg>
-                </div>
-
-                {/* Signal rows */}
-                {[
-                  { label: 'Typing rhythm',       value: '0.84',  bar: 84, color: '#4ADE80', status: 'Normal' },
-                  { label: 'Paste ratio',          value: '0.61',  bar: 61, color: '#F59E0B', status: 'Elevated' },
-                  { label: 'Tab switch count',     value: '7',     bar: 87, color: '#EF4444', status: 'Anomaly' },
-                  { label: 'Scroll depth',         value: '0.12',  bar: 12, color: '#F59E0B', status: 'Low' },
-                  { label: 'Path efficiency',      value: '0.31',  bar: 31, color: '#F59E0B', status: 'Irregular' },
-                ].map((row) => (
-                  <div key={row.label} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '9px' }}>
-                    <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '9px', color: '#4A4A5A', width: '110px', flexShrink: 0 }}>{row.label}</div>
-                    <div style={{ flex: 1, height: '3px', background: '#16161A', borderRadius: '2px', overflow: 'hidden' }}>
-                      <div style={{ width: `${row.bar}%`, height: '100%', background: row.color, borderRadius: '2px', opacity: 0.8 }} />
-                    </div>
-                    <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '9px', color: row.color, width: '52px', textAlign: 'right', flexShrink: 0 }}>{row.status}</div>
-                  </div>
-                ))}
-
-                {/* Risk score */}
-                <div style={{ marginTop: '18px', paddingTop: '16px', borderTop: '1px solid #1A1A1E', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '9px', color: '#4A4A5A', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px' }}>Composite risk score</div>
-                    <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '28px', fontWeight: 700, color: '#EF4444', letterSpacing: '-0.02em' }}>78<span style={{ fontSize: '14px', color: '#4A4A5A' }}>/100</span></div>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '9px', color: '#EF4444', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '6px' }}>HIGH RISK</div>
-                    <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', padding: '5px 10px', fontFamily: '"JetBrains Mono", monospace', fontSize: '9px', color: '#EF4444', letterSpacing: '0.1em' }}>INTERVENTION QUEUED</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating badge */}
-              <div style={{ position: 'absolute', top: '-16px', right: '-16px', background: C.white, border: `1px solid ${C.g200}`, padding: '10px 14px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
-                <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '9px', color: C.g400, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '3px' }}>Latency</div>
-                <div style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: '18px', color: C.black }}>&lt;50ms</div>
-              </div>
-              {/* Floating badge 2 */}
-              <div style={{ position: 'absolute', bottom: '-16px', left: '-16px', background: C.white, border: `1px solid ${C.g200}`, padding: '10px 14px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
-                <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '9px', color: C.g400, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '3px' }}>Signals captured</div>
-                <div style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: '18px', color: C.black }}>113+</div>
-              </div>
+            {/* Right: video */}
+            <div className="hero-video-col" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {/* Purple ambient glow */}
+              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '480px', height: '480px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(170,85,227,0.18) 0%, transparent 68%)', pointerEvents: 'none', zIndex: 0 }} />
+              <video
+                src="/cubic.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                style={{
+                  width: '100%',
+                  maxWidth: '560px',
+                  display: 'block',
+                  mixBlendMode: 'multiply',
+                  position: 'relative',
+                  zIndex: 1,
+                }}
+              />
             </div>
           </div>
         </div>
