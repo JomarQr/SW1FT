@@ -9,6 +9,8 @@ import Login from './pages/Login';
 import Landing from './pages/Landing';
 import PaymentCapture from './pages/PaymentCapture';
 import CapturedSessions from './pages/CapturedSessions';
+import Docs from './pages/Docs';
+import ApiKeys from './pages/ApiKeys';
 import { isAuthenticated } from './lib/auth';
 
 function ProtectedLayout() {
@@ -30,6 +32,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/docs" element={<Docs />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<ProtectedLayout />}>
           <Route index element={<Dashboard />} />
@@ -39,6 +42,7 @@ export default function App() {
           <Route path="baselines"        element={<Baselines />} />
           <Route path="payment-capture"   element={<PaymentCapture />} />
           <Route path="captured-sessions" element={<CapturedSessions />} />
+          <Route path="api-keys"          element={<ApiKeys />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

@@ -167,6 +167,11 @@ export default function Landing() {
             </a>
             {/* Desktop links */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <Link to="/docs" className="landing-nav-link" style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: scrolled ? C.g600 : 'rgba(255,255,255,0.55)', textDecoration: 'none', letterSpacing: '0.08em', transition: 'color 0.2s' }}
+                onMouseEnter={e => (e.currentTarget.style.color = scrolled ? C.black : C.white)}
+                onMouseLeave={e => (e.currentTarget.style.color = scrolled ? C.g600 : 'rgba(255,255,255,0.55)')}>
+                Docs
+              </Link>
               <Link to="/dashboard" className="landing-nav-link" style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: scrolled ? C.g600 : 'rgba(255,255,255,0.55)', textDecoration: 'none', letterSpacing: '0.08em', transition: 'color 0.2s' }}
                 onMouseEnter={e => (e.currentTarget.style.color = scrolled ? C.black : C.white)}
                 onMouseLeave={e => (e.currentTarget.style.color = scrolled ? C.g600 : 'rgba(255,255,255,0.55)')}>
