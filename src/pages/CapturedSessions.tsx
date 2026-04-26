@@ -46,9 +46,9 @@ function SessionDetail({ s }: { s: BehaviorSnapshot }) {
       onClick={() => setTab(t)}
       style={{
         padding: '5px 12px',
-        fontFamily: 'IBM Plex Mono', fontSize: '9px', letterSpacing: '0.1em',
+        fontFamily: 'JetBrains Mono', fontSize: '9px', letterSpacing: '0.1em',
         textTransform: 'uppercase', cursor: 'pointer',
-        background: tab === t ? 'rgba(0,229,204,0.08)' : 'transparent',
+        background: tab === t ? 'rgba(170,85,227,0.08)' : 'transparent',
         border: `1px solid ${tab === t ? COLORS.accent : '#1E1E22'}`,
         color: tab === t ? COLORS.accent : COLORS.muted,
         marginRight: '4px',
@@ -60,8 +60,8 @@ function SessionDetail({ s }: { s: BehaviorSnapshot }) {
 
   const pairs = (obj: Record<string, unknown>) => Object.entries(obj).map(([k, v]) => (
     <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid #16161A' }}>
-      <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: '#4A4A5A', flexShrink: 0, marginRight: '12px' }}>{k}</span>
-      <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.primary, textAlign: 'right', wordBreak: 'break-all' }}>
+      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#4A4A5A', flexShrink: 0, marginRight: '12px' }}>{k}</span>
+      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.primary, textAlign: 'right', wordBreak: 'break-all' }}>
         {Array.isArray(v) ? (v.join(', ') || '—') : typeof v === 'number' ? (k.endsWith('_ms') ? fmtMs(v) : Number.isInteger(v) ? v.toString() : (v as number).toFixed(4)) : String(v ?? '—')}
       </span>
     </div>
@@ -116,17 +116,17 @@ export default function CapturedSessions() {
     return (
       <div style={{ padding: '32px', minHeight: '100vh', background: '#0A0A0B' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px' }}>
-          <button onClick={() => navigate('/dashboard')} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', cursor: 'pointer', color: COLORS.muted, fontFamily: 'IBM Plex Mono', fontSize: '11px', padding: 0 }}>
+          <button onClick={() => navigate('/dashboard')} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', cursor: 'pointer', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '11px', padding: 0 }}>
             <ArrowLeft size={13} /> Back
           </button>
           <div style={{ width: '1px', height: '16px', background: '#1E1E22' }} />
-          <span style={{ fontFamily: 'DM Sans', fontSize: '15px', fontWeight: 600, color: COLORS.primary }}>Captured Sessions</span>
+          <span style={{ fontFamily: 'Inter', fontSize: '15px', fontWeight: 600, color: COLORS.primary }}>Captured Sessions</span>
         </div>
         <div style={{ textAlign: 'center', padding: '80px 0' }}>
-          <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted, marginBottom: '12px' }}>No sessions captured yet</div>
+          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted, marginBottom: '12px' }}>No sessions captured yet</div>
           <button
             onClick={() => navigate('/dashboard/payment-capture')}
-            style={{ background: 'transparent', border: `1px solid ${COLORS.accent}`, color: COLORS.accent, fontFamily: 'IBM Plex Mono', fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '9px 20px', cursor: 'pointer' }}
+            style={{ background: 'transparent', border: `1px solid ${COLORS.accent}`, color: COLORS.accent, fontFamily: 'JetBrains Mono', fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '9px 20px', cursor: 'pointer' }}
           >
             Go to Capture
           </button>
@@ -140,30 +140,30 @@ export default function CapturedSessions() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <button onClick={() => navigate('/dashboard')} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', cursor: 'pointer', color: COLORS.muted, fontFamily: 'IBM Plex Mono', fontSize: '11px', padding: 0 }}>
+          <button onClick={() => navigate('/dashboard')} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', cursor: 'pointer', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '11px', padding: 0 }}>
             <ArrowLeft size={13} /> Back
           </button>
           <div style={{ width: '1px', height: '16px', background: '#1E1E22' }} />
           <div>
-            <div style={{ fontFamily: 'DM Sans', fontSize: '15px', fontWeight: 600, color: COLORS.primary }}>Captured Sessions</div>
-            <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted }}>{sessions.length} behavioral profile{sessions.length !== 1 ? 's' : ''} stored locally</div>
+            <div style={{ fontFamily: 'Inter', fontSize: '15px', fontWeight: 600, color: COLORS.primary }}>Captured Sessions</div>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted }}>{sessions.length} behavioral profile{sessions.length !== 1 ? 's' : ''} stored locally</div>
           </div>
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <button
             onClick={() => navigate('/dashboard/payment-capture')}
-            style={{ background: COLORS.accent, border: 'none', color: '#0A0A0B', fontFamily: 'IBM Plex Mono', fontSize: '10px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '8px 16px', cursor: 'pointer' }}
+            style={{ background: COLORS.accent, border: 'none', color: '#0A0A0B', fontFamily: 'JetBrains Mono', fontSize: '10px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '8px 16px', cursor: 'pointer' }}
           >
             + New Capture
           </button>
           {confirmClear ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.warning }}>Clear all?</span>
-              <button onClick={handleClear} style={{ background: COLORS.danger, border: 'none', color: '#fff', fontFamily: 'IBM Plex Mono', fontSize: '10px', padding: '6px 12px', cursor: 'pointer' }}>Yes</button>
-              <button onClick={() => setConfirmClear(false)} style={{ background: 'transparent', border: '1px solid #1E1E22', color: COLORS.muted, fontFamily: 'IBM Plex Mono', fontSize: '10px', padding: '6px 12px', cursor: 'pointer' }}>No</button>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.warning }}>Clear all?</span>
+              <button onClick={handleClear} style={{ background: COLORS.danger, border: 'none', color: '#fff', fontFamily: 'JetBrains Mono', fontSize: '10px', padding: '6px 12px', cursor: 'pointer' }}>Yes</button>
+              <button onClick={() => setConfirmClear(false)} style={{ background: 'transparent', border: '1px solid #1E1E22', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '10px', padding: '6px 12px', cursor: 'pointer' }}>No</button>
             </div>
           ) : (
-            <button onClick={() => setConfirmClear(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'transparent', border: '1px solid #1E1E22', color: COLORS.muted, fontFamily: 'IBM Plex Mono', fontSize: '10px', padding: '7px 12px', cursor: 'pointer' }}>
+            <button onClick={() => setConfirmClear(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'transparent', border: '1px solid #1E1E22', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '10px', padding: '7px 12px', cursor: 'pointer' }}>
               <Trash2 size={11} /> Clear all
             </button>
           )}
@@ -179,8 +179,8 @@ export default function CapturedSessions() {
           { label: 'Tab Switchers', value: sessions.filter(s => s.metrics.attention.tab_switch_count > 2).length, color: COLORS.warning },
         ].map(({ label, value, color }) => (
           <div key={label} style={{ background: '#111115', border: '1px solid #1E1E22', padding: '14px 16px' }}>
-            <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>{label}</div>
-            <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '22px', fontWeight: 600, color: color ?? COLORS.accent }}>{value}</div>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>{label}</div>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '22px', fontWeight: 600, color: color ?? COLORS.accent }}>{value}</div>
           </div>
         ))}
       </div>
@@ -225,7 +225,7 @@ export default function CapturedSessions() {
                     <td style={{ color: COLORS.muted }}>{new Date(s.captured_at).toLocaleString()}</td>
                     <td>{s.analyst}</td>
                     <td>
-                      <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: risk.color, fontWeight: 600 }}>
+                      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: risk.color, fontWeight: 600 }}>
                         {risk.label}
                       </span>
                     </td>
@@ -243,7 +243,7 @@ export default function CapturedSessions() {
                     <td style={{ color: COLORS.muted }}>{fmtMs(s.metrics.session.total_duration_ms)}</td>
                     <td style={{ color: COLORS.muted }}>{s.metrics.session.form_navigation_style}</td>
                     <td onClick={e => { e.stopPropagation(); exportJson(s); }}>
-                      <button style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', color: COLORS.muted, fontFamily: 'IBM Plex Mono', fontSize: '10px', padding: '2px 6px' }}>
+                      <button style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '10px', padding: '2px 6px' }}>
                         <Download size={11} />
                       </button>
                     </td>

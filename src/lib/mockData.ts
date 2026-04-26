@@ -24,7 +24,7 @@ export const COLORS = {
   surface: '#0F0F12',
   card: '#111115',
   border: '#1E1E22',
-  accent: '#00E5CC',
+  accent: '#AA55E3',
   primary: '#E8E8ED',
   muted: '#6B6B7A',
   danger: '#FF3B5C',
@@ -299,7 +299,7 @@ export const SCAM_BREAKDOWN = [
   { name: 'Impersonation', value: 38, color: '#FF3B5C' },
   { name: 'APP Fraud', value: 27, color: '#FF8C00' },
   { name: 'Investment', value: 18, color: '#FFB800' },
-  { name: 'BEC', value: 11, color: '#00E5CC' },
+  { name: 'BEC', value: 11, color: '#AA55E3' },
   { name: 'Romance', value: 6, color: '#6B6B7A' },
 ];
 

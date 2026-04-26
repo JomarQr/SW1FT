@@ -37,7 +37,7 @@ export default function Login() {
     background: '#0A0A0B',
     border: '1px solid #1E1E22',
     color: COLORS.primary,
-    fontFamily: 'IBM Plex Mono',
+    fontFamily: 'JetBrains Mono',
     fontSize: '13px',
     padding: '12px 14px',
     outline: 'none',
@@ -51,7 +51,7 @@ export default function Login() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      fontFamily: 'DM Sans, sans-serif',
+      fontFamily: 'Inter, sans-serif',
     }}>
 
       {/* Subtle grid bg */}
@@ -67,17 +67,17 @@ export default function Login() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '48px', justifyContent: 'center' }}>
           <div style={{
             width: '36px', height: '36px',
-            background: 'rgba(0,229,204,0.08)',
-            border: '1px solid rgba(0,229,204,0.25)',
+            background: 'rgba(170,85,227,0.08)',
+            border: '1px solid rgba(170,85,227,0.25)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
             <Shield size={18} color={COLORS.accent} />
           </div>
           <div>
-            <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '15px', fontWeight: 600, color: COLORS.primary, letterSpacing: '0.02em' }}>
-              SentinelLayer
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '15px', fontWeight: 600, color: COLORS.primary, letterSpacing: '0.02em' }}>
+              SW1FT
             </div>
-            <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
               Analyst Access
             </div>
           </div>
@@ -86,10 +86,10 @@ export default function Login() {
         {/* Card */}
         <div style={{ background: '#111115', border: '1px solid #1E1E22', padding: '36px 32px' }}>
           <div style={{ marginBottom: '28px' }}>
-            <h1 style={{ fontFamily: 'DM Sans', fontSize: '18px', fontWeight: 600, color: COLORS.primary, margin: '0 0 6px' }}>
+            <h1 style={{ fontFamily: 'Inter', fontSize: '18px', fontWeight: 600, color: COLORS.primary, margin: '0 0 6px' }}>
               Sign in
             </h1>
-            <p style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted, margin: 0 }}>
+            <p style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted, margin: 0 }}>
               Authorised personnel only
             </p>
           </div>
@@ -97,7 +97,7 @@ export default function Login() {
           <form onSubmit={handleSubmit}>
             {/* Username */}
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px' }}>
                 Username
               </label>
               <input
@@ -116,7 +116,7 @@ export default function Login() {
 
             {/* Password */}
             <div style={{ marginBottom: '24px' }}>
-              <label style={{ display: 'block', fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px' }}>
                 Password
               </label>
               <div style={{ position: 'relative' }}>
@@ -146,7 +146,7 @@ export default function Login() {
             {error && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,59,92,0.08)', border: '1px solid rgba(255,59,92,0.2)', padding: '10px 12px', marginBottom: '20px' }}>
                 <AlertCircle size={13} color={COLORS.danger} />
-                <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.danger }}>{error}</span>
+                <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.danger }}>{error}</span>
               </div>
             )}
 
@@ -156,10 +156,10 @@ export default function Login() {
               disabled={loading}
               style={{
                 width: '100%',
-                background: loading ? 'rgba(0,229,204,0.5)' : COLORS.accent,
+                background: loading ? 'rgba(170,85,227,0.5)' : COLORS.accent,
                 border: 'none',
                 color: '#0A0A0B',
-                fontFamily: 'IBM Plex Mono',
+                fontFamily: 'JetBrains Mono',
                 fontSize: '12px',
                 fontWeight: 600,
                 letterSpacing: '0.1em',
@@ -175,18 +175,18 @@ export default function Login() {
         </div>
 
         {/* Demo credentials hint */}
-        <div style={{ marginTop: '20px', padding: '14px 16px', background: 'rgba(0,229,204,0.04)', border: '1px solid rgba(0,229,204,0.1)' }}>
-          <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted, letterSpacing: '0.08em', marginBottom: '6px', textTransform: 'uppercase' }}>
+        <div style={{ marginTop: '20px', padding: '14px 16px', background: 'rgba(170,85,227,0.04)', border: '1px solid rgba(170,85,227,0.1)' }}>
+          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, letterSpacing: '0.08em', marginBottom: '6px', textTransform: 'uppercase' }}>
             Demo credentials
           </div>
-          <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.accent }}>
+          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.accent }}>
             analyst / sentinel2026
           </div>
         </div>
 
         {/* Footer note */}
-        <div style={{ marginTop: '32px', textAlign: 'center', fontFamily: 'IBM Plex Mono', fontSize: '10px', color: '#2A2A32' }}>
-          SentinelLayer · EU-WEST-1 · v2.4.1
+        <div style={{ marginTop: '32px', textAlign: 'center', fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#2A2A32' }}>
+          SW1FT · EU-WEST-1 · v2.4.1
         </div>
       </div>
     </div>

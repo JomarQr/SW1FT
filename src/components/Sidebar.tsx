@@ -40,10 +40,10 @@ export default function Sidebar() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <img src="/logo_chrome.png" alt="SW1FT" style={{ width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0 }} />
           <div>
-            <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '13px', fontWeight: 600, color: '#E8E8ED', letterSpacing: '0.02em' }}>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '13px', fontWeight: 600, color: '#E8E8ED', letterSpacing: '0.02em' }}>
               SW1FT
             </div>
-            <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '9px', color: '#6B6B7A', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '1px' }}>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: '#6B6B7A', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '1px' }}>
               v2.4.1 · EU-PSP
             </div>
           </div>
@@ -51,7 +51,7 @@ export default function Sidebar() {
       </div>
 
       {/* Nav section label */}
-      <div style={{ padding: '16px 16px 6px', fontFamily: 'IBM Plex Mono', fontSize: '9px', color: '#6B6B7A', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+      <div style={{ padding: '16px 16px 6px', fontFamily: 'JetBrains Mono', fontSize: '9px', color: '#6B6B7A', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
         Workspace
       </div>
 
@@ -71,12 +71,12 @@ export default function Sidebar() {
                 gap: '10px',
                 padding: '9px 10px',
                 marginBottom: '2px',
-                fontFamily: 'DM Sans',
+                fontFamily: 'Inter',
                 fontSize: '13px',
                 fontWeight: isActive ? 500 : 400,
-                color: isActive ? '#00E5CC' : '#6B6B7A',
-                background: isActive ? 'rgba(0, 229, 204, 0.07)' : 'transparent',
-                borderLeft: isActive ? '2px solid #00E5CC' : '2px solid transparent',
+                color: isActive ? '#AA55E3' : '#6B6B7A',
+                background: isActive ? 'rgba(170, 85, 227, 0.07)' : 'transparent',
+                borderLeft: isActive ? '2px solid #AA55E3' : '2px solid transparent',
                 textDecoration: 'none',
                 transition: 'all 0.15s ease',
               }}
@@ -92,18 +92,18 @@ export default function Sidebar() {
       <div style={{ padding: '12px 16px', borderTop: '1px solid #1E1E22' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
           <div className="animate-pulse-dot" style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#00CC7A', flexShrink: 0 }} />
-          <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: '#00CC7A' }}>SYSTEM LIVE</span>
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#00CC7A' }}>SYSTEM LIVE</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Activity size={11} color="#6B6B7A" />
-          <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: '#6B6B7A' }}>EU-WEST-1 · 12ms</span>
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#6B6B7A' }}>EU-WEST-1 · 12ms</span>
         </div>
 
         {/* Analyst + logout */}
         <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #1E1E22', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: '#6B6B7A' }}>Analyst</div>
-            <div style={{ fontFamily: 'DM Sans', fontSize: '12px', color: '#E8E8ED', marginTop: '2px' }}>J. Springis</div>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#6B6B7A' }}>Analyst</div>
+            <div style={{ fontFamily: 'Inter', fontSize: '12px', color: '#E8E8ED', marginTop: '2px' }}>J. Springis</div>
           </div>
           <button
             onClick={handleLogout}

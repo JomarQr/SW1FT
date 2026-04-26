@@ -26,7 +26,7 @@ function fmtTime(iso: string) {
 const ChartTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: '#0F0F12', border: '1px solid #1E1E22', padding: '8px 12px', fontFamily: 'IBM Plex Mono', fontSize: '11px' }}>
+    <div style={{ background: '#0F0F12', border: '1px solid #1E1E22', padding: '8px 12px', fontFamily: 'JetBrains Mono', fontSize: '11px' }}>
       <div style={{ color: COLORS.muted, marginBottom: '4px' }}>{label}s</div>
       {payload.map((p: any) => (
         <div key={p.name} style={{ color: p.color }}>
@@ -41,7 +41,7 @@ function Card({ title, children, style }: { title: string; children: React.React
   return (
     <div style={{ background: '#111115', border: '1px solid #1E1E22', ...style }}>
       <div style={{ padding: '12px 16px', borderBottom: '1px solid #1E1E22' }}>
-        <span style={{ fontFamily: 'DM Sans', fontSize: '12px', fontWeight: 500, color: COLORS.primary, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+        <span style={{ fontFamily: 'Inter', fontSize: '12px', fontWeight: 500, color: COLORS.primary, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
           {title}
         </span>
       </div>
@@ -55,8 +55,8 @@ function Card({ title, children, style }: { title: string; children: React.React
 function SignalRow({ label, value, highlight = false }: { label: string; value: React.ReactNode; highlight?: boolean }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: '1px solid #1E1E22' }}>
-      <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted }}>{label}</span>
-      <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: highlight ? COLORS.danger : COLORS.primary, fontWeight: highlight ? 600 : 400 }}>
+      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>{label}</span>
+      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: highlight ? COLORS.danger : COLORS.primary, fontWeight: highlight ? 600 : 400 }}>
         {value}
       </span>
     </div>
@@ -84,7 +84,7 @@ export default function SessionDetail() {
       <div style={{ marginBottom: '20px' }}>
         <button
           onClick={() => navigate('/dashboard')}
-          style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', cursor: 'pointer', color: COLORS.muted, fontFamily: 'IBM Plex Mono', fontSize: '11px', padding: '0 0 12px 0' }}
+          style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', cursor: 'pointer', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '11px', padding: '0 0 12px 0' }}
         >
           <ArrowLeft size={13} /> Back to Dashboard
         </button>
@@ -92,26 +92,26 @@ export default function SessionDetail() {
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <h1 style={{ fontFamily: 'IBM Plex Mono', fontSize: '20px', fontWeight: 600, color: COLORS.accent, margin: 0 }}>
+              <h1 style={{ fontFamily: 'JetBrains Mono', fontSize: '20px', fontWeight: 600, color: COLORS.accent, margin: 0 }}>
                 {session.id}
               </h1>
-              <span style={{ background: statusCfg.bg, color: statusCfg.text, fontFamily: 'IBM Plex Mono', fontSize: '11px', fontWeight: 600, padding: '3px 10px', border: `1px solid ${statusCfg.text}44` }}>
+              <span style={{ background: statusCfg.bg, color: statusCfg.text, fontFamily: 'JetBrains Mono', fontSize: '11px', fontWeight: 600, padding: '3px 10px', border: `1px solid ${statusCfg.text}44` }}>
                 {session.status}
               </span>
             </div>
             <div style={{ display: 'flex', gap: '20px', marginTop: '6px' }}>
-              <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted }}>User: <span style={{ color: COLORS.primary }}>{session.userId}</span></span>
-              <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted }}>Channel: <span style={{ color: COLORS.primary, textTransform: 'uppercase' }}>{session.channel}</span></span>
-              <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted }}>Country: <span style={{ color: COLORS.primary }}>{session.country}</span></span>
-              <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted }}>Amount: <span style={{ color: COLORS.primary }}>€{session.transactionAmount.toLocaleString('de-DE', { minimumFractionDigits: 2 })}</span></span>
-              <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted }}>Started: <span style={{ color: COLORS.primary }}>{fmtTime(session.startTime)}</span></span>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>User: <span style={{ color: COLORS.primary }}>{session.userId}</span></span>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>Channel: <span style={{ color: COLORS.primary, textTransform: 'uppercase' }}>{session.channel}</span></span>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>Country: <span style={{ color: COLORS.primary }}>{session.country}</span></span>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>Amount: <span style={{ color: COLORS.primary }}>€{session.transactionAmount.toLocaleString('de-DE', { minimumFractionDigits: 2 })}</span></span>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>Started: <span style={{ color: COLORS.primary }}>{fmtTime(session.startTime)}</span></span>
             </div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '42px', fontWeight: 700, color: riskColor(session.riskScore), lineHeight: 1 }}>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '42px', fontWeight: 700, color: riskColor(session.riskScore), lineHeight: 1 }}>
               {session.riskScore}
             </div>
-            <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted, marginTop: '2px' }}>risk score</div>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, marginTop: '2px' }}>risk score</div>
           </div>
         </div>
       </div>
@@ -129,28 +129,28 @@ export default function SessionDetail() {
           } />
           <div style={{ padding: '10px 0', borderBottom: '1px solid #1E1E22' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted, display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted, display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Phone size={11} /> Active call detected
               </span>
               {signals.activeCallDetected
-                ? <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: COLORS.danger, fontFamily: 'IBM Plex Mono', fontSize: '11px', fontWeight: 600 }}><AlertTriangle size={11} /> YES</div>
-                : <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: COLORS.safe, fontFamily: 'IBM Plex Mono', fontSize: '11px' }}><CheckCircle size={11} /> NO</div>
+                ? <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: COLORS.danger, fontFamily: 'JetBrains Mono', fontSize: '11px', fontWeight: 600 }}><AlertTriangle size={11} /> YES</div>
+                : <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: COLORS.safe, fontFamily: 'JetBrains Mono', fontSize: '11px' }}><CheckCircle size={11} /> NO</div>
               }
             </div>
             {signals.activeCallDetected && (
-              <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted, marginTop: '4px' }}>
+              <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, marginTop: '4px' }}>
                 Last call: {signals.timeSinceLastCall}s before confirmation
               </div>
             )}
           </div>
           <div style={{ padding: '10px 0' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted, display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted, display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Monitor size={11} /> Remote access tool
               </span>
               {signals.remoteAccessDetected
-                ? <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: COLORS.danger, fontFamily: 'IBM Plex Mono', fontSize: '11px', fontWeight: 600 }}><XCircle size={11} /> DETECTED</div>
-                : <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: COLORS.safe, fontFamily: 'IBM Plex Mono', fontSize: '11px' }}><CheckCircle size={11} /> CLEAN</div>
+                ? <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: COLORS.danger, fontFamily: 'JetBrains Mono', fontSize: '11px', fontWeight: 600 }}><XCircle size={11} /> DETECTED</div>
+                : <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: COLORS.safe, fontFamily: 'JetBrains Mono', fontSize: '11px' }}><CheckCircle size={11} /> CLEAN</div>
               }
             </div>
           </div>
@@ -158,10 +158,10 @@ export default function SessionDetail() {
           {/* Scroll depth bar */}
           <div style={{ marginTop: '8px', paddingTop: '12px', borderTop: '1px solid #1E1E22' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-              <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted, display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <Eye size={10} /> Scroll depth on confirm screen
               </span>
-              <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: signals.scrollDepth < 40 ? COLORS.danger : COLORS.safe }}>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: signals.scrollDepth < 40 ? COLORS.danger : COLORS.safe }}>
                 {signals.scrollDepth}%
               </span>
             </div>
@@ -177,8 +177,8 @@ export default function SessionDetail() {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={signals.riskTimeline} margin={{ top: 5, right: 10, bottom: 0, left: -10 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1E1E22" vertical={false} />
-                <XAxis dataKey="t" tick={{ fill: COLORS.muted, fontFamily: 'IBM Plex Mono', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `${v}s`} interval={4} />
-                <YAxis domain={[0, 100]} tick={{ fill: COLORS.muted, fontFamily: 'IBM Plex Mono', fontSize: 10 }} axisLine={false} tickLine={false} />
+                <XAxis dataKey="t" tick={{ fill: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `${v}s`} interval={4} />
+                <YAxis domain={[0, 100]} tick={{ fill: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: 10 }} axisLine={false} tickLine={false} />
                 <Tooltip content={<ChartTooltip />} />
                 <ReferenceLine y={65} stroke={COLORS.orange} strokeDasharray="4 4" strokeWidth={1} />
                 <ReferenceLine y={85} stroke={COLORS.danger} strokeDasharray="4 4" strokeWidth={1} />
@@ -196,8 +196,8 @@ export default function SessionDetail() {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={signals.typingCadenceTimeline} margin={{ top: 5, right: 10, bottom: 0, left: -10 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1E1E22" vertical={false} />
-                <XAxis dataKey="t" tick={{ fill: COLORS.muted, fontFamily: 'IBM Plex Mono', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `${v}s`} interval={5} />
-                <YAxis tick={{ fill: COLORS.muted, fontFamily: 'IBM Plex Mono', fontSize: 10 }} axisLine={false} tickLine={false} />
+                <XAxis dataKey="t" tick={{ fill: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `${v}s`} interval={5} />
+                <YAxis tick={{ fill: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: 10 }} axisLine={false} tickLine={false} />
                 <Tooltip content={<ChartTooltip />} />
                 <ReferenceLine y={0} stroke={COLORS.muted} strokeWidth={1} />
                 <ReferenceLine y={2} stroke={COLORS.warning} strokeDasharray="3 3" strokeWidth={1} />
@@ -213,8 +213,8 @@ export default function SessionDetail() {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={pauseBarData} margin={{ top: 5, right: 10, bottom: 0, left: -10 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1E1E22" horizontal={true} vertical={false} />
-                <XAxis dataKey="name" tick={{ fill: COLORS.muted, fontFamily: 'IBM Plex Mono', fontSize: 10 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: COLORS.muted, fontFamily: 'IBM Plex Mono', fontSize: 10 }} axisLine={false} tickLine={false} />
+                <XAxis dataKey="name" tick={{ fill: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: 10 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: 10 }} axisLine={false} tickLine={false} />
                 <Tooltip content={<ChartTooltip />} />
                 <Bar dataKey="value" name="Seconds" radius={0}>
                   {pauseBarData.map((entry, i) => (
@@ -236,17 +236,17 @@ export default function SessionDetail() {
             {signals.signalContributions.map(c => (
               <div key={c.signal}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-                  <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.primary }}>{c.signal}</span>
-                  <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted }}>{c.value}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.primary }}>{c.signal}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>{c.value}</span>
                 </div>
                 <div style={{ height: '5px', background: '#1E1E22', width: '100%' }}>
                   <div style={{ height: '100%', width: `${c.weight}%`, background: c.weight > 70 ? COLORS.danger : c.weight > 50 ? COLORS.orange : COLORS.warning, transition: 'width 1s ease' }} />
                 </div>
-                <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '9px', color: COLORS.muted, marginTop: '3px', textAlign: 'right' }}>{c.weight}% contribution</div>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, marginTop: '3px', textAlign: 'right' }}>{c.weight}% contribution</div>
               </div>
             ))}
             {signals.signalContributions.length === 0 && (
-              <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted }}>No significant signals detected</span>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>No significant signals detected</span>
             )}
           </div>
         </Card>
@@ -254,19 +254,19 @@ export default function SessionDetail() {
         {/* Intervention log */}
         <Card title="Intervention Log" style={{ flex: 1 }}>
           {signals.interventionLog.length === 0 ? (
-            <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted }}>No interventions triggered</span>
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>No interventions triggered</span>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {signals.interventionLog.map(inv => (
                 <div key={inv.id} style={{ padding: '10px', background: '#0F0F12', border: '1px solid #1E1E22' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.accent }}>{inv.id}</span>
-                    <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.accent }}>{inv.id}</span>
+                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <Clock size={9} /> {fmtTime(inv.triggeredAt)}
                     </span>
                   </div>
-                  <div style={{ fontFamily: 'DM Sans', fontSize: '12px', color: COLORS.primary, marginBottom: '4px' }}>{inv.type}</div>
-                  <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted }}>
+                  <div style={{ fontFamily: 'Inter', fontSize: '12px', color: COLORS.primary, marginBottom: '4px' }}>{inv.type}</div>
+                  <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted }}>
                     Outcome: <span style={{ color: COLORS.warning }}>{inv.outcome}</span>
                   </div>
                 </div>
@@ -277,16 +277,16 @@ export default function SessionDetail() {
       </div>
 
       {/* Explainability block */}
-      <div style={{ background: 'rgba(0, 229, 204, 0.04)', border: '1px solid rgba(0, 229, 204, 0.15)', padding: '16px 20px' }}>
+      <div style={{ background: 'rgba(170, 85, 227, 0.04)', border: '1px solid rgba(170, 85, 227, 0.15)', padding: '16px 20px' }}>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
           <div style={{ marginTop: '2px', flexShrink: 0 }}>
             <div style={{ width: '3px', height: '52px', background: COLORS.accent }} />
           </div>
           <div>
-            <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.accent, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px' }}>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.accent, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px' }}>
               Explainability — Audit Log
             </div>
-            <p style={{ fontFamily: 'IBM Plex Mono', fontSize: '12px', color: COLORS.primary, lineHeight: 1.7, margin: 0 }}>
+            <p style={{ fontFamily: 'JetBrains Mono', fontSize: '12px', color: COLORS.primary, lineHeight: 1.7, margin: 0 }}>
               {signals.explainabilityText}
             </p>
           </div>

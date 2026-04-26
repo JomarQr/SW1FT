@@ -28,7 +28,7 @@ function StatusBadge({ status }: { status: SessionStatus }) {
   return (
     <span style={{
       background: cfg.bg, color: cfg.text,
-      fontFamily: 'IBM Plex Mono', fontSize: '10px', fontWeight: 500,
+      fontFamily: 'JetBrains Mono', fontSize: '10px', fontWeight: 500,
       padding: '2px 7px', letterSpacing: '0.08em',
       border: `1px solid ${cfg.text}33`,
     }}>
@@ -82,19 +82,19 @@ function KPICard({ icon: Icon, label, value, format, sub, accent = false }: {
   return (
     <div style={{
       background: '#111115',
-      border: `1px solid ${accent ? 'rgba(0,229,204,0.2)' : '#1E1E22'}`,
+      border: `1px solid ${accent ? 'rgba(170,85,227,0.2)' : '#1E1E22'}`,
       padding: '20px',
       flex: 1,
       minWidth: 0,
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-        <span style={{ fontFamily: 'DM Sans', fontSize: '12px', color: '#6B6B7A', letterSpacing: '0.02em' }}>{label}</span>
+        <span style={{ fontFamily: 'Inter', fontSize: '12px', color: '#6B6B7A', letterSpacing: '0.02em' }}>{label}</span>
         <Icon size={15} color={accent ? COLORS.accent : COLORS.muted} />
       </div>
-      <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '28px', fontWeight: 600, color: accent ? COLORS.accent : COLORS.primary, lineHeight: 1 }}>
+      <div style={{ fontFamily: 'JetBrains Mono', fontSize: '28px', fontWeight: 600, color: accent ? COLORS.accent : COLORS.primary, lineHeight: 1 }}>
         {format(displayed)}
       </div>
-      {sub && <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted, marginTop: '6px' }}>{sub}</div>}
+      {sub && <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, marginTop: '6px' }}>{sub}</div>}
     </div>
   );
 }
@@ -104,7 +104,7 @@ function KPICard({ icon: Icon, label, value, format, sub, accent = false }: {
 const ChartTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: '#0F0F12', border: '1px solid #1E1E22', padding: '8px 12px', fontFamily: 'IBM Plex Mono', fontSize: '11px' }}>
+    <div style={{ background: '#0F0F12', border: '1px solid #1E1E22', padding: '8px 12px', fontFamily: 'JetBrains Mono', fontSize: '11px' }}>
       <div style={{ color: '#6B6B7A', marginBottom: '4px' }}>{label}</div>
       {payload.map((p: any) => (
         <div key={p.name} style={{ color: p.color, display: 'flex', gap: '8px' }}>
@@ -151,16 +151,16 @@ export default function Dashboard() {
       {/* Header row */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div>
-          <h1 style={{ fontFamily: 'DM Sans', fontSize: '20px', fontWeight: 600, color: COLORS.primary, margin: 0 }}>
+          <h1 style={{ fontFamily: 'Inter', fontSize: '20px', fontWeight: 600, color: COLORS.primary, margin: 0 }}>
             Live Operations
           </h1>
-          <p style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted, marginTop: '4px' }}>
+          <p style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted, marginTop: '4px' }}>
             CET {new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Berlin' })} — Monitoring EU-PSP session stream
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div className="animate-pulse-dot" style={{ width: '8px', height: '8px', borderRadius: '50%', background: COLORS.accent }} />
-          <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.accent }}>LIVE</span>
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.accent }}>LIVE</span>
         </div>
       </div>
 
@@ -179,14 +179,14 @@ export default function Dashboard() {
         <div style={{ flex: '0 0 62%', background: '#111115', border: '1px solid #1E1E22' }}>
           <div style={{ padding: '14px 16px', borderBottom: '1px solid #1E1E22', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontFamily: 'DM Sans', fontSize: '13px', fontWeight: 500, color: COLORS.primary }}>Active Session Feed</span>
-              <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted, background: '#1E1E22', padding: '1px 6px' }}>
+              <span style={{ fontFamily: 'Inter', fontSize: '13px', fontWeight: 500, color: COLORS.primary }}>Active Session Feed</span>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, background: '#1E1E22', padding: '1px 6px' }}>
                 {liveSessions.length} sessions
               </span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <div className="animate-pulse-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: COLORS.accent }} />
-              <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.accent }}>updating</span>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.accent }}>updating</span>
             </div>
           </div>
           <div style={{ overflowY: 'auto', maxHeight: '420px' }}>
@@ -210,10 +210,10 @@ export default function Dashboard() {
                     style={{ cursor: 'pointer' }}
                     onClick={() => navigate(`/dashboard/session/${s.id}`)}
                   >
-                    <td style={{ color: COLORS.accent, fontFamily: 'IBM Plex Mono', fontSize: '11px' }}>{s.id}</td>
+                    <td style={{ color: COLORS.accent, fontFamily: 'JetBrains Mono', fontSize: '11px' }}>{s.id}</td>
                     <td style={{ color: COLORS.muted }}>{s.userId}</td>
                     <td>
-                      <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                         {s.channel}
                       </span>
                     </td>
@@ -240,7 +240,7 @@ export default function Dashboard() {
         {/* Top 5 alerts */}
         <div style={{ flex: 1, background: '#111115', border: '1px solid #1E1E22' }}>
           <div style={{ padding: '14px 16px', borderBottom: '1px solid #1E1E22' }}>
-            <span style={{ fontFamily: 'DM Sans', fontSize: '13px', fontWeight: 500, color: COLORS.primary }}>Top Active Alerts</span>
+            <span style={{ fontFamily: 'Inter', fontSize: '13px', fontWeight: 500, color: COLORS.primary }}>Top Active Alerts</span>
           </div>
           <div style={{ padding: '8px 0' }}>
             {topAlerts.map(alert => (
@@ -259,29 +259,29 @@ export default function Dashboard() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <span style={{
-                      fontFamily: 'IBM Plex Mono', fontSize: '10px', fontWeight: 600,
+                      fontFamily: 'JetBrains Mono', fontSize: '10px', fontWeight: 600,
                       color: riskColor(alert.riskScore),
                       background: `${riskColor(alert.riskScore)}15`,
                       padding: '1px 6px',
                     }}>
                       {alert.riskScore}
                     </span>
-                    <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted }}>{alert.id}</span>
+                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted }}>{alert.id}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: COLORS.muted }}>
                     <Clock size={10} />
-                    <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px' }}>{fmtTime(alert.time)}</span>
+                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px' }}>{fmtTime(alert.time)}</span>
                   </div>
                 </div>
-                <div style={{ fontFamily: 'DM Sans', fontSize: '12px', color: COLORS.primary, marginBottom: '4px' }}>
+                <div style={{ fontFamily: 'Inter', fontSize: '12px', color: COLORS.primary, marginBottom: '4px' }}>
                   {alert.primarySignal}
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted, textTransform: 'uppercase' }}>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, textTransform: 'uppercase' }}>
                     {alert.scamType}
                   </span>
-                  <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted }}>·</span>
-                  <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted }}>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted }}>·</span>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted }}>
                     €{alert.transactionAmount.toLocaleString()}
                   </span>
                 </div>
@@ -294,7 +294,7 @@ export default function Dashboard() {
       {/* Risk distribution chart */}
       <div style={{ background: '#111115', border: '1px solid #1E1E22' }}>
         <div style={{ padding: '14px 16px', borderBottom: '1px solid #1E1E22' }}>
-          <span style={{ fontFamily: 'DM Sans', fontSize: '13px', fontWeight: 500, color: COLORS.primary }}>
+          <span style={{ fontFamily: 'Inter', fontSize: '13px', fontWeight: 500, color: COLORS.primary }}>
             Risk Score Distribution — Last 24h
           </span>
         </div>
@@ -303,8 +303,8 @@ export default function Dashboard() {
             <AreaChart data={RISK_DISTRIBUTION_24H} margin={{ top: 5, right: 10, bottom: 0, left: -10 }}>
               <defs>
                 <linearGradient id="riskGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#00E5CC" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#00E5CC" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#AA55E3" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#AA55E3" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="alertGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#FF3B5C" stopOpacity={0.2} />
@@ -312,10 +312,10 @@ export default function Dashboard() {
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#1E1E22" vertical={false} />
-              <XAxis dataKey="hour" tick={{ fill: '#6B6B7A', fontFamily: 'IBM Plex Mono', fontSize: 10 }} axisLine={false} tickLine={false} interval={3} />
-              <YAxis tick={{ fill: '#6B6B7A', fontFamily: 'IBM Plex Mono', fontSize: 10 }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="hour" tick={{ fill: '#6B6B7A', fontFamily: 'JetBrains Mono', fontSize: 10 }} axisLine={false} tickLine={false} interval={3} />
+              <YAxis tick={{ fill: '#6B6B7A', fontFamily: 'JetBrains Mono', fontSize: 10 }} axisLine={false} tickLine={false} />
               <Tooltip content={<ChartTooltip />} />
-              <Area type="monotone" dataKey="avgRisk" name="Avg Risk" stroke="#00E5CC" strokeWidth={1.5} fill="url(#riskGrad)" dot={false} />
+              <Area type="monotone" dataKey="avgRisk" name="Avg Risk" stroke="#AA55E3" strokeWidth={1.5} fill="url(#riskGrad)" dot={false} />
               <Area type="monotone" dataKey="alerts" name="Alerts" stroke="#FF3B5C" strokeWidth={1.5} fill="url(#alertGrad)" dot={false} />
             </AreaChart>
           </ResponsiveContainer>

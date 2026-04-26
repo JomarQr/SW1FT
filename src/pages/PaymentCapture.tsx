@@ -20,13 +20,13 @@ function Section({ title, live, children }: { title: string; live?: boolean; chi
   return (
     <div style={{ background: '#111115', border: '1px solid #1E1E22', marginBottom: '10px' }}>
       <div style={{ padding: '8px 12px', borderBottom: '1px solid #1E1E22', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '9px', letterSpacing: '0.12em', textTransform: 'uppercase', color: COLORS.muted }}>
+        <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', letterSpacing: '0.12em', textTransform: 'uppercase', color: COLORS.muted }}>
           {title}
         </span>
         {live && (
           <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
             <span className="animate-pulse-dot" style={{ width: '5px', height: '5px', borderRadius: '50%', background: COLORS.safe, display: 'inline-block' }} />
-            <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '8px', color: COLORS.safe }}>LIVE</span>
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: COLORS.safe }}>LIVE</span>
           </span>
         )}
       </div>
@@ -39,8 +39,8 @@ function Row({ label, value, level = 'normal', mono = true }: { label: string; v
   const formatted = typeof value === 'number' ? (Number.isInteger(value) ? value.toString() : value.toFixed(3)) : value;
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '3px 12px' }}>
-      <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: '#4A4A5A' }}>{label}</span>
-      <span style={{ fontFamily: mono ? 'IBM Plex Mono' : 'DM Sans', fontSize: '11px', color: numColor(level), fontWeight: level !== 'normal' ? 600 : 400 }}>
+      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#4A4A5A' }}>{label}</span>
+      <span style={{ fontFamily: mono ? 'JetBrains Mono' : 'Inter', fontSize: '11px', color: numColor(level), fontWeight: level !== 'normal' ? 600 : 400 }}>
         {formatted}
       </span>
     </div>
@@ -69,11 +69,11 @@ function SignalPanel({ metrics, elapsed }: { metrics: LiveMetrics; elapsed: numb
       <div style={{ background: '#0F0F12', border: '1px solid #1E1E22', padding: '9px 12px', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span className="animate-pulse-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: COLORS.danger, display: 'inline-block' }} />
-          <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.danger, letterSpacing: '0.1em' }}>RECORDING</span>
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.danger, letterSpacing: '0.1em' }}>RECORDING</span>
         </div>
-        <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted }}>{fmtTime(elapsed)}</span>
-        <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted }}>{metrics.raw_event_count.toLocaleString()} evt</span>
-        <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.accent }}>{metrics.events_per_second} /s</span>
+        <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted }}>{fmtTime(elapsed)}</span>
+        <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted }}>{metrics.raw_event_count.toLocaleString()} evt</span>
+        <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.accent }}>{metrics.events_per_second} /s</span>
       </div>
 
       {/* Device fingerprint */}
@@ -171,9 +171,9 @@ function SignalPanel({ metrics, elapsed }: { metrics: LiveMetrics; elapsed: numb
       </Section>
 
       {/* Feature count summary */}
-      <div style={{ background: 'rgba(0,229,204,0.04)', border: '1px solid rgba(0,229,204,0.12)', padding: '10px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted }}>features extracted</span>
-        <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '14px', fontWeight: 600, color: COLORS.accent }}>
+      <div style={{ background: 'rgba(170,85,227,0.04)', border: '1px solid rgba(170,85,227,0.12)', padding: '10px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted }}>features extracted</span>
+        <span style={{ fontFamily: 'JetBrains Mono', fontSize: '14px', fontWeight: 600, color: COLORS.accent }}>
           {Object.keys(metrics.device).length + Object.keys(metrics.mouse).length + Object.keys(metrics.keyboard).length + Object.keys(metrics.clipboard).length + Object.keys(metrics.attention).length + Object.keys(metrics.session).length + 2}
         </span>
       </div>
@@ -206,7 +206,7 @@ function PaymentWidget({
     background: '#0A0A0B',
     border: `1px solid ${focused === field ? COLORS.accent : '#2A2A32'}`,
     color: COLORS.primary,
-    fontFamily: 'IBM Plex Mono',
+    fontFamily: 'JetBrains Mono',
     fontSize: '13px',
     padding: '11px 14px',
     outline: 'none',
@@ -230,8 +230,8 @@ function PaymentWidget({
         <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(0,204,122,0.1)', border: '1px solid rgba(0,204,122,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
           <CheckCircle size={22} color={COLORS.safe} />
         </div>
-        <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '13px', color: COLORS.safe, letterSpacing: '0.1em', marginBottom: '8px' }}>PAYMENT CAPTURED</div>
-        <div style={{ fontFamily: 'DM Sans', fontSize: '13px', color: COLORS.muted }}>Behavioral profile saved. Review the panel.</div>
+        <div style={{ fontFamily: 'JetBrains Mono', fontSize: '13px', color: COLORS.safe, letterSpacing: '0.1em', marginBottom: '8px' }}>PAYMENT CAPTURED</div>
+        <div style={{ fontFamily: 'Inter', fontSize: '13px', color: COLORS.muted }}>Behavioral profile saved. Review the panel.</div>
       </div>
     );
   }
@@ -241,12 +241,12 @@ function PaymentWidget({
       {/* Merchant header */}
       <div style={{ background: '#111115', border: '1px solid #1E1E22', borderBottom: 'none', padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <div style={{ fontFamily: 'DM Sans', fontSize: '13px', color: COLORS.muted }}>Payment to</div>
-          <div style={{ fontFamily: 'DM Sans', fontSize: '16px', fontWeight: 600, color: COLORS.primary }}>SentinelLayer Demo</div>
+          <div style={{ fontFamily: 'Inter', fontSize: '13px', color: COLORS.muted }}>Payment to</div>
+          <div style={{ fontFamily: 'Inter', fontSize: '16px', fontWeight: 600, color: COLORS.primary }}>SW1FT Demo</div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '22px', fontWeight: 600, color: COLORS.primary }}>€47.99</div>
-          <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.1em' }}>ONE-TIME · EUR</div>
+          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '22px', fontWeight: 600, color: COLORS.primary }}>€47.99</div>
+          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.1em' }}>ONE-TIME · EUR</div>
         </div>
       </div>
 
@@ -254,7 +254,7 @@ function PaymentWidget({
       <div style={{ background: '#111115', border: '1px solid #1E1E22', padding: '24px' }}>
         {/* Cardholder */}
         <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', fontFamily: 'IBM Plex Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '6px' }}>
+          <label style={{ display: 'block', fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '6px' }}>
             Cardholder Name
           </label>
           <input
@@ -272,7 +272,7 @@ function PaymentWidget({
 
         {/* Card number */}
         <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', fontFamily: 'IBM Plex Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '6px' }}>
+          <label style={{ display: 'block', fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '6px' }}>
             Card Number
           </label>
           <div style={{ position: 'relative' }}>
@@ -289,7 +289,7 @@ function PaymentWidget({
               style={{ ...inputStyle('card'), paddingRight: '56px' }}
             />
             {cardBrand && (
-              <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontFamily: 'IBM Plex Mono', fontSize: '9px', color: COLORS.accent, letterSpacing: '0.08em' }}>
+              <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.accent, letterSpacing: '0.08em' }}>
                 {cardBrand}
               </div>
             )}
@@ -304,7 +304,7 @@ function PaymentWidget({
         {/* Expiry + CVV */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
           <div>
-            <label style={{ display: 'block', fontFamily: 'IBM Plex Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '6px' }}>
+            <label style={{ display: 'block', fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '6px' }}>
               Expiry
             </label>
             <input
@@ -321,7 +321,7 @@ function PaymentWidget({
             />
           </div>
           <div>
-            <label style={{ display: 'block', fontFamily: 'IBM Plex Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '6px' }}>
+            <label style={{ display: 'block', fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '6px' }}>
               CVV
             </label>
             <div style={{ position: 'relative' }}>
@@ -359,10 +359,10 @@ function PaymentWidget({
           onClick={() => isReady && onPay({ name, card, expiry })}
           style={{
             width: '100%',
-            background: isReady ? COLORS.accent : 'rgba(0,229,204,0.15)',
+            background: isReady ? COLORS.accent : 'rgba(170,85,227,0.15)',
             border: 'none',
-            color: isReady ? '#0A0A0B' : 'rgba(0,229,204,0.4)',
-            fontFamily: 'IBM Plex Mono',
+            color: isReady ? '#0A0A0B' : 'rgba(170,85,227,0.4)',
+            fontFamily: 'JetBrains Mono',
             fontSize: '12px',
             fontWeight: 600,
             letterSpacing: '0.1em',
@@ -383,7 +383,7 @@ function PaymentWidget({
         {/* Security note */}
         <div style={{ marginTop: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
           <Shield size={11} color={COLORS.muted} />
-          <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.08em' }}>
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.08em' }}>
             256-BIT SSL · PCI DSS · 3D SECURE
           </span>
         </div>
@@ -415,12 +415,12 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
 
   const tabStyle = (t: string): React.CSSProperties => ({
     padding: '7px 14px',
-    fontFamily: 'IBM Plex Mono',
+    fontFamily: 'JetBrains Mono',
     fontSize: '9px',
     letterSpacing: '0.1em',
     textTransform: 'uppercase',
     cursor: 'pointer',
-    background: tab === t ? 'rgba(0,229,204,0.08)' : 'transparent',
+    background: tab === t ? 'rgba(170,85,227,0.08)' : 'transparent',
     border: `1px solid ${tab === t ? COLORS.accent : '#1E1E22'}`,
     color: tab === t ? COLORS.accent : COLORS.muted,
     marginRight: '4px',
@@ -436,17 +436,17 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
         {/* Header */}
         <div style={{ padding: '16px 20px', borderBottom: '1px solid #1E1E22', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.safe, letterSpacing: '0.12em', marginBottom: '4px' }}>BEHAVIORAL PROFILE CAPTURED</div>
-            <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted }}>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.safe, letterSpacing: '0.12em', marginBottom: '4px' }}>BEHAVIORAL PROFILE CAPTURED</div>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>
               {snapshot.session_id} · {new Date(snapshot.captured_at).toLocaleString()} · {snapshot.total_features} features
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '9px', color: COLORS.muted, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Analyst</div>
-              <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.primary }}>{snapshot.analyst}</div>
+              <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Analyst</div>
+              <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.primary }}>{snapshot.analyst}</div>
             </div>
-            <button onClick={onClose} style={{ background: 'none', border: '1px solid #1E1E22', color: COLORS.muted, cursor: 'pointer', padding: '6px 10px', fontFamily: 'IBM Plex Mono', fontSize: '11px' }}>ESC</button>
+            <button onClick={onClose} style={{ background: 'none', border: '1px solid #1E1E22', color: COLORS.muted, cursor: 'pointer', padding: '6px 10px', fontFamily: 'JetBrains Mono', fontSize: '11px' }}>ESC</button>
           </div>
         </div>
 
@@ -463,8 +463,8 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 24px' }}>
               {Object.entries(m.mouse).map(([k, v]) => (
                 <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #1A1A1E' }}>
-                  <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: '#4A4A5A' }}>{k}</span>
-                  <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.primary }}>{typeof v === 'number' ? v.toFixed(3) : String(v)}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#4A4A5A' }}>{k}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.primary }}>{typeof v === 'number' ? v.toFixed(3) : String(v)}</span>
                 </div>
               ))}
             </div>
@@ -473,16 +473,16 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 24px' }}>
               {Object.entries(m.keyboard).map(([k, v]) => (
                 <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #1A1A1E' }}>
-                  <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: '#4A4A5A' }}>{k}</span>
-                  <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.primary }}>{typeof v === 'number' ? v.toFixed(3) : String(v)}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#4A4A5A' }}>{k}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.primary }}>{typeof v === 'number' ? v.toFixed(3) : String(v)}</span>
                 </div>
               ))}
               <div style={{ gridColumn: '1/-1', marginTop: '12px' }}>
-                <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>Clipboard</div>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>Clipboard</div>
                 {Object.entries(m.clipboard).map(([k, v]) => (
                   <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #1A1A1E' }}>
-                    <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: '#4A4A5A' }}>{k}</span>
-                    <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.primary }}>{Array.isArray(v) ? v.join(', ') || '—' : String(v)}</span>
+                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#4A4A5A' }}>{k}</span>
+                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.primary }}>{Array.isArray(v) ? v.join(', ') || '—' : String(v)}</span>
                   </div>
                 ))}
               </div>
@@ -492,8 +492,8 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 24px' }}>
               {Object.entries(m.session).map(([k, v]) => (
                 <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #1A1A1E', gridColumn: typeof v === 'object' && v !== null ? '1/-1' : 'auto' }}>
-                  <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: '#4A4A5A', flexShrink: 0, marginRight: '12px' }}>{k}</span>
-                  <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.primary, wordBreak: 'break-all', textAlign: 'right' }}>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#4A4A5A', flexShrink: 0, marginRight: '12px' }}>{k}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.primary, wordBreak: 'break-all', textAlign: 'right' }}>
                     {typeof v === 'number' ? (k.endsWith('_ms') ? fmtMs(v) : v.toFixed(3)) : Array.isArray(v) ? v.join(' → ') || '—' : typeof v === 'object' ? JSON.stringify(v) : String(v ?? '—')}
                   </span>
                 </div>
@@ -504,8 +504,8 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 24px' }}>
               {Object.entries(m.attention).map(([k, v]) => (
                 <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #1A1A1E' }}>
-                  <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: '#4A4A5A' }}>{k}</span>
-                  <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.primary }}>{typeof v === 'number' && k.endsWith('_ms') ? fmtMs(v) : String(v)}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#4A4A5A' }}>{k}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.primary }}>{typeof v === 'number' && k.endsWith('_ms') ? fmtMs(v) : String(v)}</span>
                 </div>
               ))}
             </div>
@@ -514,8 +514,8 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 24px' }}>
               {Object.entries(m.device).map(([k, v]) => (
                 <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #1A1A1E', gridColumn: k === 'user_agent' || k === 'languages' ? '1/-1' : 'auto' }}>
-                  <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: '#4A4A5A', flexShrink: 0, marginRight: '12px' }}>{k}</span>
-                  <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.primary, wordBreak: 'break-all', textAlign: 'right' }}>{String(v) || '—'}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#4A4A5A', flexShrink: 0, marginRight: '12px' }}>{k}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.primary, wordBreak: 'break-all', textAlign: 'right' }}>{String(v) || '—'}</span>
                 </div>
               ))}
             </div>
@@ -525,22 +525,22 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
         {/* Footer actions */}
         <div style={{ padding: '14px 20px', borderTop: '1px solid #1E1E22', display: 'flex', gap: '10px', justifyContent: 'flex-end', alignItems: 'center' }}>
           {saved && (
-            <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.safe, marginRight: 'auto' }}>
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.safe, marginRight: 'auto' }}>
               ✓ Saved · Attributed to {snapshot.analyst}
             </span>
           )}
           <button
             onClick={handleExport}
-            style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'transparent', border: '1px solid #2A2A32', color: COLORS.muted, fontFamily: 'IBM Plex Mono', fontSize: '10px', letterSpacing: '0.08em', padding: '8px 14px', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'transparent', border: '1px solid #2A2A32', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '10px', letterSpacing: '0.08em', padding: '8px 14px', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' }}
           >
             <Download size={11} /> Export JSON
           </button>
           <button
             onClick={handleSave}
             disabled={saved}
-            style={{ display: 'flex', alignItems: 'center', gap: '6px', background: saved ? 'rgba(0,204,122,0.1)' : COLORS.accent, border: 'none', color: saved ? COLORS.safe : '#0A0A0B', fontFamily: 'IBM Plex Mono', fontSize: '10px', letterSpacing: '0.08em', fontWeight: 600, padding: '8px 16px', cursor: saved ? 'default' : 'pointer', textTransform: 'uppercase' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '6px', background: saved ? 'rgba(0,204,122,0.1)' : COLORS.accent, border: 'none', color: saved ? COLORS.safe : '#0A0A0B', fontFamily: 'JetBrains Mono', fontSize: '10px', letterSpacing: '0.08em', fontWeight: 600, padding: '8px 16px', cursor: saved ? 'default' : 'pointer', textTransform: 'uppercase' }}
           >
-            <Save size={11} /> {saved ? 'Saved' : 'Save to SentinelLayer'}
+            <Save size={11} /> {saved ? 'Saved' : 'Save to SW1FT'}
           </button>
         </div>
       </div>
@@ -559,21 +559,21 @@ function IdlePanel({ onStart }: { onStart: () => void }) {
       <div style={{ width: '56px', height: '56px', borderRadius: '50%', border: '1px solid #2A2A32', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
         <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#2A2A32' }} />
       </div>
-      <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.primary, letterSpacing: '0.1em', marginBottom: '8px' }}>RECORDING PAUSED</div>
-      <div style={{ fontFamily: 'DM Sans', fontSize: '12px', color: COLORS.muted, lineHeight: 1.6, marginBottom: '32px', maxWidth: '260px' }}>
+      <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.primary, letterSpacing: '0.1em', marginBottom: '8px' }}>RECORDING PAUSED</div>
+      <div style={{ fontFamily: 'Inter', fontSize: '12px', color: COLORS.muted, lineHeight: 1.6, marginBottom: '32px', maxWidth: '260px' }}>
         Press start to begin capturing behavioral signals from the payment form.
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%', marginBottom: '32px', textAlign: 'left' }}>
         {['Mouse movement & clicks', 'Keystroke timing & rhythm', 'Field focus & duration', 'Clipboard activity', 'Tab switches & attention'].map(s => (
           <div key={s} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#2A2A32', flexShrink: 0 }} />
-            <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: '#3A3A4A' }}>{s}</span>
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#3A3A4A' }}>{s}</span>
           </div>
         ))}
       </div>
       <button
         onClick={onStart}
-        style={{ width: '100%', background: COLORS.accent, border: 'none', color: '#0A0A0B', fontFamily: 'IBM Plex Mono', fontSize: '11px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '13px', cursor: 'pointer', transition: 'opacity 0.2s' }}
+        style={{ width: '100%', background: COLORS.accent, border: 'none', color: '#0A0A0B', fontFamily: 'JetBrains Mono', fontSize: '11px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '13px', cursor: 'pointer', transition: 'opacity 0.2s' }}
       >
         ▶ Start Recording
       </button>
@@ -632,22 +632,22 @@ export default function PaymentCapture() {
       {/* Page header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <button onClick={() => navigate('/dashboard')} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', cursor: 'pointer', color: COLORS.muted, fontFamily: 'IBM Plex Mono', fontSize: '11px', padding: 0 }}>
+          <button onClick={() => navigate('/dashboard')} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', cursor: 'pointer', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '11px', padding: 0 }}>
             <ArrowLeft size={13} /> Back
           </button>
           <div style={{ width: '1px', height: '16px', background: '#1E1E22' }} />
           <div>
-            <div style={{ fontFamily: 'DM Sans', fontSize: '15px', fontWeight: 600, color: COLORS.primary }}>Behavioral Capture</div>
-            <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted }}>
+            <div style={{ fontFamily: 'Inter', fontSize: '15px', fontWeight: 600, color: COLORS.primary }}>Behavioral Capture</div>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted }}>
               {recording ? 'Recording — interactions captured from payment form only' : 'Not recording — press Start to begin'}
             </div>
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted }}>
+          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted }}>
             Session <span style={{ color: COLORS.accent }}>{sessionId}</span>
           </div>
-          <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted }}>
+          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted }}>
             Analyst: <span style={{ color: COLORS.primary }}>{analyst}</span>
           </div>
           {/* Start / Stop button */}
@@ -655,7 +655,7 @@ export default function PaymentCapture() {
             recording ? (
               <button
                 onClick={handleStop}
-                style={{ display: 'flex', alignItems: 'center', gap: '7px', background: 'rgba(255,59,92,0.08)', border: '1px solid rgba(255,59,92,0.3)', color: COLORS.danger, fontFamily: 'IBM Plex Mono', fontSize: '10px', letterSpacing: '0.1em', padding: '7px 14px', cursor: 'pointer' }}
+                style={{ display: 'flex', alignItems: 'center', gap: '7px', background: 'rgba(255,59,92,0.08)', border: '1px solid rgba(255,59,92,0.3)', color: COLORS.danger, fontFamily: 'JetBrains Mono', fontSize: '10px', letterSpacing: '0.1em', padding: '7px 14px', cursor: 'pointer' }}
               >
                 <span className="animate-pulse-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: COLORS.danger, display: 'inline-block', flexShrink: 0 }} />
                 RECORDING · STOP
@@ -663,7 +663,7 @@ export default function PaymentCapture() {
             ) : (
               <button
                 onClick={handleStart}
-                style={{ display: 'flex', alignItems: 'center', gap: '7px', background: COLORS.accent, border: 'none', color: '#0A0A0B', fontFamily: 'IBM Plex Mono', fontSize: '10px', fontWeight: 600, letterSpacing: '0.1em', padding: '8px 16px', cursor: 'pointer' }}
+                style={{ display: 'flex', alignItems: 'center', gap: '7px', background: COLORS.accent, border: 'none', color: '#0A0A0B', fontFamily: 'JetBrains Mono', fontSize: '10px', fontWeight: 600, letterSpacing: '0.1em', padding: '8px 16px', cursor: 'pointer' }}
               >
                 ▶ START RECORDING
               </button>
@@ -686,7 +686,7 @@ export default function PaymentCapture() {
             <div style={{ marginTop: '16px', textAlign: 'center' }}>
               <button
                 onClick={() => navigate('/dashboard/captured-sessions')}
-                style={{ background: 'transparent', border: `1px solid ${COLORS.accent}`, color: COLORS.accent, fontFamily: 'IBM Plex Mono', fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '9px 20px', cursor: 'pointer' }}
+                style={{ background: 'transparent', border: `1px solid ${COLORS.accent}`, color: COLORS.accent, fontFamily: 'JetBrains Mono', fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '9px 20px', cursor: 'pointer' }}
               >
                 View saved sessions →
               </button>

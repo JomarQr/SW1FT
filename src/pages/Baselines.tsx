@@ -11,7 +11,7 @@ const HEALTH_CFG: Record<BaselineHealth, { bg: string; text: string; label: stri
 function HealthBadge({ status }: { status: BaselineHealth }) {
   const cfg = HEALTH_CFG[status];
   return (
-    <span style={{ background: cfg.bg, color: cfg.text, fontFamily: 'IBM Plex Mono', fontSize: '10px', fontWeight: 600, padding: '2px 7px', border: `1px solid ${cfg.text}33`, letterSpacing: '0.06em' }}>
+    <span style={{ background: cfg.bg, color: cfg.text, fontFamily: 'JetBrains Mono', fontSize: '10px', fontWeight: 600, padding: '2px 7px', border: `1px solid ${cfg.text}33`, letterSpacing: '0.06em' }}>
       {cfg.label}
     </span>
   );
@@ -24,7 +24,7 @@ function ConfidenceBar({ value }: { value: number }) {
       <div style={{ width: '60px', height: '3px', background: '#1E1E22' }}>
         <div style={{ height: '100%', width: `${value}%`, background: color }} />
       </div>
-      <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color }}>{value}</span>
+      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color }}>{value}</span>
     </div>
   );
 }
@@ -55,31 +55,31 @@ function ExpandedBaseline({ b }: { b: UserBaseline }) {
       <td colSpan={8} style={{ padding: 0, background: '#0A0A0B' }}>
         <div style={{ padding: '16px 24px', borderBottom: '1px solid #1E1E22', display: 'flex', gap: '40px' }}>
           <div>
-            <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px' }}>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px' }}>
               Baseline Signal Ranges
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {rows.map(row => (
                 <div key={row.label} style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                  <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted, width: '220px', flexShrink: 0 }}>{row.label}</span>
-                  <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.primary, width: '70px' }}>{row.value}</span>
-                  <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted }}>{row.sd}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted, width: '220px', flexShrink: 0 }}>{row.label}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.primary, width: '70px' }}>{row.value}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>{row.sd}</span>
                 </div>
               ))}
             </div>
           </div>
           <div>
-            <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px' }}>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px' }}>
               Enrollment Info
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted }}>
+              <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>
                 Enrolled: <span style={{ color: COLORS.primary }}>{fmtDate(b.enrolledDate)}</span>
               </div>
-              <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted }}>
+              <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>
                 Country: <span style={{ color: COLORS.primary }}>{b.country}</span>
               </div>
-              <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted }}>
+              <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>
                 Sessions needed for HEALTHY: <span style={{ color: b.baselineSessions >= 30 ? COLORS.safe : COLORS.warning }}>{Math.max(0, 30 - b.baselineSessions)} more</span>
               </div>
             </div>
@@ -88,8 +88,8 @@ function ExpandedBaseline({ b }: { b: UserBaseline }) {
             <div style={{ background: 'rgba(255,184,0,0.06)', border: '1px solid rgba(255,184,0,0.2)', padding: '12px 16px', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
               <Clock size={14} color={COLORS.warning} style={{ marginTop: '1px', flexShrink: 0 }} />
               <div>
-                <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.warning, fontWeight: 600, marginBottom: '4px' }}>COLD START</div>
-                <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted, lineHeight: 1.5 }}>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.warning, fontWeight: 600, marginBottom: '4px' }}>COLD START</div>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, lineHeight: 1.5 }}>
                   Baseline requires ≥30 sessions.<br />
                   {b.baselineSessions} of 30 collected ({Math.round((b.baselineSessions / 30) * 100)}%).<br />
                   Anomaly detection in fallback mode.
@@ -101,8 +101,8 @@ function ExpandedBaseline({ b }: { b: UserBaseline }) {
             <div style={{ background: 'rgba(255,184,0,0.06)', border: '1px solid rgba(255,184,0,0.2)', padding: '12px 16px', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
               <AlertTriangle size={14} color={COLORS.warning} style={{ marginTop: '1px', flexShrink: 0 }} />
               <div>
-                <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.warning, fontWeight: 600, marginBottom: '4px' }}>BASELINE DEGRADING</div>
-                <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '10px', color: COLORS.muted, lineHeight: 1.5 }}>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.warning, fontWeight: 600, marginBottom: '4px' }}>BASELINE DEGRADING</div>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, lineHeight: 1.5 }}>
                   Signal drift detected. Confidence at {b.confidenceScore}%.<br />
                   Consider baseline reset after analyst review.
                 </div>
@@ -145,7 +145,7 @@ export default function Baselines() {
   }
 
   const thStyle = (key?: typeof sortKey): React.CSSProperties => ({
-    textAlign: 'left', padding: '8px 12px', fontFamily: 'IBM Plex Mono', fontSize: '10px', fontWeight: 500,
+    textAlign: 'left', padding: '8px 12px', fontFamily: 'JetBrains Mono', fontSize: '10px', fontWeight: 500,
     letterSpacing: '0.1em', textTransform: 'uppercase', color: key && sortKey === key ? COLORS.accent : COLORS.muted,
     borderBottom: '1px solid #1E1E22', whiteSpace: 'nowrap', cursor: key ? 'pointer' : 'default', userSelect: 'none',
   });
@@ -159,10 +159,10 @@ export default function Baselines() {
   return (
     <div style={{ padding: '24px', minHeight: '100vh', background: '#0A0A0B' }}>
       <div style={{ marginBottom: '20px' }}>
-        <h1 style={{ fontFamily: 'DM Sans', fontSize: '20px', fontWeight: 600, color: COLORS.primary, margin: '0 0 4px' }}>
+        <h1 style={{ fontFamily: 'Inter', fontSize: '20px', fontWeight: 600, color: COLORS.primary, margin: '0 0 4px' }}>
           User Baseline Manager
         </h1>
-        <p style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted, margin: 0 }}>
+        <p style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted, margin: 0 }}>
           {BASELINES.length} enrolled users · behavioral profiles for anomaly detection
         </p>
       </div>
@@ -182,8 +182,8 @@ export default function Baselines() {
               style={{ flex: 1, background: healthFilter === status ? `${cfg.text}15` : '#111115', border: `1px solid ${healthFilter === status ? cfg.text + '44' : '#1E1E22'}`, padding: '14px 16px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: 'all 0.15s' }}
             >
               <div>
-                <div style={{ fontFamily: 'DM Sans', fontSize: '11px', color: COLORS.muted, marginBottom: '6px' }}>{cfg.label}</div>
-                <div style={{ fontFamily: 'IBM Plex Mono', fontSize: '24px', fontWeight: 600, color: cfg.text }}>{count}</div>
+                <div style={{ fontFamily: 'Inter', fontSize: '11px', color: COLORS.muted, marginBottom: '6px' }}>{cfg.label}</div>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '24px', fontWeight: 600, color: cfg.text }}>{count}</div>
               </div>
               <Icon size={20} color={cfg.text} />
             </div>
@@ -199,11 +199,11 @@ export default function Baselines() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search user ID..."
-            style={{ background: 'none', border: 'none', outline: 'none', fontFamily: 'IBM Plex Mono', fontSize: '12px', color: COLORS.primary, flex: 1 }}
+            style={{ background: 'none', border: 'none', outline: 'none', fontFamily: 'JetBrains Mono', fontSize: '12px', color: COLORS.primary, flex: 1 }}
           />
         </div>
         {healthFilter && (
-          <button onClick={() => setHealthFilter('')} style={{ background: 'none', border: 'none', color: COLORS.danger, fontFamily: 'IBM Plex Mono', fontSize: '10px', cursor: 'pointer', padding: 0 }}>
+          <button onClick={() => setHealthFilter('')} style={{ background: 'none', border: 'none', color: COLORS.danger, fontFamily: 'JetBrains Mono', fontSize: '10px', cursor: 'pointer', padding: 0 }}>
             clear filter ×
           </button>
         )}
@@ -240,21 +240,21 @@ export default function Baselines() {
                   style={{ cursor: 'pointer' }}
                   onClick={() => toggleExpand(b.userId)}
                 >
-                  <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'IBM Plex Mono', fontSize: '12px', color: COLORS.accent }}>{b.userId}</td>
+                  <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'JetBrains Mono', fontSize: '12px', color: COLORS.accent }}>{b.userId}</td>
                   <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '12px', color: b.baselineSessions < 30 ? COLORS.warning : COLORS.primary }}>
+                      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '12px', color: b.baselineSessions < 30 ? COLORS.warning : COLORS.primary }}>
                         {b.baselineSessions}
                       </span>
-                      {b.baselineSessions < 30 && <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '9px', color: COLORS.warning }}>COLD</span>}
+                      {b.baselineSessions < 30 && <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.warning }}>COLD</span>}
                     </div>
                   </td>
                   <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22' }}>
                     <ConfidenceBar value={b.confidenceScore} />
                   </td>
-                  <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted }}>{fmtTime(b.lastActive)}</td>
-                  <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'IBM Plex Mono', fontSize: '12px', color: b.anomalyCount > 5 ? COLORS.warning : COLORS.primary }}>{b.anomalyCount}</td>
-                  <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'IBM Plex Mono', fontSize: '11px', color: COLORS.muted }}>{b.country}</td>
+                  <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>{fmtTime(b.lastActive)}</td>
+                  <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'JetBrains Mono', fontSize: '12px', color: b.anomalyCount > 5 ? COLORS.warning : COLORS.primary }}>{b.anomalyCount}</td>
+                  <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>{b.country}</td>
                   <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22' }}>
                     <HealthBadge status={b.healthStatus} />
                   </td>
@@ -268,7 +268,7 @@ export default function Baselines() {
           </tbody>
         </table>
         {filtered.length === 0 && (
-          <div style={{ padding: '32px', textAlign: 'center', fontFamily: 'IBM Plex Mono', fontSize: '12px', color: COLORS.muted }}>
+          <div style={{ padding: '32px', textAlign: 'center', fontFamily: 'JetBrains Mono', fontSize: '12px', color: COLORS.muted }}>
             No baselines match the current filters
           </div>
         )}

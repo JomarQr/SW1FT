@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 const C = {
   black:  '#0D0D0D',
   white:  '#FFFFFF',
-  accent: '#00E5CC',
+  accent: '#AA55E3',
   g100:   '#F7F7F7',
   g200:   '#E8E8E8',
   g400:   '#AEAEAE',
@@ -15,7 +15,7 @@ const C = {
 };
 
 const SIGNALS = [
-  { id: 'typing',   label: 'Typing cadence',         text: 'The rhythm and velocity of keystrokes during form entry. SentinelLayer measures dwell time — how long each key is held — and flight time, the gap between successive keystrokes. Abnormal mechanical precision, extreme slowing, or sudden cadence shifts are evaluated against the individual\'s established baseline, not a population average.' },
+  { id: 'typing',   label: 'Typing cadence',         text: 'The rhythm and velocity of keystrokes during form entry. SW1FT measures dwell time — how long each key is held — and flight time, the gap between successive keystrokes. Abnormal mechanical precision, extreme slowing, or sudden cadence shifts are evaluated against the individual\'s established baseline, not a population average.' },
   { id: 'pause',    label: 'Pre-confirmation pause',  text: 'The duration between completing form entry and pressing confirm. Extended pauses significantly above a user\'s personal baseline often indicate that they are re-reading instructions received by phone, or hesitating under pressure from a third party. This signal is weighted heavily in high-value payment analysis.' },
   { id: 'scroll',   label: 'Scroll depth',            text: 'How fully a user scrolls through confirmation and warning screens before proceeding. Very low scroll depth — particularly on screens containing transaction details or fraud warnings — is consistent with a user who has been instructed to proceed without reading. It is a signal of directed, rather than autonomous, behavior.' },
   { id: 'call',     label: 'Active call detection',   text: 'Whether the user\'s device is engaged in an active phone call during a banking session. When combined with behavioral anomalies, an ongoing call at the moment of payment confirmation is one of the strongest composite indicators of a social engineering session in progress. The signal is device-state derived — no call content is accessed.' },
@@ -36,7 +36,7 @@ const CONTRASTS = [
 const HOW_COLS = [
   {
     label: 'Collection',
-    text: 'During a normal banking session, SentinelLayer passively collects keyboard rhythm, touch dynamics, navigation patterns, and device state. No visible challenge is presented. No user interaction is required. Collection is silent and continuous.',
+    text: 'During a normal banking session, SW1FT passively collects keyboard rhythm, touch dynamics, navigation patterns, and device state. No visible challenge is presented. No user interaction is required. Collection is silent and continuous.',
     icon: (
       <svg viewBox="0 0 48 36" fill="none" width="48" height="36">
         <rect x="2"  y="22" width="4" height="12" fill="#0D0D0D" opacity="0.25"/>
@@ -67,8 +67,8 @@ const HOW_COLS = [
     icon: (
       <svg viewBox="0 0 48 36" fill="none" width="48" height="36">
         <path d="M2 22 L10 21 L18 22 L24 21 L28 4 L32 30 L36 22 L44 22 L48 22" stroke="#0D0D0D" strokeWidth="1.5"/>
-        <path d="M24 21 L28 4 L32 30" stroke="#00E5CC" strokeWidth="2.5"/>
-        <circle cx="28" cy="4" r="3.5" fill="#00E5CC"/>
+        <path d="M24 21 L28 4 L32 30" stroke="#AA55E3" strokeWidth="2.5"/>
+        <circle cx="28" cy="4" r="3.5" fill="#AA55E3"/>
       </svg>
     ),
   },
@@ -78,7 +78,7 @@ const PERSONAS = [
   {
     role: 'Head of Fraud',
     value: 'The behavioral layer your rule engine doesn\'t reach.',
-    body: 'SentinelLayer adds real-time signal to your existing fraud stack — no replacement required. Each flagged session includes a full behavioral breakdown and an audit-ready explainability report. Analyst time is directed to cases with genuine indicators, not review volume.',
+    body: 'SW1FT adds real-time signal to your existing fraud stack — no replacement required. Each flagged session includes a full behavioral breakdown and an audit-ready explainability report. Analyst time is directed to cases with genuine indicators, not review volume.',
     points: ['Real-time session risk scoring', 'Per-intervention explainability reports', 'Analyst dashboard with signal decomposition', 'Configurable intervention thresholds'],
   },
   {
@@ -99,7 +99,7 @@ const PERSONAS = [
 
 function SectionLabel({ n, title }: { n: string; title: string }) {
   return (
-    <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', color: C.g400, letterSpacing: '0.18em', textTransform: 'uppercase' as const, display: 'block', marginBottom: '20px' }}>
+    <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: C.g400, letterSpacing: '0.18em', textTransform: 'uppercase' as const, display: 'block', marginBottom: '20px' }}>
       {n} — {title}
     </span>
   );
@@ -164,7 +164,7 @@ export default function Landing() {
             <img src="/logo.png" alt="SW1FT" style={{ height: '36px', display: 'block' }} />
           </a>
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <Link to="/dashboard" style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', color: C.g600, textDecoration: 'none', letterSpacing: '0.08em', transition: 'color 0.2s' }}
+            <Link to="/dashboard" style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: C.g600, textDecoration: 'none', letterSpacing: '0.08em', transition: 'color 0.2s' }}
               onMouseEnter={e => (e.currentTarget.style.color = C.black)}
               onMouseLeave={e => (e.currentTarget.style.color = C.g600)}>
               Dashboard →
@@ -191,11 +191,11 @@ export default function Landing() {
         <div style={{ ...container, position: 'relative', zIndex: 1, padding: `120px ${pad} 80px` }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '36px' }}>
             <div style={{ width: '32px', height: '1px', background: C.accent }} />
-            <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', color: C.accent, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+            <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: C.accent, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
               Behavioral fraud intelligence
             </span>
           </div>
-          <h1 style={{ fontFamily: '"Syne", sans-serif', fontWeight: 800, fontSize: 'clamp(52px, 7.5vw, 96px)', color: C.black, lineHeight: 1.0, letterSpacing: '-0.02em', maxWidth: '820px', marginBottom: '32px' }}>
+          <h1 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 800, fontSize: 'clamp(52px, 7.5vw, 96px)', color: C.black, lineHeight: 1.0, letterSpacing: '-0.02em', maxWidth: '820px', marginBottom: '32px' }}>
             Behavioral<br />signals<br />don't lie.
           </h1>
           <p style={{ fontFamily: 'Georgia, serif', fontSize: '19px', color: C.g600, maxWidth: '420px', lineHeight: 1.65, marginBottom: '48px' }}>
@@ -203,7 +203,7 @@ export default function Landing() {
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '28px', flexWrap: 'wrap' as const }}>
             <a href="#contact" className="landing-btn">Request access</a>
-            <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '10px', color: C.g400, letterSpacing: '0.08em' }}>
+            <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '10px', color: C.g400, letterSpacing: '0.08em' }}>
               EU-hosted &nbsp;·&nbsp; GDPR compliant &nbsp;·&nbsp; PSD3 aligned
             </span>
           </div>
@@ -215,7 +215,7 @@ export default function Landing() {
         <div style={container}>
           <div className="landing-fade-up" style={{ maxWidth: '640px' }}>
             <SectionLabel n="01" title="The problem" />
-            <h2 style={{ fontFamily: '"Syne", sans-serif', fontWeight: 700, fontSize: 'clamp(34px, 4.5vw, 54px)', marginBottom: '44px', lineHeight: 1.1 }}>
+            <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(34px, 4.5vw, 54px)', marginBottom: '44px', lineHeight: 1.1 }}>
               The authentication paradox.
             </h2>
             <p style={{ color: C.g800, lineHeight: 1.85, marginBottom: '26px' }}>
@@ -230,7 +230,7 @@ export default function Landing() {
           </div>
 
           <div className="landing-fade-up" style={{ textAlign: 'center', maxWidth: '760px', margin: '80px auto 0', padding: '64px 0', borderTop: `1px solid ${C.g200}`, borderBottom: `1px solid ${C.g200}`, '--fd': '0.15s' } as React.CSSProperties}>
-            <p style={{ fontFamily: '"Syne", sans-serif', fontWeight: 600, fontSize: 'clamp(22px, 3.2vw, 38px)', color: C.black, lineHeight: 1.3 }}>
+            <p style={{ fontFamily: '"Inter", sans-serif', fontWeight: 600, fontSize: 'clamp(22px, 3.2vw, 38px)', color: C.black, lineHeight: 1.3 }}>
               "Fraudsters don't break your login.<br />They convince your customer to do it for them."
             </p>
           </div>
@@ -242,14 +242,14 @@ export default function Landing() {
         <div style={container}>
           <div className="landing-fade-up" style={{ paddingLeft: 'clamp(0px, 8vw, 120px)', marginBottom: '72px' }}>
             <SectionLabel n="02" title="How it works" />
-            <h2 style={{ fontFamily: '"Syne", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', maxWidth: '460px', lineHeight: 1.1 }}>
+            <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', maxWidth: '460px', lineHeight: 1.1 }}>
               Three layers.<br />No friction added.
             </h2>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(28px, 4vw, 52px)' }}>
             {HOW_COLS.map((col, i) => (
               <div key={col.label} className="landing-fade-up" style={{ paddingTop: '24px', borderTop: `2px solid ${C.black}`, '--fd': `${i * 0.12}s` } as React.CSSProperties}>
-                <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: C.black, marginBottom: '28px', display: 'block' }}>
+                <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: C.black, marginBottom: '28px', display: 'block' }}>
                   {col.label}
                 </span>
                 <div style={{ marginBottom: '22px' }}>{col.icon}</div>
@@ -265,18 +265,18 @@ export default function Landing() {
         <div style={container}>
           <div className="landing-fade-up">
             <SectionLabel n="03" title="The distinction" />
-            <h2 style={{ fontFamily: '"Syne", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', marginBottom: '64px', maxWidth: '500px', lineHeight: 1.1 }}>
+            <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', marginBottom: '64px', maxWidth: '500px', lineHeight: 1.1 }}>
               A different question entirely.
             </h2>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(36px, 6vw, 80px)' }}>
             <div className="landing-fade-up" style={{ '--fd': '0.05s' } as React.CSSProperties}>
-              <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: C.g400, marginBottom: '32px', display: 'block' }}>
+              <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: C.g400, marginBottom: '32px', display: 'block' }}>
                 The industry
               </span>
               {CONTRASTS.map((c, i) => (
                 <div key={i} style={{ display: 'flex', gap: '18px', marginBottom: '26px' }}>
-                  <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '10px', color: C.g400, paddingTop: '3px', flexShrink: 0, width: '20px' }}>
+                  <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '10px', color: C.g400, paddingTop: '3px', flexShrink: 0, width: '20px' }}>
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <p style={{ fontSize: '16px', color: C.g600, lineHeight: 1.6, paddingLeft: '16px', borderLeft: `2px solid ${C.g200}`, margin: 0 }}>
@@ -286,12 +286,12 @@ export default function Landing() {
               ))}
             </div>
             <div className="landing-fade-up" style={{ '--fd': '0.18s' } as React.CSSProperties}>
-              <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: C.g400, marginBottom: '32px', display: 'block' }}>
-                SentinelLayer
+              <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: C.g400, marginBottom: '32px', display: 'block' }}>
+                SW1FT
               </span>
               {CONTRASTS.map((c, i) => (
                 <div key={i} style={{ display: 'flex', gap: '18px', marginBottom: '26px' }}>
-                  <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '10px', color: C.g400, paddingTop: '3px', flexShrink: 0, width: '20px' }}>
+                  <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '10px', color: C.g400, paddingTop: '3px', flexShrink: 0, width: '20px' }}>
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <p style={{ fontSize: '16px', color: C.black, lineHeight: 1.6, paddingLeft: '16px', borderLeft: `2px solid ${C.accent}`, margin: 0, fontStyle: 'italic' }}>
@@ -309,7 +309,7 @@ export default function Landing() {
         <div style={container}>
           <div className="landing-fade-up" style={{ paddingLeft: 'clamp(0px, 6vw, 80px)', marginBottom: '52px' }}>
             <SectionLabel n="04" title="Signal library" />
-            <h2 style={{ fontFamily: '"Syne", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', color: C.white, lineHeight: 1.1 }}>
+            <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', color: C.white, lineHeight: 1.1 }}>
               What we measure.
             </h2>
           </div>
@@ -330,7 +330,7 @@ export default function Landing() {
             const sig = SIGNALS.find(s => s.id === activeSignal);
             return sig ? (
               <div style={{ padding: '28px 32px', border: '1px solid #1E1E1E', background: '#0A0A0A', marginTop: '4px' }}>
-                <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '10px', color: C.accent, letterSpacing: '0.15em', textTransform: 'uppercase' as const, marginBottom: '12px', display: 'block' }}>
+                <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '10px', color: C.accent, letterSpacing: '0.15em', textTransform: 'uppercase' as const, marginBottom: '12px', display: 'block' }}>
                   {sig.label}
                 </span>
                 <p style={{ fontFamily: 'Georgia, serif', fontSize: '16px', color: '#B0B0B0', lineHeight: 1.8, maxWidth: '680px', margin: 0 }}>
@@ -347,17 +347,17 @@ export default function Landing() {
         <div style={container}>
           <div className="landing-fade-up">
             <SectionLabel n="05" title="Audience" />
-            <h2 style={{ fontFamily: '"Syne", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', marginBottom: '64px', maxWidth: '540px', lineHeight: 1.1 }}>
+            <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', marginBottom: '64px', maxWidth: '540px', lineHeight: 1.1 }}>
               Built for the teams<br />who carry the risk.
             </h2>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
             {PERSONAS.map((p, i) => (
               <div key={p.role} className={`landing-fade-up landing-persona-card`} style={{ '--fd': `${i * 0.12}s` } as React.CSSProperties}>
-                <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase' as const, color: C.g400, marginBottom: '20px', display: 'block' }}>
+                <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase' as const, color: C.g400, marginBottom: '20px', display: 'block' }}>
                   {p.role}
                 </span>
-                <h3 style={{ fontFamily: '"Syne", sans-serif', fontWeight: 700, fontSize: '20px', color: C.black, lineHeight: 1.3, marginBottom: '18px' }}>
+                <h3 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: '20px', color: C.black, lineHeight: 1.3, marginBottom: '18px' }}>
                   {p.value}
                 </h3>
                 <p style={{ fontFamily: 'Georgia, serif', fontSize: '15px', color: C.g600, lineHeight: 1.7, marginBottom: '22px' }}>
@@ -365,7 +365,7 @@ export default function Landing() {
                 </p>
                 <ul style={{ listStyle: 'none', padding: 0, borderTop: `1px solid ${C.g200}`, paddingTop: '18px' }}>
                   {p.points.map(pt => (
-                    <li key={pt} style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', color: C.g800, padding: '5px 0', borderBottom: `1px solid ${C.g200}`, display: 'flex', gap: '10px', lineHeight: 1.5 }}>
+                    <li key={pt} style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: C.g800, padding: '5px 0', borderBottom: `1px solid ${C.g200}`, display: 'flex', gap: '10px', lineHeight: 1.5 }}>
                       <span style={{ color: C.accent, flexShrink: 0 }}>—</span>
                       {pt}
                     </li>
@@ -382,7 +382,7 @@ export default function Landing() {
         <div style={container}>
           <div className="landing-fade-up" style={{ textAlign: 'right', marginBottom: '72px' }}>
             <SectionLabel n="06" title="Performance" />
-            <h2 style={{ fontFamily: '"Syne", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', display: 'inline-block', lineHeight: 1.1 }}>
+            <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', display: 'inline-block', lineHeight: 1.1 }}>
               The performance data.
             </h2>
           </div>
@@ -393,10 +393,10 @@ export default function Landing() {
               { num: '4–8wk', sub: 'to a mature personal baseline',                  desc: 'After 30–50 sessions, individual models reach operational confidence. New users are handled by a calibrated population fallback until their baseline matures.' },
             ].map((m, i) => (
               <div key={m.num} className="landing-fade-up" style={{ paddingTop: '28px', borderTop: `1px solid ${C.black}`, '--fd': `${i * 0.12}s` } as React.CSSProperties}>
-                <span style={{ display: 'block', fontFamily: '"Syne", sans-serif', fontWeight: 800, fontSize: 'clamp(48px, 5.5vw, 78px)', color: C.black, lineHeight: 1, letterSpacing: '-0.03em', marginBottom: '10px' }}>
+                <span style={{ display: 'block', fontFamily: '"Inter", sans-serif', fontWeight: 800, fontSize: 'clamp(48px, 5.5vw, 78px)', color: C.black, lineHeight: 1, letterSpacing: '-0.03em', marginBottom: '10px' }}>
                   {m.num}
                 </span>
-                <span style={{ display: 'block', fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', color: C.g600, letterSpacing: '0.06em', lineHeight: 1.5, marginBottom: '16px' }}>
+                <span style={{ display: 'block', fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: C.g600, letterSpacing: '0.06em', lineHeight: 1.5, marginBottom: '16px' }}>
                   {m.sub}
                 </span>
                 <p style={{ fontFamily: 'Georgia, serif', fontSize: '15px', color: C.g600, lineHeight: 1.7, borderTop: `1px solid ${C.g200}`, paddingTop: '16px', margin: 0 }}>
@@ -413,13 +413,13 @@ export default function Landing() {
         <div style={container}>
           <div className="landing-fade-up" style={{ maxWidth: '620px' }}>
             <SectionLabel n="07" title="Contact" />
-            <h2 style={{ fontFamily: '"Syne", sans-serif', fontWeight: 700, fontSize: 'clamp(26px, 3.5vw, 42px)', marginBottom: '24px', lineHeight: 1.2 }}>
-              Ready to evaluate SentinelLayer<br />for your institution?
+            <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(26px, 3.5vw, 42px)', marginBottom: '24px', lineHeight: 1.2 }}>
+              Ready to evaluate SW1FT<br />for your institution?
             </h2>
-            <p style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', color: C.g400, letterSpacing: '0.1em', marginBottom: '6px' }}>
-              SentinelLayer · Behavioral fraud intelligence for European banks and PSPs
+            <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: C.g400, letterSpacing: '0.1em', marginBottom: '6px' }}>
+              SW1FT · Behavioral fraud intelligence for European banks and PSPs
             </p>
-            <a href="mailto:contact@sentinellayer.eu" style={{ display: 'inline-block', fontFamily: '"IBM Plex Mono", monospace', fontSize: '14px', color: C.black, textDecoration: 'none', borderBottom: `1px solid ${C.g200}`, paddingBottom: '2px', marginBottom: '36px', transition: 'border-color 0.2s' }}
+            <a href="mailto:contact@sentinellayer.eu" style={{ display: 'inline-block', fontFamily: '"JetBrains Mono", monospace', fontSize: '14px', color: C.black, textDecoration: 'none', borderBottom: `1px solid ${C.g200}`, paddingBottom: '2px', marginBottom: '36px', transition: 'border-color 0.2s' }}
               onMouseEnter={e => (e.currentTarget.style.borderBottomColor = C.accent)}
               onMouseLeave={e => (e.currentTarget.style.borderBottomColor = C.g200)}>
               contact@sentinellayer.eu
@@ -433,10 +433,10 @@ export default function Landing() {
       {/* ── Footer ──────────────────────────────────────────────────── */}
       <footer style={{ padding: '26px 0', borderTop: `1px solid ${C.g200}` }}>
         <div style={{ ...container, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' as const, gap: '12px' }}>
-          <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', color: C.g400, letterSpacing: '0.06em' }}>
-            © 2026 SentinelLayer. Incorporated in Latvia.
+          <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: C.g400, letterSpacing: '0.06em' }}>
+            © 2026 SW1FT. Incorporated in Latvia.
           </span>
-          <span style={{ fontFamily: '"IBM Plex Mono", monospace', fontSize: '11px', color: C.g200, letterSpacing: '0.06em' }}>
+          <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: C.g200, letterSpacing: '0.06em' }}>
             contact@sentinellayer.eu
           </span>
         </div>
