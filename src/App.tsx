@@ -10,6 +10,8 @@ import Landing from './pages/Landing';
 import PaymentCapture from './pages/PaymentCapture';
 import CapturedSessions from './pages/CapturedSessions';
 import Docs from './pages/Docs';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
 import ApiKeys from './pages/ApiKeys';
 import { isAuthenticated } from './lib/auth';
 
@@ -33,6 +35,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/docs" element={<Docs />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:slug" element={<BlogPost />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<ProtectedLayout />}>
           <Route index element={<Dashboard />} />

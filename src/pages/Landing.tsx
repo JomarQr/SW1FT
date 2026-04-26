@@ -167,6 +167,11 @@ export default function Landing() {
             </a>
             {/* Desktop links */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <Link to="/blog" className="landing-nav-link" style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: scrolled ? C.g600 : 'rgba(255,255,255,0.55)', textDecoration: 'none', letterSpacing: '0.08em', transition: 'color 0.2s' }}
+                onMouseEnter={e => (e.currentTarget.style.color = scrolled ? C.black : C.white)}
+                onMouseLeave={e => (e.currentTarget.style.color = scrolled ? C.g600 : 'rgba(255,255,255,0.55)')}>
+                Blog
+              </Link>
               <Link to="/docs" className="landing-nav-link" style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: scrolled ? C.g600 : 'rgba(255,255,255,0.55)', textDecoration: 'none', letterSpacing: '0.08em', transition: 'color 0.2s' }}
                 onMouseEnter={e => (e.currentTarget.style.color = scrolled ? C.black : C.white)}
                 onMouseLeave={e => (e.currentTarget.style.color = scrolled ? C.g600 : 'rgba(255,255,255,0.55)')}>
@@ -195,6 +200,12 @@ export default function Landing() {
         {/* Mobile dropdown */}
         {menuOpen && (
           <div style={{ background: scrolled ? 'rgba(255,255,255,0.97)' : 'rgba(0,0,0,0.95)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderTop: `1px solid ${scrolled ? C.g200 : '#222'}`, padding: '20px clamp(20px, 5.5vw, 80px)' }}>
+            <Link to="/blog" onClick={() => setMenuOpen(false)} style={{ display: 'block', fontFamily: '"JetBrains Mono", monospace', fontSize: '13px', letterSpacing: '0.08em', color: scrolled ? C.black : C.white, textDecoration: 'none', padding: '14px 0', borderBottom: `1px solid ${scrolled ? C.g200 : '#222'}` }}>
+              Blog
+            </Link>
+            <Link to="/docs" onClick={() => setMenuOpen(false)} style={{ display: 'block', fontFamily: '"JetBrains Mono", monospace', fontSize: '13px', letterSpacing: '0.08em', color: scrolled ? C.black : C.white, textDecoration: 'none', padding: '14px 0', borderBottom: `1px solid ${scrolled ? C.g200 : '#222'}` }}>
+              Docs
+            </Link>
             <Link to="/dashboard" onClick={() => setMenuOpen(false)} style={{ display: 'block', fontFamily: '"JetBrains Mono", monospace', fontSize: '13px', letterSpacing: '0.08em', color: scrolled ? C.black : C.white, textDecoration: 'none', padding: '14px 0', borderBottom: `1px solid ${scrolled ? C.g200 : '#222'}` }}>
               Dashboard →
             </Link>

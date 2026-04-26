@@ -222,3 +222,14 @@ body {
   /* Problem section: image below text */
   .landing-problem-img    { order: 1; }
 }
+
+/* ─── Blog responsive layout ──────────────────────────────────────────────── */
+
+@media (max-width: 860px) {
+  .blog-grid             { grid-template-columns: repeat(2, 1fr) !important; }
+  .blog-featured-grid    { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 560px) {
+  .blog-grid             { grid-template-columns: 1fr !important; }
+}
