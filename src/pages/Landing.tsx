@@ -216,23 +216,23 @@ export default function Landing() {
 
             {/* Right: video */}
             <div className="hero-video-col" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {/* Purple ambient glow */}
-              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '480px', height: '480px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(170,85,227,0.18) 0%, transparent 68%)', pointerEvents: 'none', zIndex: 0 }} />
-              <video
-                src="/cubic.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
-                style={{
-                  width: '100%',
-                  maxWidth: '560px',
-                  display: 'block',
-                  mixBlendMode: 'multiply',
-                  position: 'relative',
-                  zIndex: 1,
-                }}
-              />
+              {/* Purple ambient glow bleeds through the dark box */}
+              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '520px', height: '520px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(170,85,227,0.22) 0%, transparent 68%)', pointerEvents: 'none', zIndex: 0 }} />
+              {/* Black container — screen blend makes black pixels invisible */}
+              <div style={{ position: 'relative', zIndex: 1, background: '#000', width: '100%', maxWidth: '560px', lineHeight: 0 }}>
+                <video
+                  src="/cubic.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  style={{
+                    width: '100%',
+                    display: 'block',
+                    mixBlendMode: 'screen',
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
