@@ -228,23 +228,16 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Right: video */}
-            <div className="hero-video-col" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {/* Purple ambient glow bleeds through the dark box */}
-              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '520px', height: '520px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(170,85,227,0.22) 0%, transparent 68%)', pointerEvents: 'none', zIndex: 0 }} />
-              {/* Black container — screen blend makes black pixels invisible */}
-              <div style={{ position: 'relative', zIndex: 1, background: '#000', width: '100%', maxWidth: '560px', lineHeight: 0 }}>
+            {/* Right: video — overflows column to right viewport edge */}
+            <div className="hero-video-col" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+              <div style={{ background: '#000', width: '130%', marginRight: `calc(-1 * ${pad})`, lineHeight: 0 }}>
                 <video
                   src="/cubic.mp4"
                   autoPlay
                   loop
                   muted
                   playsInline
-                  style={{
-                    width: '100%',
-                    display: 'block',
-                    mixBlendMode: 'screen',
-                  }}
+                  style={{ width: '100%', display: 'block', mixBlendMode: 'screen' }}
                 />
               </div>
             </div>
