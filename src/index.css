@@ -200,7 +200,29 @@ body {
 }
 .landing-persona-card:hover { border-color: #AA55E3; }
 
-/* Responsive hero grid */
-@media (max-width: 768px) {
-  .hero-video-col { display: none; }
+/* ─── Responsive landing layout ───────────────────────────────────────────── */
+
+/* Tablet: 3-col → 2-col */
+@media (max-width: 960px) {
+  .landing-grid-3 { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+/* Mobile */
+@media (max-width: 680px) {
+  .hero-video-col         { display: none; }
+  .landing-grid-2         { grid-template-columns: 1fr !important; }
+  .landing-grid-3         { grid-template-columns: 1fr !important; }
+  .landing-signals-header { padding-left: 0 !important; }
+  .landing-metrics-head   { text-align: left !important; }
+
+  /* Nav: hide dashboard link, shrink button */
+  .landing-nav-link       { display: none; }
+  .landing-btn            { padding: 9px 16px; font-size: 10px; }
+
+  /* Problem section: reverse so text comes first */
+  .landing-problem-grid   { direction: ltr; }
+  .landing-problem-img    { order: -1; }
+
+  /* Tighten section spacing on mobile */
+  .landing-section-mobile-pad { padding-left: 20px !important; padding-right: 20px !important; }
 }

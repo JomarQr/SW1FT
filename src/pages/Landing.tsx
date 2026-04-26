@@ -161,10 +161,10 @@ export default function Landing() {
       }}>
         <div style={{ ...container, display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
           <a href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-            <img src={scrolled ? '/logo.png' : '/logo_white.png'} alt="SW1FT" style={{ height: '36px', display: 'block' }} />
+            <img src={scrolled ? '/logo.png' : '/logo_white.png'} alt="SW1FT" style={{ height: '52px', display: 'block' }} />
           </a>
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <Link to="/dashboard" style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: scrolled ? C.g600 : 'rgba(255,255,255,0.55)', textDecoration: 'none', letterSpacing: '0.08em', transition: 'color 0.2s' }}
+            <Link to="/dashboard" className="landing-nav-link" style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: scrolled ? C.g600 : 'rgba(255,255,255,0.55)', textDecoration: 'none', letterSpacing: '0.08em', transition: 'color 0.2s' }}
               onMouseEnter={e => (e.currentTarget.style.color = scrolled ? C.black : C.white)}
               onMouseLeave={e => (e.currentTarget.style.color = scrolled ? C.g600 : 'rgba(255,255,255,0.55)')}>
               Dashboard →
@@ -190,7 +190,7 @@ export default function Landing() {
         }} />
 
         <div style={{ ...container, position: 'relative', zIndex: 1, padding: `120px ${pad} 80px`, width: '100%' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(48px, 6vw, 96px)', alignItems: 'center' }}>
+          <div className="landing-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(48px, 6vw, 96px)', alignItems: 'center' }}>
 
             {/* Left: copy */}
             <div>
@@ -241,7 +241,7 @@ export default function Landing() {
       {/* ── Problem ─────────────────────────────────────────────────── */}
       <section style={{ padding: `${sectionPad} 0`, borderTop: `1px solid ${C.g200}` }}>
         <div style={container}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(48px, 6vw, 96px)', alignItems: 'center', marginBottom: '80px' }}>
+          <div className="landing-grid-2 landing-problem-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(48px, 6vw, 96px)', alignItems: 'center', marginBottom: '80px' }}>
             <div className="landing-fade-up">
               <SectionLabel n="01" title="The problem" />
               <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(34px, 4.5vw, 54px)', marginBottom: '44px', lineHeight: 1.1 }}>
@@ -257,7 +257,7 @@ export default function Landing() {
                 Behavioral biometrics have traditionally served as a passive identity layer — verifying that the typing pattern belongs to the registered user. This is valuable but insufficient. The human element is the last unprotected layer in any payment stack. We protect that layer.
               </p>
             </div>
-            <div className="landing-fade-up" style={{ '--fd': '0.12s' } as React.CSSProperties}>
+            <div className="landing-fade-up landing-problem-img" style={{ '--fd': '0.12s' } as React.CSSProperties}>
               <img
                 src="/security.png"
                 alt="Security layers illustration"
@@ -277,7 +277,7 @@ export default function Landing() {
       {/* ── How It Works ────────────────────────────────────────────── */}
       <section style={{ padding: `${sectionPad} 0`, background: C.g100 }}>
         <div style={container}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(48px, 6vw, 96px)', alignItems: 'center', marginBottom: '72px' }}>
+          <div className="landing-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(48px, 6vw, 96px)', alignItems: 'center', marginBottom: '72px' }}>
             <div className="landing-fade-up">
               <SectionLabel n="02" title="How it works" />
               <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', maxWidth: '460px', lineHeight: 1.1 }}>
@@ -292,7 +292,7 @@ export default function Landing() {
               />
             </div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(28px, 4vw, 52px)' }}>
+          <div className="landing-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(28px, 4vw, 52px)' }}>
             {HOW_COLS.map((col, i) => (
               <div key={col.label} className="landing-fade-up" style={{ paddingTop: '24px', borderTop: `2px solid ${C.black}`, '--fd': `${i * 0.12}s` } as React.CSSProperties}>
                 <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: C.black, marginBottom: '28px', display: 'block' }}>
@@ -315,7 +315,7 @@ export default function Landing() {
               A different question entirely.
             </h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(36px, 6vw, 80px)' }}>
+          <div className="landing-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(36px, 6vw, 80px)' }}>
             <div className="landing-fade-up" style={{ '--fd': '0.05s' } as React.CSSProperties}>
               <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: C.g400, marginBottom: '32px', display: 'block' }}>
                 The industry
@@ -353,7 +353,7 @@ export default function Landing() {
       {/* ── Signals ─────────────────────────────────────────────────── */}
       <section style={{ padding: `${sectionPad} 0`, background: C.black }}>
         <div style={container}>
-          <div className="landing-fade-up" style={{ paddingLeft: 'clamp(0px, 6vw, 80px)', marginBottom: '52px' }}>
+          <div className="landing-fade-up landing-signals-header" style={{ paddingLeft: 'clamp(0px, 6vw, 80px)', marginBottom: '52px' }}>
             <SectionLabel n="04" title="Signal library" />
             <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', color: C.white, lineHeight: 1.1 }}>
               What we measure.
@@ -397,7 +397,7 @@ export default function Landing() {
               Built for the teams<br />who carry the risk.
             </h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+          <div className="landing-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
             {PERSONAS.map((p, i) => (
               <div key={p.role} className={`landing-fade-up landing-persona-card`} style={{ '--fd': `${i * 0.12}s` } as React.CSSProperties}>
                 <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase' as const, color: C.g400, marginBottom: '20px', display: 'block' }}>
@@ -426,13 +426,13 @@ export default function Landing() {
       {/* ── Metrics ─────────────────────────────────────────────────── */}
       <section style={{ padding: `${sectionPad} 0`, background: C.g100, borderTop: `1px solid ${C.g200}`, borderBottom: `1px solid ${C.g200}` }}>
         <div style={container}>
-          <div className="landing-fade-up" style={{ textAlign: 'right', marginBottom: '72px' }}>
+          <div className="landing-fade-up landing-metrics-head" style={{ textAlign: 'right', marginBottom: '72px' }}>
             <SectionLabel n="06" title="Performance" />
             <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', display: 'inline-block', lineHeight: 1.1 }}>
               The performance data.
             </h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(28px, 4vw, 56px)' }}>
+          <div className="landing-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(28px, 4vw, 56px)' }}>
             {[
               { num: '17B',   sub: 'sessions analyzed across our network, monthly',  desc: 'Behavioral models benefit from network-level refinement while maintaining strict per-user privacy isolation. No individual data is shared.' },
               { num: '<50ms', sub: 'signal processing latency, end-to-end',          desc: 'From session event to risk score delivery. Fully compatible with real-time payment authorization flows without introducing detectable delay.' },
