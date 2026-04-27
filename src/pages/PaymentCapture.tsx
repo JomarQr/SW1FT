@@ -588,6 +588,7 @@ export default function PaymentCapture() {
   const analyst = getUsername();
   const containerRef = useRef<HTMLDivElement>(null);
   const [recording, setRecording] = useState(false);
+  const [userId, setUserId] = useState(() => localStorage.getItem('sw1ft_capture_user_id') || '');
   const { metrics, finalize, onSubmitHoverStart, onSubmitHoverEnd } = useBehaviorCapture({
     enabled: recording,
     containerRef,
@@ -614,7 +615,7 @@ export default function PaymentCapture() {
   useEffect(() => () => { if (elapsedRef.current) clearInterval(elapsedRef.current); }, []);
 
   function handlePay() {
-    const snap = finalize(analyst);
+    const snap = finalize(analyst, userId.trim() || undefined);
     setSnapshot(snap);
     setSubmitted(true);
     setShowModal(true);
@@ -649,6 +650,16 @@ export default function PaymentCapture() {
           </div>
           <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted }}>
             Analyst: <span style={{ color: COLORS.primary }}>{analyst}</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted }}>User ID:</span>
+            <input
+              value={userId}
+              onChange={e => { setUserId(e.target.value); localStorage.setItem('sw1ft_capture_user_id', e.target.value); }}
+              placeholder="USR-XXXX"
+              disabled={recording || submitted}
+              style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', background: '#0A0A0C', border: '1px solid #2A2A32', color: COLORS.primary, padding: '5px 8px', width: '100px', outline: 'none', opacity: (recording || submitted) ? 0.5 : 1 }}
+            />
           </div>
           {/* Start / Stop button */}
           {!submitted && (

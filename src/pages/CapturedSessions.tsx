@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, Trash2, ChevronDown, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Download, Trash2, ChevronDown, ChevronRight, ScanFace } from 'lucide-react';
 import { getSessions, clearSessions } from '../lib/behaviorStore';
 import type { BehaviorSnapshot } from '../lib/useBehaviorCapture';
 import { COLORS } from '../lib/mockData';
@@ -69,7 +69,7 @@ function SessionDetail({ s }: { s: BehaviorSnapshot }) {
 
   return (
     <tr>
-      <td colSpan={10} style={{ padding: 0 }}>
+      <td colSpan={11} style={{ padding: 0 }}>
         <div style={{ background: '#0D0D10', borderBottom: '1px solid #1E1E22', padding: '16px 20px' }}>
           {/* Tabs */}
           <div style={{ marginBottom: '14px', display: 'flex', flexWrap: 'wrap', gap: '0' }}>
@@ -192,6 +192,7 @@ export default function CapturedSessions() {
             <tr>
               <th style={{ width: '28px' }} />
               <th>Session ID</th>
+              <th>User ID</th>
               <th>Captured</th>
               <th>Analyst</th>
               <th>Risk</th>
@@ -222,6 +223,20 @@ export default function CapturedSessions() {
                         : <ChevronRight size={12} color={COLORS.muted} />}
                     </td>
                     <td style={{ color: COLORS.accent }}>{s.session_id}</td>
+                    <td>
+                      {s.user_id ? (
+                        <button
+                          onClick={e => { e.stopPropagation(); navigate(`/dashboard/behavior-profile?user=${encodeURIComponent(s.user_id!)}`); }}
+                          style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', color: COLORS.accent, fontFamily: 'JetBrains Mono', fontSize: '10px', padding: 0 }}
+                          title="View behavioral profile"
+                        >
+                          <ScanFace size={11} />
+                          {s.user_id}
+                        </button>
+                      ) : (
+                        <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted }}>—</span>
+                      )}
+                    </td>
                     <td style={{ color: COLORS.muted }}>{new Date(s.captured_at).toLocaleString()}</td>
                     <td>{s.analyst}</td>
                     <td>

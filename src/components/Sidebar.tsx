@@ -1,5 +1,5 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Bell, BarChart2, Users, Activity, LogOut, MousePointer2, Database, KeyRound, Brain } from 'lucide-react';
+import { LayoutDashboard, Bell, BarChart2, Users, Activity, LogOut, MousePointer2, Database, KeyRound, Brain, ScanFace } from 'lucide-react';
 import { logout } from '../lib/auth';
 
 const NAV_ITEMS = [
@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { to: '/dashboard/payment-capture',   icon: MousePointer2, label: 'Capture' },
   { to: '/dashboard/captured-sessions', icon: Database,      label: 'Sessions' },
   { to: '/dashboard/persona',            icon: Brain,         label: 'Persona Engine' },
+  { to: '/dashboard/behavior-profile',  icon: ScanFace,      label: 'Behavior Profile' },
   { to: '/dashboard/api-keys',          icon: KeyRound,      label: 'API & SDK' },
 ];
 
