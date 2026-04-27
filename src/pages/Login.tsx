@@ -71,11 +71,8 @@ export default function Login() {
         </Link>
 
         {/* Logo */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', marginBottom: '48px' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '48px' }}>
           <img src="/logo_white.png" alt="SW1FT" style={{ height: '48px', display: 'block' }} />
-          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: '#FFFFFF', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
-            Analyst Access
-          </div>
         </div>
 
         {/* Card */}
@@ -167,16 +164,6 @@ export default function Login() {
               {loading ? 'Verifying...' : 'Sign in'}
             </button>
           </form>
-        </div>
-
-        {/* Demo credentials hint */}
-        <div style={{ marginTop: '20px', padding: '14px 16px', background: 'rgba(170,85,227,0.04)', border: '1px solid rgba(170,85,227,0.1)' }}>
-          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, letterSpacing: '0.08em', marginBottom: '6px', textTransform: 'uppercase' }}>
-            Demo credentials
-          </div>
-          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.accent }}>
-            analyst / sentinel2026
-          </div>
         </div>
 
         {/* Footer note */}
