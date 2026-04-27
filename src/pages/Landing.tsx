@@ -37,40 +37,17 @@ const HOW_COLS = [
   {
     label: 'Collection',
     text: 'During a normal banking session, SW1FT passively collects keyboard rhythm, touch dynamics, navigation patterns, and device state. No visible challenge is presented. No user interaction is required. Collection is silent and continuous.',
-    icon: (
-      <svg viewBox="0 0 48 36" fill="none" width="48" height="36">
-        <rect x="2"  y="22" width="4" height="12" fill="#0D0D0D" opacity="0.25"/>
-        <rect x="10" y="14" width="4" height="20" fill="#0D0D0D" opacity="0.45"/>
-        <rect x="18" y="6"  width="4" height="28" fill="#0D0D0D"/>
-        <rect x="26" y="10" width="4" height="24" fill="#0D0D0D" opacity="0.65"/>
-        <rect x="34" y="18" width="4" height="16" fill="#0D0D0D" opacity="0.35"/>
-        <rect x="42" y="24" width="4" height="10" fill="#0D0D0D" opacity="0.2"/>
-      </svg>
-    ),
+    icon: <img src="/icons/collection.png" alt="Collection" style={{ height: '48px', display: 'block' }} />,
   },
   {
     label: 'Baseline',
     text: 'Over 30 to 50 sessions, a behavioral model is constructed for each individual user. This model is specific to that person — not a population average, not a fraud profile. It captures their rhythm, their hesitation patterns, their natural decision cadence.',
-    icon: (
-      <svg viewBox="0 0 48 36" fill="none" width="48" height="36">
-        <path d="M2 22 L8 20 L14 21 L20 19 L26 20 L32 18 L38 21 L44 19 L48 20" stroke="#0D0D0D" strokeWidth="1.5"/>
-        <circle cx="8"  cy="20" r="2.5" fill="#0D0D0D" opacity="0.35"/>
-        <circle cx="20" cy="19" r="2.5" fill="#0D0D0D" opacity="0.55"/>
-        <circle cx="32" cy="18" r="2.5" fill="#0D0D0D" opacity="0.75"/>
-        <circle cx="44" cy="19" r="2.5" fill="#0D0D0D" opacity="0.45"/>
-      </svg>
-    ),
+    icon: <img src="/icons/baseline.png" alt="Baseline" style={{ height: '48px', display: 'block' }} />,
   },
   {
     label: 'Deviation',
     text: 'Every session is evaluated against the individual model in real time. At the point of payment confirmation, if deviation exceeds a calibrated threshold, a risk signal is dispatched to the bank\'s intervention layer. The customer may never know.',
-    icon: (
-      <svg viewBox="0 0 48 36" fill="none" width="48" height="36">
-        <path d="M2 22 L10 21 L18 22 L24 21 L28 4 L32 30 L36 22 L44 22 L48 22" stroke="#0D0D0D" strokeWidth="1.5"/>
-        <path d="M24 21 L28 4 L32 30" stroke="#AA55E3" strokeWidth="2.5"/>
-        <circle cx="28" cy="4" r="3.5" fill="#AA55E3"/>
-      </svg>
-    ),
+    icon: <img src="/icons/devidation.png" alt="Deviation" style={{ height: '48px', display: 'block' }} />,
   },
 ];
 
