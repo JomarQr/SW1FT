@@ -268,7 +268,7 @@ export default function Landing() {
             <div className="landing-fade-up">
               <SectionLabel n="01" title="The problem" />
               <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(34px, 4.5vw, 54px)', marginBottom: '44px', lineHeight: 1.1 }}>
-                The authentication paradox.
+                The authentication<br />paradox.
               </h2>
               <p style={{ color: C.g800, lineHeight: 1.85, marginBottom: '26px' }}>
                 Strong Customer Authentication was designed to verify identity. It was not designed to detect a user who is being coached, pressured, or deceived by someone on the other end of a phone call. Every SCA requirement can be satisfied by a legitimate customer who is not acting freely.
@@ -376,7 +376,7 @@ export default function Landing() {
       {/* ── Signals ─────────────────────────────────────────────────── */}
       <section style={{ padding: `${sectionPad} 0`, background: C.black }}>
         <div style={container}>
-          <div className="landing-fade-up landing-signals-header" style={{ paddingLeft: 'clamp(0px, 6vw, 80px)', marginBottom: '52px' }}>
+          <div className="landing-fade-up landing-signals-header" style={{ marginBottom: '52px' }}>
             <SectionLabel n="04" title="Signal library" />
             <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', color: C.white, lineHeight: 1.1 }}>
               What we measure.
@@ -388,7 +388,7 @@ export default function Landing() {
               <button
                 key={s.id}
                 className={`signal-chip-item${activeSignal === s.id ? ' chip-active' : ''}`}
-                onClick={() => setActiveSignal(activeSignal === s.id ? null : s.id)}
+                onClick={() => setActiveSignal(s.id)}
               >
                 {s.label}
               </button>
@@ -449,9 +449,9 @@ export default function Landing() {
       {/* ── Metrics ─────────────────────────────────────────────────── */}
       <section style={{ padding: `${sectionPad} 0`, background: C.g100, borderTop: `1px solid ${C.g200}`, borderBottom: `1px solid ${C.g200}` }}>
         <div style={container}>
-          <div className="landing-fade-up landing-metrics-head" style={{ textAlign: 'right', marginBottom: '72px' }}>
+          <div className="landing-fade-up landing-metrics-head" style={{ textAlign: 'left', marginBottom: '72px' }}>
             <SectionLabel n="06" title="Performance" />
-            <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', display: 'inline-block', lineHeight: 1.1 }}>
+            <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', lineHeight: 1.1 }}>
               The performance data.
             </h2>
           </div>
