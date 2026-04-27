@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import Sidebar from './components/Sidebar';
+import TopBar from './components/TopBar';
 import Dashboard from './pages/Dashboard';
 import SessionDetail from './pages/SessionDetail';
 import Alerts from './pages/Alerts';
@@ -29,9 +30,10 @@ function ProtectedLayout() {
     return <Navigate to="/login" replace />;
   }
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: '#0A0A0B' }}>
+    <div style={{ background: '#0A0A0B', height: '100vh', overflow: 'hidden' }}>
+      <TopBar />
       <Sidebar />
-      <main className="flex-1 overflow-y-auto" style={{ marginLeft: '220px' }}>
+      <main style={{ marginLeft: '200px', marginTop: '32px', height: 'calc(100vh - 32px)', overflowY: 'auto' }}>
         <Outlet />
       </main>
     </div>

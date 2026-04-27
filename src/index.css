@@ -84,9 +84,9 @@ body {
   animation: slide-in 0.25s ease-out forwards;
 }
 
-/* Radial glow behind KPI area */
+/* Radial glow behind KPI area — keep class but reduce intensity */
 .kpi-glow {
-  background: radial-gradient(ellipse 80% 300px at 50% -60px, rgba(170, 85, 227, 0.06) 0%, transparent 70%);
+  background: radial-gradient(ellipse 80% 300px at 50% -60px, rgba(170, 85, 227, 0.03) 0%, transparent 70%);
 }
 
 /* Table styles */
@@ -97,28 +97,34 @@ body {
 
 .sl-table th {
   text-align: left;
-  padding: 8px 12px;
+  padding: 5px 10px;
   font-family: "JetBrains Mono", monospace;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #6B6B7A;
-  border-bottom: 1px solid #1E1E22;
+  color: #2E2E3E;
+  border-bottom: 1px solid #1A1A1F;
   white-space: nowrap;
+  background: #0B0B0E;
 }
 
 .sl-table td {
-  padding: 9px 12px;
+  padding: 6px 10px;
   font-family: "JetBrains Mono", monospace;
-  font-size: 12px;
-  color: #E8E8ED;
-  border-bottom: 1px solid #1E1E22;
+  font-size: 11px;
+  color: #C8C8D4;
+  border-bottom: 1px solid #131316;
   white-space: nowrap;
 }
 
+.sl-table td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 .sl-table tr:hover td {
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: rgba(255, 255, 255, 0.015);
 }
 
 /* Risk score bar */
