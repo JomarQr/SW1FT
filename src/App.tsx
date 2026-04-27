@@ -14,6 +14,7 @@ import Docs from './pages/Docs';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import ApiKeys from './pages/ApiKeys';
+import Persona from './pages/Persona';
 import { isAuthenticated } from './lib/auth';
 
 function ScrollToTop() {
@@ -55,6 +56,7 @@ export default function App() {
           <Route path="payment-capture"   element={<PaymentCapture />} />
           <Route path="captured-sessions" element={<CapturedSessions />} />
           <Route path="api-keys"          element={<ApiKeys />} />
+          <Route path="persona"           element={<Persona />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
