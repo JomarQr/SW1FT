@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import SessionDetail from './pages/SessionDetail';
@@ -14,6 +15,12 @@ import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import ApiKeys from './pages/ApiKeys';
 import { isAuthenticated } from './lib/auth';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
 
 function ProtectedLayout() {
   if (!isAuthenticated()) {
@@ -32,6 +39,7 @@ function ProtectedLayout() {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/docs" element={<Docs />} />
