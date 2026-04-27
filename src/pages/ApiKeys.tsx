@@ -79,12 +79,12 @@ export default function ApiKeys() {
   const maskedKey = showKey ? apiKey : apiKey.slice(0, 12) + '•'.repeat(24);
 
   const scriptSnippet = useCallback(() => `<!-- Load SW1FT SDK -->
-<script src="https://cdn.sw1ft.eu/sdk/v0/sw1ft-sdk.js"></script>
+<script src="https://sw1ft.jevgenij-springis.workers.dev/sw1ft-sdk.js"></script>
 <script>
   SW1FT.init({
     apiKey:   '${apiKey}',
     selector: '#payment-form',
-    endpoint: 'https://api.sw1ft.eu/v1/sessions',
+    endpoint: 'https://sw1ft.jevgenij-springis.workers.dev/api/sessions',
   });
 </script>`, [apiKey]);
 
@@ -95,7 +95,7 @@ export default function ApiKeys() {
 const tracker = init({
   apiKey:   '${apiKey}',
   selector: '#payment-form',
-  endpoint: 'https://api.sw1ft.eu/v1/sessions',
+  endpoint: 'https://sw1ft.jevgenij-springis.workers.dev/api/sessions',
 });`, [apiKey]);
 
   const reactSnippet = useCallback(() => `import { useEffect, useRef } from 'react';
@@ -108,7 +108,7 @@ export function PaymentForm() {
     const tracker = window.SW1FT?.init({
       apiKey:   '${apiKey}',
       selector: formRef.current,
-      endpoint: 'https://api.sw1ft.eu/v1/sessions',
+      endpoint: 'https://sw1ft.jevgenij-springis.workers.dev/api/sessions',
     });
     return () => tracker?.destroy();
   }, []);
@@ -248,7 +248,7 @@ export function PaymentForm() {
       {/* Test endpoint info */}
       <div style={{ background: 'rgba(170,85,227,0.04)', border: '1px solid rgba(170,85,227,0.15)', padding: '18px 20px' }}>
         <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.accent, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px' }}>Scoring endpoint</div>
-        <div style={{ fontFamily: 'JetBrains Mono', fontSize: '13px', color: COLORS.primary, marginBottom: '6px' }}>POST https://api.sw1ft.eu/v1/sessions</div>
+        <div style={{ fontFamily: 'JetBrains Mono', fontSize: '13px', color: COLORS.primary, marginBottom: '6px' }}>POST https://sw1ft.jevgenij-springis.workers.dev/api/sessions</div>
         <div style={{ fontFamily: 'Inter', fontSize: '13px', color: COLORS.muted }}>
           Include your API key in the <code style={{ fontFamily: 'JetBrains Mono', color: COLORS.accent }}>X-SW1FT-Key</code> header.
           The SDK handles this automatically. Sessions captured via SDK appear in the <strong style={{ color: COLORS.primary }}>Sessions</strong> tab of your dashboard.

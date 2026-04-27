@@ -1,14 +1,14 @@
 /*!
  * SW1FT Behavioral Intelligence SDK  v0.1.0
- * https://sw1ft.eu · EU-hosted · GDPR compliant
+ * https://sw1ft.jevgenij-springis.workers.dev · EU-hosted · GDPR compliant
  *
  * Usage:
- *   <script src="https://cdn.sw1ft.eu/sdk/v0/sw1ft-sdk.js"></script>
+ *   <script src="https://sw1ft.jevgenij-springis.workers.dev/sw1ft-sdk.js"></script>
  *   <script>
  *     const tracker = SW1FT.init({
  *       apiKey:   'YOUR_API_KEY',
  *       selector: '#payment-form',   // form or container to watch
- *       endpoint: 'https://api.sw1ft.eu/v1/sessions',
+ *       endpoint: 'https://sw1ft.jevgenij-springis.workers.dev/api/sessions',
  *       debug:    false,
  *     });
  *   </script>

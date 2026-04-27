@@ -81,14 +81,14 @@ function FAQ({ q, a }: { q: string; a: string }) {
 }
 
 const SNIPPET_SCRIPT = `<!-- 1. Load the SW1FT SDK -->
-<script src="https://cdn.sw1ft.eu/sdk/v0/sw1ft-sdk.js"></script>
+<script src="https://sw1ft.jevgenij-springis.workers.dev/sw1ft-sdk.js"></script>
 
 <!-- 2. Initialize on your payment form -->
 <script>
   const tracker = SW1FT.init({
     apiKey:   'YOUR_API_KEY',
     selector: '#payment-form',
-    endpoint: 'https://api.sw1ft.eu/v1/sessions',
+    endpoint: 'https://sw1ft.jevgenij-springis.workers.dev/api/sessions',
     debug:    false,
   });
 
@@ -105,10 +105,10 @@ const SNIPPET_ESM = `import { init } from '@sw1ft/sdk';
 const tracker = init({
   apiKey:   'YOUR_API_KEY',
   selector: '#payment-form',
-  endpoint: 'https://api.sw1ft.eu/v1/sessions',
+  endpoint: 'https://sw1ft.jevgenij-springis.workers.dev/api/sessions',
 });`;
 
-const SNIPPET_WEBHOOK = `// POST https://api.sw1ft.eu/v1/sessions
+const SNIPPET_WEBHOOK = `// POST https://sw1ft.jevgenij-springis.workers.dev/api/sessions
 // Headers: X-SW1FT-Key: YOUR_API_KEY
 
 {
@@ -150,12 +150,12 @@ const SNIPPET_FULL = `<!DOCTYPE html>
     <button id="pay-btn" type="submit">Pay £250.00</button>
   </form>
 
-  <script src="https://cdn.sw1ft.eu/sdk/v0/sw1ft-sdk.js"></script>
+  <script src="https://sw1ft.jevgenij-springis.workers.dev/sw1ft-sdk.js"></script>
   <script>
     SW1FT.init({
       apiKey:   'YOUR_API_KEY',
       selector: '#payment-form',
-      endpoint: 'https://api.sw1ft.eu/v1/sessions',
+      endpoint: 'https://sw1ft.jevgenij-springis.workers.dev/api/sessions',
     });
   </script>
 
