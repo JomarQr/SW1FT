@@ -25,12 +25,55 @@ interface RegionPreset { id: string; label: string; center: [number, number]; zo
 interface Insight { icon: 'ok' | 'watch' | 'alert' | 'info'; text: string; }
 
 interface CountryProfile {
-  code: string; flag: string; risk: RiskLevel; riskColor: string;
+  code: string; risk: RiskLevel; riskColor: string;
   type: MarkerType | 'unknown'; sessions: number; lastSeen: string;
   transactions: number; avgAmount: string; status: string;
   trustedSince?: string; distance?: string;
   insights: Insight[];
 }
+
+/* ── country name → ISO-2 (lowercase) ───────────────────────────────────── */
+
+const NAME_TO_CODE: Record<string, string> = {
+  'Afghanistan': 'af', 'Albania': 'al', 'Algeria': 'dz', 'Angola': 'ao',
+  'Argentina': 'ar', 'Armenia': 'am', 'Australia': 'au', 'Austria': 'at',
+  'Azerbaijan': 'az', 'Bahrain': 'bh', 'Bangladesh': 'bd', 'Belarus': 'by',
+  'Belgium': 'be', 'Bolivia': 'bo', 'Bosnia and Herzegovina': 'ba',
+  'Botswana': 'bw', 'Brazil': 'br', 'Bulgaria': 'bg', 'Cambodia': 'kh',
+  'Cameroon': 'cm', 'Canada': 'ca', 'Chile': 'cl', 'China': 'cn',
+  'Colombia': 'co', 'Congo': 'cg', 'Dem. Rep. Congo': 'cd', 'Costa Rica': 'cr',
+  'Croatia': 'hr', 'Cuba': 'cu', 'Cyprus': 'cy', 'Czechia': 'cz',
+  'Czech Republic': 'cz', 'Denmark': 'dk', 'Dominican Republic': 'do',
+  'Ecuador': 'ec', 'Egypt': 'eg', 'El Salvador': 'sv', 'Eritrea': 'er',
+  'Estonia': 'ee', 'Ethiopia': 'et', 'Finland': 'fi', 'France': 'fr',
+  'Gabon': 'ga', 'Georgia': 'ge', 'Germany': 'de', 'Ghana': 'gh',
+  'Greece': 'gr', 'Guatemala': 'gt', 'Guinea': 'gn', 'Haiti': 'ht',
+  'Honduras': 'hn', 'Hungary': 'hu', 'Iceland': 'is', 'India': 'in',
+  'Indonesia': 'id', 'Iran': 'ir', 'Iraq': 'iq', 'Ireland': 'ie',
+  'Israel': 'il', 'Italy': 'it', 'Jamaica': 'jm', 'Japan': 'jp',
+  'Jordan': 'jo', 'Kazakhstan': 'kz', 'Kenya': 'ke', 'North Korea': 'kp',
+  'South Korea': 'kr', 'Kosovo': 'xk', 'Kuwait': 'kw', 'Kyrgyzstan': 'kg',
+  'Laos': 'la', 'Latvia': 'lv', 'Lebanon': 'lb', 'Libya': 'ly',
+  'Lithuania': 'lt', 'Luxembourg': 'lu', 'Madagascar': 'mg', 'Malaysia': 'my',
+  'Mali': 'ml', 'Malta': 'mt', 'Mauritania': 'mr', 'Mexico': 'mx',
+  'Moldova': 'md', 'Mongolia': 'mn', 'Montenegro': 'me', 'Morocco': 'ma',
+  'Mozambique': 'mz', 'Myanmar': 'mm', 'Namibia': 'na', 'Nepal': 'np',
+  'Netherlands': 'nl', 'New Zealand': 'nz', 'Nicaragua': 'ni', 'Niger': 'ne',
+  'Nigeria': 'ng', 'North Macedonia': 'mk', 'Norway': 'no', 'Oman': 'om',
+  'Pakistan': 'pk', 'Palestine': 'ps', 'Panama': 'pa', 'Paraguay': 'py',
+  'Peru': 'pe', 'Philippines': 'ph', 'Poland': 'pl', 'Portugal': 'pt',
+  'Qatar': 'qa', 'Romania': 'ro', 'Russia': 'ru', 'Rwanda': 'rw',
+  'Saudi Arabia': 'sa', 'Senegal': 'sn', 'Serbia': 'rs', 'Sierra Leone': 'sl',
+  'Slovakia': 'sk', 'Slovenia': 'si', 'Somalia': 'so', 'South Africa': 'za',
+  'South Sudan': 'ss', 'Spain': 'es', 'Sri Lanka': 'lk', 'Sudan': 'sd',
+  'Sweden': 'se', 'Switzerland': 'ch', 'Syria': 'sy', 'Taiwan': 'tw',
+  'Tajikistan': 'tj', 'Tanzania': 'tz', 'Thailand': 'th', 'Togo': 'tg',
+  'Tunisia': 'tn', 'Turkey': 'tr', 'Turkmenistan': 'tm', 'Uganda': 'ug',
+  'Ukraine': 'ua', 'United Arab Emirates': 'ae', 'United Kingdom': 'gb',
+  'United States of America': 'us', 'United States': 'us', 'Uruguay': 'uy',
+  'Uzbekistan': 'uz', 'Venezuela': 've', 'Vietnam': 'vn', 'Yemen': 'ye',
+  'Zambia': 'zm', 'Zimbabwe': 'zw',
+};
 
 /* ── region presets ──────────────────────────────────────────────────────── */
 
@@ -80,7 +123,7 @@ const MLABEL: Record<MarkerType, string> = {
 
 const PROFILES: Record<string, CountryProfile> = {
   'Latvia': {
-    code: 'LV', flag: '🇱🇻', risk: 'Low', riskColor: 'var(--green)', type: 'current',
+    code: 'LV', risk: 'Low', riskColor: 'var(--green)', type: 'current',
     sessions: 12, lastSeen: '2 minutes ago', transactions: 12, avgAmount: '€3,200',
     status: 'PRIMARY REGION', trustedSince: 'Jan 2023',
     distance: '0 km (home)',
@@ -93,7 +136,7 @@ const PROFILES: Record<string, CountryProfile> = {
     ],
   },
   'Lithuania': {
-    code: 'LT', flag: '🇱🇹', risk: 'Low', riskColor: 'var(--green)', type: 'trusted',
+    code: 'LT', risk: 'Low', riskColor: 'var(--green)', type: 'trusted',
     sessions: 8, lastSeen: '3 days ago', transactions: 8, avgAmount: '€2,800',
     status: 'TRUSTED', trustedSince: 'Mar 2023', distance: '290 km from Riga',
     insights: [
@@ -104,7 +147,7 @@ const PROFILES: Record<string, CountryProfile> = {
     ],
   },
   'Estonia': {
-    code: 'EE', flag: '🇪🇪', risk: 'Low', riskColor: 'var(--green)', type: 'trusted',
+    code: 'EE', risk: 'Low', riskColor: 'var(--green)', type: 'trusted',
     sessions: 5, lastSeen: '8 days ago', transactions: 5, avgAmount: '€3,100',
     status: 'TRUSTED', trustedSince: 'May 2023', distance: '310 km from Riga',
     insights: [
@@ -114,7 +157,7 @@ const PROFILES: Record<string, CountryProfile> = {
     ],
   },
   'Germany': {
-    code: 'DE', flag: '🇩🇪', risk: 'Low', riskColor: 'var(--green)', type: 'trusted',
+    code: 'DE', risk: 'Low', riskColor: 'var(--green)', type: 'trusted',
     sessions: 3, lastSeen: '22 days ago', transactions: 3, avgAmount: '€4,600',
     status: 'TRUSTED', trustedSince: 'Sep 2023', distance: '1,380 km from Riga',
     insights: [
@@ -125,7 +168,7 @@ const PROFILES: Record<string, CountryProfile> = {
     ],
   },
   'Poland': {
-    code: 'PL', flag: '🇵🇱', risk: 'Low', riskColor: 'var(--green)', type: 'trusted',
+    code: 'PL', risk: 'Low', riskColor: 'var(--green)', type: 'trusted',
     sessions: 2, lastSeen: '31 days ago', transactions: 2, avgAmount: '€1,800',
     status: 'TRUSTED', trustedSince: 'Nov 2023', distance: '640 km from Riga',
     insights: [
@@ -135,7 +178,7 @@ const PROFILES: Record<string, CountryProfile> = {
     ],
   },
   'Turkey': {
-    code: 'TR', flag: '🇹🇷', risk: 'Elevated', riskColor: 'var(--orange)', type: 'new',
+    code: 'TR', risk: 'Elevated', riskColor: 'var(--orange)', type: 'new',
     sessions: 1, lastSeen: '6 days ago', transactions: 1, avgAmount: '€780',
     status: 'NEW REGION', distance: '2,100 km from Riga',
     insights: [
@@ -147,7 +190,7 @@ const PROFILES: Record<string, CountryProfile> = {
     ],
   },
   'United Arab Emirates': {
-    code: 'AE', flag: '🇦🇪', risk: 'Elevated', riskColor: 'var(--orange)', type: 'new',
+    code: 'AE', risk: 'Elevated', riskColor: 'var(--orange)', type: 'new',
     sessions: 1, lastSeen: '6 days ago', transactions: 1, avgAmount: '€920',
     status: 'NEW REGION', distance: '4,800 km from Riga',
     insights: [
@@ -158,7 +201,7 @@ const PROFILES: Record<string, CountryProfile> = {
     ],
   },
   'Nigeria': {
-    code: 'NG', flag: '🇳🇬', risk: 'High', riskColor: 'var(--red)', type: 'highrisk',
+    code: 'NG', risk: 'High', riskColor: 'var(--red)', type: 'highrisk',
     sessions: 0, lastSeen: 'Never', transactions: 0, avgAmount: '—',
     status: 'HIGH RISK', distance: '6,700 km from Riga',
     insights: [
@@ -169,7 +212,7 @@ const PROFILES: Record<string, CountryProfile> = {
     ],
   },
   'Russia': {
-    code: 'RU', flag: '🇷🇺', risk: 'Blocked', riskColor: 'var(--red)', type: 'highrisk',
+    code: 'RU', risk: 'Blocked', riskColor: 'var(--red)', type: 'highrisk',
     sessions: 0, lastSeen: 'Never', transactions: 0, avgAmount: '—',
     status: 'BLOCKED',
     insights: [
@@ -182,7 +225,7 @@ const PROFILES: Record<string, CountryProfile> = {
 };
 
 const DEFAULT_PROFILE: CountryProfile = {
-  code: '??', flag: '🌍', risk: 'No Data', riskColor: 'var(--t4)', type: 'unknown',
+  code: '??', risk: 'No Data', riskColor: 'var(--t4)', type: 'unknown',
   sessions: 0, lastSeen: '—', transactions: 0, avgAmount: '—',
   status: 'NO SESSION DATA',
   insights: [
@@ -281,7 +324,8 @@ export default function GeoRiskMap() {
   const [zoom,          setZoom]          = useState(1);
   const [center,        setCenter]        = useState<[number, number]>([20, 22]);
   const [activeRegion,  setActiveRegion]  = useState('world');
-  const [selectedGeo,   setSelectedGeo]   = useState<string | null>(null); // geo name
+  const [selectedGeo,   setSelectedGeo]   = useState<string | null>(null);
+  const [selectedCode,  setSelectedCode]  = useState<string | null>(null);
   const [profile,       setProfile]       = useState<CountryProfile | null>(null);
   const [tooltip,       setTooltip]       = useState<{ x: number; y: number; marker: GeoMarker } | null>(null);
   const [geoLoaded,     setGeoLoaded]     = useState(false);
@@ -298,6 +342,12 @@ export default function GeoRiskMap() {
     setZoom(r.zoom); setCenter(r.center); setActiveRegion(r.id);
   }
 
+  function resolveCode(name: string): string | null {
+    const p = PROFILES[name];
+    if (p) return p.code.toLowerCase();
+    return NAME_TO_CODE[name] ?? null;
+  }
+
   function handleCountryClick(geo: GeoJSON.Feature) {
     const name   = (geo.properties as Record<string, string>)?.name ?? '—';
     const { center: c, zoom: z } = getCountryView(geo);
@@ -305,6 +355,7 @@ export default function GeoRiskMap() {
     setZoom(z);
     setActiveRegion('');
     setSelectedGeo(name);
+    setSelectedCode(resolveCode(name));
     setProfile(PROFILES[name] ?? DEFAULT_PROFILE);
   }
 
@@ -314,11 +365,13 @@ export default function GeoRiskMap() {
     setZoom(tgt);
     setActiveRegion('');
     setSelectedGeo(m.name);
+    setSelectedCode(resolveCode(m.name));
     setProfile(PROFILES[m.name] ?? DEFAULT_PROFILE);
   }
 
   function clearSelection() {
     setSelectedGeo(null);
+    setSelectedCode(null);
     setProfile(null);
     applyRegion(REGION_PRESETS[0]);
   }
@@ -538,9 +591,9 @@ export default function GeoRiskMap() {
 
                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
                   <div>
-                    <div style={{ marginBottom: '6px', lineHeight: 1 }}><FlagImg code={profile.code} height={20} /></div>
+                    <div style={{ marginBottom: '6px', lineHeight: 1 }}><FlagImg code={selectedCode ?? '??'} height={20} /></div>
                     <div style={{ fontFamily: 'Inter', fontSize: '14px', fontWeight: 600, color: 'var(--t1)', marginBottom: '3px' }}>{selectedGeo}</div>
-                    <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--bdr2)', letterSpacing: '0.08em' }}>ISO: {profile.code}</div>
+                    <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--bdr2)', letterSpacing: '0.08em' }}>ISO: {selectedCode?.toUpperCase() ?? profile.code}</div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     {riskBadge(profile.risk, profile.riskColor)}
