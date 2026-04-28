@@ -59,21 +59,19 @@ const STATUS_CFG: Record<SessionStatus, { color: string; bg: string }> = {
 /* ── KPI card ────────────────────────────────────────────────────────────── */
 
 function KpiCard({
-  label, value, format, sub, subColor, topColor, delta,
+  label, value, format, sub, subColor, delta,
 }: {
   label: string;
   value: number;
   format: (n: number) => string;
   sub?: string;
   subColor?: string;
-  topColor?: string;
   delta?: { value: string; up: boolean | null };
 }) {
   const displayed = useCountUp(value);
   return (
     <div style={{
       background: 'var(--surface)', border: '1px solid var(--bdr)',
-      borderTop: `2px solid ${topColor ?? 'var(--bdr)'}`,
       padding: '12px 14px', flex: 1, minWidth: 0,
     }}>
       <div style={{
@@ -177,7 +175,6 @@ export default function Dashboard() {
           format={n => n.toLocaleString()}
           sub="monitored"
           delta={{ value: '+12.3% 24h', up: true }}
-          topColor="var(--bdr2)"
         />
         <KpiCard
           label="Active Now"
@@ -185,7 +182,6 @@ export default function Dashboard() {
           format={n => String(n)}
           sub="live sessions"
           delta={{ value: '↑ 12/min', up: true }}
-          topColor={COLORS.accent}
         />
         <KpiCard
           label="Alerts Triggered"
@@ -193,7 +189,6 @@ export default function Dashboard() {
           format={n => String(n)}
           sub={`${ALERTS.filter(a => a.status === 'PENDING').length} pending`}
           subColor={COLORS.warning}
-          topColor={COLORS.warning}
         />
         <KpiCard
           label="Interventions"
@@ -201,7 +196,6 @@ export default function Dashboard() {
           format={n => String(n)}
           sub="3 active"
           subColor={COLORS.orange}
-          topColor={COLORS.orange}
         />
         <KpiCard
           label="High Risk / Blocked"
@@ -209,7 +203,6 @@ export default function Dashboard() {
           format={n => String(n)}
           sub={`${highRiskCount} high risk`}
           subColor={COLORS.danger}
-          topColor={COLORS.danger}
         />
         <KpiCard
           label="Loss Prevented"
@@ -217,7 +210,6 @@ export default function Dashboard() {
           format={fmtEur}
           sub="this week"
           subColor={COLORS.safe}
-          topColor={COLORS.safe}
           delta={{ value: 'est.', up: null }}
         />
       </div>

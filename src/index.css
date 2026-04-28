@@ -24,24 +24,24 @@
 }
 
 [data-theme="light"] {
-  --bg:        #F4F3F8;
+  --bg:        #F7F7F8;
   --surface:   #FFFFFF;
-  --card:      #F0EFF8;
-  --bdr:       #DDD8EC;
-  --bdr2:      #CCC5E4;
-  --t1:        #1A1020;
-  --t2:        #5A5070;
-  --t3:        #7A7090;
-  --t4:        #9A8EB0;
-  --t5:        #B8AECE;
+  --card:      #F2F2F4;
+  --bdr:       #E2E2E5;
+  --bdr2:      #CECECE;
+  --t1:        #111113;
+  --t2:        #4A4A55;
+  --t3:        #6E6E78;
+  --t4:        #9696A0;
+  --t5:        #C0C0C8;
   --accent:    #8833CC;
   --accent-d:  #6622AA;
   --accent-lt: #9944CC;
-  --accent-bg: rgba(136,51,204,0.08);
-  --green:     #009955;
-  --red:       #CC2244;
-  --orange:    #BB6600;
-  --yellow:    #CC9900;
+  --accent-bg: rgba(136,51,204,0.07);
+  --green:     #007A3E;
+  --red:       #C41E3A;
+  --orange:    #B35A00;
+  --yellow:    #A87800;
 }
 
 @theme {
