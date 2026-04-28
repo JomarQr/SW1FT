@@ -5,6 +5,7 @@ import {
   ResponsiveContainer, ReferenceLine,
 } from 'recharts';
 import { ExternalLink, ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
+import GeoRiskMap from '../components/GeoRiskMap';
 import {
   SESSIONS, ALERTS, DASHBOARD_KPIs, RISK_DISTRIBUTION_24H, COLORS,
   type Session, type SessionStatus,
@@ -352,6 +353,11 @@ export default function Dashboard() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Geo risk map */}
+      <div style={{ marginBottom: '8px' }}>
+        <GeoRiskMap />
       </div>
 
       {/* Risk distribution chart */}
