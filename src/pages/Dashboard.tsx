@@ -203,6 +203,9 @@ export default function Dashboard() {
   const topAlerts = [...ALERTS].sort((a, b) => b.riskScore - a.riskScore).slice(0, 8);
   const highRiskCount = liveSessions.filter(s => s.riskScore >= 65).length;
   const blockedCount  = liveSessions.filter(s => s.status === 'BLOCKED').length;
+  const unreviewedHighRisk = liveSessions.filter(s =>
+    (s as any)._captured && s.riskScore >= 61 && !getFeedbackForSession(s.id)
+  ).length;
 
   return (
     <div style={{ padding: '16px', minHeight: '100%', background: 'var(--bg)' }}>
@@ -263,6 +266,17 @@ export default function Dashboard() {
             label="Active Session Feed"
             right={
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                {unreviewedHighRisk > 0 && (
+                  <span style={{
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    minWidth: '18px', height: '18px', borderRadius: '9px',
+                    background: COLORS.danger, color: '#fff',
+                    fontFamily: 'JetBrains Mono', fontSize: '9px', fontWeight: 700,
+                    padding: '0 5px', letterSpacing: 0,
+                  }} title={`${unreviewedHighRisk} high-risk session${unreviewedHighRisk > 1 ? 's' : ''} need review`}>
+                    {unreviewedHighRisk}
+                  </span>
+                )}
                 {feedbackCount > 0 && (
                   <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--green)', background: 'rgba(0,204,122,0.07)', border: '1px solid rgba(0,204,122,0.2)', padding: '2px 7px' }}>
                     {feedbackCount} labeled
@@ -294,13 +308,29 @@ export default function Dashboard() {
                 {liveSessions.map(s => {
                   const scfg = STATUS_CFG[s.status];
                   const hasFeedback = !!getFeedbackForSession(s.id);
+                  const needsReview = (s as any)._captured && s.riskScore >= 61 && !hasFeedback;
+                  const rowBg = needsReview
+                    ? (s.riskScore >= 81 ? 'rgba(255,59,92,0.08)' : 'rgba(255,140,0,0.07)')
+                    : 'transparent';
+                  const hoverBg = needsReview
+                    ? (s.riskScore >= 81 ? 'rgba(255,59,92,0.14)' : 'rgba(255,140,0,0.13)')
+                    : 'rgba(255,255,255,0.015)';
                   return (
                     <tr
                       key={s.id}
                       className={flashedId === s.id ? 'row-flash' : ''}
-                      style={{ borderBottom: '1px solid var(--card)' }}
-                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.015)')}
-                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                      onClick={needsReview ? () => setReviewSession(s) : undefined}
+                      style={{
+                        borderBottom: '1px solid var(--card)',
+                        background: rowBg,
+                        borderLeft: needsReview
+                          ? `3px solid ${s.riskScore >= 81 ? COLORS.danger : COLORS.orange}`
+                          : undefined,
+                        cursor: needsReview ? 'pointer' : 'default',
+                        transition: 'background 0.15s',
+                      }}
+                      onMouseEnter={e => (e.currentTarget.style.background = hoverBg)}
+                      onMouseLeave={e => (e.currentTarget.style.background = rowBg)}
                     >
                       <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono', fontSize: '11px', color: (s as any)._captured ? '#C890F0' : COLORS.accent, whiteSpace: 'nowrap' }}>
                         {(s as any)._captured && <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#00CC7A', marginRight: 5, verticalAlign: 'middle', boxShadow: '0 0 5px #00CC7A' }} />}

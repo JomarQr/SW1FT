@@ -8,7 +8,6 @@ import {
   saveIntervention, type InterventionRecord,
 } from '../lib/interventionStore';
 import { snapshotToSession, saveLiveSession } from '../lib/liveSessionStore';
-import { InterventionModal } from '../components/InterventionEngine';
 import { getUsername } from '../lib/auth';
 import { COLORS } from '../lib/mockData';
 
@@ -606,10 +605,6 @@ export default function PaymentCapture() {
   const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startRef = useRef(Date.now());
 
-  // Intervention flow state
-  const [pendingIntervention, setPendingIntervention] = useState<InterventionRecord | null>(null);
-  const [paymentAmount, setPaymentAmount] = useState(0);
-
   function handleStart() {
     startRef.current = Date.now();
     setElapsed(0);
@@ -629,7 +624,6 @@ export default function PaymentCapture() {
     setSnapshot(snap);
     setSubmitted(true);
     handleStop();
-    setPaymentAmount(amount);
 
     const score = computeRiskScore(snap);
     const level = getRiskLevel(score);
@@ -640,7 +634,7 @@ export default function PaymentCapture() {
     saveSession(snap);
 
     if (level !== 'APPROVE') {
-      // Build intervention record
+      // Silently record intervention — shown in Dashboard only
       const intervention: InterventionRecord = {
         id: `INT-${snap.session_id}`,
         session_id: snap.session_id,
@@ -656,34 +650,8 @@ export default function PaymentCapture() {
       };
       saveIntervention(intervention);
       window.dispatchEvent(new CustomEvent('sw1ft_new_intervention'));
-      setPendingIntervention(intervention);
-    } else {
-      setShowModal(true);
     }
-  }
 
-  function handleInterventionCancel() {
-    if (pendingIntervention) {
-      const updated = { ...pendingIntervention, user_action: 'cancel' as const, outcome: 'fraud_prevented' as const };
-      saveIntervention(updated);
-      window.dispatchEvent(new CustomEvent('sw1ft_new_intervention'));
-      // Update live session status to BLOCKED
-      if (snapshot) {
-        const ls = snapshotToSession(snapshot, paymentAmount, updated.id);
-        saveLiveSession({ ...ls, status: 'BLOCKED', riskScore: updated.risk_score });
-      }
-    }
-    setPendingIntervention(null);
-    setShowModal(true);
-  }
-
-  function handleInterventionProceed() {
-    if (pendingIntervention) {
-      const updated = { ...pendingIntervention, user_action: 'proceed' as const, outcome: 'monitoring' as const };
-      saveIntervention(updated);
-      window.dispatchEvent(new CustomEvent('sw1ft_new_intervention'));
-    }
-    setPendingIntervention(null);
     setShowModal(true);
   }
 
@@ -778,15 +746,6 @@ export default function PaymentCapture() {
           }
         </div>
       </div>
-
-      {/* Intervention modal — shown before completion if risk is elevated */}
-      {pendingIntervention && (
-        <InterventionModal
-          record={pendingIntervention}
-          onCancel={handleInterventionCancel}
-          onProceed={handleInterventionProceed}
-        />
-      )}
 
       {showModal && snapshot && (
         <CompletionModal snapshot={snapshot} onClose={handleCloseModal} />

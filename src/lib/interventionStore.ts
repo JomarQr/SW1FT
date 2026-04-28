@@ -61,51 +61,61 @@ export function getInterventionKPIs(): InterventionKPIs {
 
 export function computeRiskScore(snap: BehaviorSnapshot): number {
   const m = snap.metrics;
-  let score = 15;
+  let score = 0;
 
-  // Hesitation before submit — main APP fraud signal
+  // ── Hesitation before submit (main APP fraud signal) ──────────────────────
+  // Normal users confirm in 1–4s. Victims being coached pause 8–20s.
   const hes = m.session.hesitation_before_submit_ms;
-  if      (hes > 12_000) score += 30;
-  else if (hes >  6_000) score += 18;
-  else if (hes >  3_000) score += 8;
+  if      (hes > 15_000) score += 35;  // clearly being instructed
+  else if (hes > 10_000) score += 22;
+  else if (hes >  7_000) score += 12;
+  else if (hes >  4_500) score += 4;   // slightly slow — no signal alone
 
-  // Paste vs type — card details pasted in (not typed)
+  // ── Paste vs type ratio ────────────────────────────────────────────────────
+  // Normal: type card manually (ratio ~0–0.15). Fraud: entire form pasted.
   const pvt = m.session.paste_vs_type_ratio;
-  if      (pvt > 0.6) score += 20;
-  else if (pvt > 0.3) score += 10;
-  else if (pvt > 0.1) score += 4;
+  if      (pvt > 0.75) score += 22;
+  else if (pvt > 0.50) score += 12;
+  else if (pvt > 0.30) score += 5;
+  // Ratio ≤ 0.30 → no penalty (one paste = card number = totally normal)
 
-  // Scroll depth — didn't read confirmation page
+  // ── Scroll depth ──────────────────────────────────────────────────────────
+  // Ignoring confirmation screen is suspicious. But most payment forms
+  // are above fold so 40–60% scroll is typical — only flag very low.
   const scroll = m.session.scroll_depth_pct;
-  if      (scroll < 15) score += 18;
-  else if (scroll < 35) score += 9;
-  else if (scroll < 55) score += 3;
+  if      (scroll < 8)  score += 22;
+  else if (scroll < 20) score += 12;
+  else if (scroll < 35) score += 5;
+  // 35%+ → normal
 
-  // Tab switches / window blur — on a call?
+  // ── Tab switches / window focus loss ──────────────────────────────────────
+  // Normal: 0–1 (maybe glance at phone). Guided fraud: 3+ (following caller).
   const tabs = m.attention.tab_switch_count;
-  if      (tabs >= 5) score += 15;
-  else if (tabs >= 2) score += 8;
-  else if (tabs >= 1) score += 3;
+  if      (tabs >= 5) score += 22;
+  else if (tabs >= 3) score += 14;
+  else if (tabs >= 2) score += 6;
+  // 0–1 → no penalty
 
-  // Clipboard paste activity
+  // ── Clipboard paste count ─────────────────────────────────────────────────
+  // 1–2 pastes (card number, name) → completely normal.
   const pastes = m.clipboard.paste_total;
-  if      (pastes >= 4) score += 12;
-  else if (pastes >= 2) score += 6;
-  else if (pastes >= 1) score += 2;
+  if      (pastes >= 6) score += 18;
+  else if (pastes >= 4) score += 10;
+  else if (pastes >= 3) score += 4;
+  // ≤ 2 → no penalty
 
-  // Very fast typing — robotic / script-driven
-  if (m.keyboard.typing_speed_cps > 9) score += 10;
+  // ── Extended time away from window ────────────────────────────────────────
+  const away = m.attention.total_time_away_ms;
+  if      (away > 25_000) score += 18;
+  else if (away > 15_000) score += 10;
+  else if (away > 8_000)  score += 4;
 
-  // Very low keyboard activity (user guided step by step)
-  if (m.keyboard.total_keys > 0 && m.keyboard.total_keys < 8) score += 8;
+  // ── Robotic typing speed (>10 chars/s = likely automated) ─────────────────
+  if (m.keyboard.typing_speed_cps > 12) score += 12;
 
-  // High error rate or excessive backspaces (uncertain / instructed)
-  if (m.keyboard.backspace_count > 10) score += 8;
-  else if (m.keyboard.backspace_count > 5) score += 4;
-
-  // Long time away from window during form fill
-  if (m.attention.total_time_away_ms > 10_000) score += 10;
-  else if (m.attention.total_time_away_ms > 4_000) score += 5;
+  // ── Excessive backspacing (guided entry — told what to type, then corrected) ─
+  if      (m.keyboard.backspace_count > 20) score += 10;
+  else if (m.keyboard.backspace_count > 12) score += 5;
 
   return Math.min(100, Math.max(0, Math.round(score)));
 }
