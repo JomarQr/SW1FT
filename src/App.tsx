@@ -18,7 +18,8 @@ import ApiKeys from './pages/ApiKeys';
 import Persona from './pages/Persona';
 import BehaviorProfile from './pages/BehaviorProfile';
 import MLModels from './pages/MLModels';
-import { isAuthenticated } from './lib/auth';
+import AdminPanel from './pages/AdminPanel';
+import { isAuthenticated, isAdmin } from './lib/auth';
 import { ThemeProvider } from './lib/ThemeContext';
 
 function ScrollToTop() {
@@ -65,6 +66,7 @@ export default function App() {
           <Route path="persona"            element={<Persona />} />
           <Route path="behavior-profile"  element={<BehaviorProfile />} />
           <Route path="ml-models"         element={<MLModels />} />
+          <Route path="admin"             element={isAdmin() ? <AdminPanel /> : <Navigate to="/dashboard" replace />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

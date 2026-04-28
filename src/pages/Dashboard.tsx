@@ -10,6 +10,7 @@ import SessionReviewPanel from '../components/SessionReviewPanel';
 import { getFeedbackForSession, countFeedbacks } from '../lib/feedbackStore';
 import { getLiveSessions } from '../lib/liveSessionStore';
 import { getInterventionKPIs } from '../lib/interventionStore';
+import { getRole, getUsername } from '../lib/auth';
 import {
   SESSIONS, ALERTS, DASHBOARD_KPIs, RISK_DISTRIBUTION_24H, COLORS,
   type Session, type SessionStatus,
@@ -146,9 +147,15 @@ function SectionHeader({ label, right }: { label: string; right?: React.ReactNod
 export default function Dashboard() {
   const navigate = useNavigate();
 
-  // Merge mock sessions with real captured sessions (captured on top)
+  const isClient = getRole() === 'client';
+  const currentUsername = getUsername();
+
+  // Clients see only their own captured sessions; analysts/admins see everything
   const [liveSessions, setLiveSessions] = useState<Session[]>(() => {
     const captured = getLiveSessions();
+    if (isClient) {
+      return captured.filter(s => s.userId === currentUsername || (s as any)._captured);
+    }
     const mock = [...SESSIONS].slice(0, 20);
     const ids = new Set(captured.map(s => s.id));
     return [...captured, ...mock.filter(s => !ids.has(s.id))].slice(0, 25);
@@ -181,6 +188,9 @@ export default function Dashboard() {
     function onNewSession() {
       const captured = getLiveSessions();
       setLiveSessions(prev => {
+        if (isClient) {
+          return captured.filter(s => s.userId === currentUsername || (s as any)._captured);
+        }
         const ids = new Set(captured.map(s => s.id));
         const mock = prev.filter(s => !(s as any)._captured);
         return [...captured, ...mock.filter(s => !ids.has(s.id))].slice(0, 25);
@@ -303,6 +313,13 @@ export default function Dashboard() {
                 </tr>
               </thead>
               <tbody>
+                {liveSessions.length === 0 && (
+                  <tr>
+                    <td colSpan={9} style={{ padding: '40px', textAlign: 'center', fontFamily: 'JetBrains Mono', fontSize: '11px', color: 'var(--t4)' }}>
+                      No sessions yet — use <strong style={{ color: 'var(--t3)' }}>Capture</strong> to submit your first payment
+                    </td>
+                  </tr>
+                )}
                 {liveSessions.map(s => {
                   const scfg = STATUS_CFG[s.status];
                   const hasFeedback = !!getFeedbackForSession(s.id);
