@@ -1,9 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, Trash2, ChevronDown, ChevronRight, ScanFace } from 'lucide-react';
+import {
+  ArrowLeft, Download, Trash2, ChevronDown, ChevronRight, ScanFace,
+  Brain, RefreshCw, CheckCircle, Clock, Database, Zap,
+} from 'lucide-react';
 import { getSessions, clearSessions } from '../lib/behaviorStore';
 import type { BehaviorSnapshot } from '../lib/useBehaviorCapture';
 import { COLORS } from '../lib/mockData';
+import { getFeedbacks, clearFeedbacks } from '../lib/feedbackStore';
+import {
+  getModelState, saveModelState, bumpModelVersion,
+  type ModelState, type TrainingMode,
+} from '../lib/modelStore';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -93,6 +101,199 @@ function SessionDetail({ s }: { s: BehaviorSnapshot }) {
   );
 }
 
+// ─── Model Intelligence panel ─────────────────────────────────────────────────
+
+function ModelIntelligencePanel() {
+  const [model, setModel]           = useState<ModelState>(() => getModelState());
+  const [feedbacks, setFeedbacks]   = useState(() => getFeedbacks());
+  const [confirmClear, setConfirmClear] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => () => { if (intervalRef.current) clearInterval(intervalRef.current); }, []);
+
+  function startTraining(mode: TrainingMode) {
+    if (model.status === 'training') return;
+    const pending = feedbacks.length;
+    if (pending === 0) return;
+
+    const duration = mode === 'daily' ? 9000 : 14000;
+    const steps = 40;
+    const stepMs = duration / steps;
+    let step = 0;
+
+    const updated: ModelState = { ...model, status: 'training', progress: 0 };
+    setModel(updated);
+    saveModelState(updated);
+
+    intervalRef.current = setInterval(() => {
+      step++;
+      const progress = Math.min(100, Math.round((step / steps) * 100));
+
+      if (step >= steps) {
+        clearInterval(intervalRef.current!);
+        const done = bumpModelVersion(pending, { ...model, status: 'training', progress: 100 });
+        setModel(done);
+        saveModelState(done);
+        clearFeedbacks();
+        setFeedbacks([]);
+      } else {
+        const inProgress: ModelState = { ...model, status: 'training', progress };
+        setModel(inProgress);
+        saveModelState(inProgress);
+      }
+    }, stepMs);
+  }
+
+  const pct = (v: number) => `${(v * 100).toFixed(1)}%`;
+  const fmtDate = (iso: string | null) => iso ? new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
+
+  const isTraining  = model.status === 'training';
+  const pendingCount = feedbacks.length;
+  const correctCount = feedbacks.filter(f => f.modelWasCorrect).length;
+  const accuracy     = pendingCount > 0 ? (correctCount / pendingCount) : null;
+
+  return (
+    <div style={{ background: 'var(--surface)', border: '1px solid var(--bdr)', marginBottom: '20px' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid var(--bdr)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Brain size={12} color="var(--accent)" />
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', fontWeight: 700, color: 'var(--t4)', letterSpacing: '0.16em', textTransform: 'uppercase' }}>Model Intelligence</span>
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--accent)', background: 'var(--accent-bg)', border: '1px solid rgba(170,85,227,0.18)', padding: '1px 6px' }}>{model.version}</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: isTraining ? 'var(--yellow)' : model.status === 'done' ? 'var(--green)' : 'var(--t5)' }} />
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--t4)', letterSpacing: '0.08em' }}>
+            {isTraining ? 'TRAINING' : model.status === 'done' ? 'UP TO DATE' : 'IDLE'}
+          </span>
+        </div>
+      </div>
+
+      {/* Metrics strip */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', borderBottom: '1px solid var(--bdr)' }}>
+        {[
+          { label: 'Accuracy',   value: pct(model.accuracy),  color: model.accuracy  > 0.85 ? COLORS.safe : COLORS.warning },
+          { label: 'Precision',  value: pct(model.precision), color: model.precision > 0.82 ? COLORS.safe : COLORS.warning },
+          { label: 'Recall',     value: pct(model.recall),    color: model.recall    > 0.84 ? COLORS.safe : COLORS.warning },
+          { label: 'F1 Score',   value: pct(model.f1),        color: model.f1        > 0.84 ? COLORS.safe : COLORS.warning },
+          { label: 'Train Samples', value: model.trainingSamples.toLocaleString(), color: 'var(--t2)' },
+          { label: 'Trained On', value: fmtDate(model.lastTrained), color: 'var(--t3)' },
+        ].map(({ label, value, color }, i) => (
+          <div key={label} style={{ padding: '10px 14px', borderRight: i < 5 ? '1px solid var(--bdr)' : 'none' }}>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--t5)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px' }}>{label}</div>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '14px', fontWeight: 700, color, fontVariantNumeric: 'tabular-nums' }}>{value}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Training queue + controls */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0', padding: '0' }}>
+
+        {/* Queue info */}
+        <div style={{ padding: '14px 16px', borderRight: '1px solid var(--bdr)' }}>
+          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: 'var(--t5)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '10px' }}>
+            Training Queue
+          </div>
+          <div style={{ display: 'flex', gap: '16px', marginBottom: '10px' }}>
+            {[
+              { icon: <Database size={11} />, label: 'Labeled sessions', value: String(pendingCount), color: pendingCount > 0 ? 'var(--accent)' : 'var(--t4)' },
+              { icon: <CheckCircle size={11} />, label: 'Model correct', value: pendingCount > 0 ? `${correctCount}/${pendingCount}` : '—', color: pendingCount > 0 ? COLORS.safe : 'var(--t4)' },
+              { icon: <Zap size={11} />, label: 'Analyst accuracy', value: accuracy !== null ? pct(accuracy) : '—', color: accuracy !== null && accuracy > 0.7 ? COLORS.safe : 'var(--t4)' },
+              { icon: <Clock size={11} />, label: 'Total trained', value: String(model.trainingsCompleted), color: 'var(--t3)' },
+            ].map(({ icon, label, value, color }) => (
+              <div key={label} style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--t4)' }}>{icon}<span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--t5)', letterSpacing: '0.08em' }}>{label}</span></div>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '13px', fontWeight: 700, color, fontVariantNumeric: 'tabular-nums' }}>{value}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Progress bar */}
+          {isTraining && (
+            <div style={{ marginTop: '4px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--yellow)', letterSpacing: '0.08em' }}>TRAINING IN PROGRESS…</span>
+                <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--yellow)' }}>{model.progress}%</span>
+              </div>
+              <div style={{ height: '3px', background: 'var(--bdr)', borderRadius: '2px', overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: `${model.progress}%`, background: 'var(--yellow)', transition: 'width 0.3s ease' }} />
+              </div>
+            </div>
+          )}
+          {model.status === 'done' && !isTraining && (
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--green)', letterSpacing: '0.06em' }}>
+              ✓ Last retraining completed · {model.feedbacksUsed} samples used total
+            </div>
+          )}
+          {pendingCount === 0 && !isTraining && model.status !== 'done' && (
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--t5)' }}>
+              No labeled sessions yet — review sessions from the dashboard to build the queue
+            </div>
+          )}
+
+          {/* Clear feedback */}
+          {pendingCount > 0 && !isTraining && (
+            <div style={{ marginTop: '8px' }}>
+              {confirmClear ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.warning }}>Clear queue?</span>
+                  <button onClick={() => { clearFeedbacks(); setFeedbacks([]); setConfirmClear(false); }} style={{ background: COLORS.danger, border: 'none', color: '#fff', fontFamily: 'JetBrains Mono', fontSize: '9px', padding: '3px 9px', cursor: 'pointer' }}>Yes</button>
+                  <button onClick={() => setConfirmClear(false)} style={{ background: 'transparent', border: '1px solid var(--bdr)', color: 'var(--t4)', fontFamily: 'JetBrains Mono', fontSize: '9px', padding: '3px 9px', cursor: 'pointer' }}>No</button>
+                </div>
+              ) : (
+                <button onClick={() => setConfirmClear(true)} style={{ display: 'flex', alignItems: 'center', gap: '5px', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--t5)', fontFamily: 'JetBrains Mono', fontSize: '8px', padding: 0 }}>
+                  <Trash2 size={10} /> Clear queue
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Retraining buttons */}
+        <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '8px' }}>
+          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: 'var(--t5)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '4px' }}>
+            Start Retraining
+          </div>
+          {(['daily', 'weekly'] as TrainingMode[]).map(mode => {
+            const canTrain = pendingCount > 0 && !isTraining;
+            const minSamples = mode === 'daily' ? 20 : 100;
+            const enough    = pendingCount >= minSamples;
+            return (
+              <button
+                key={mode}
+                onClick={() => canTrain && enough && startTraining(mode)}
+                disabled={!canTrain || !enough}
+                style={{
+                  padding: '11px 14px', border: '1px solid var(--bdr)',
+                  background: canTrain && enough ? 'var(--surface)' : 'transparent',
+                  cursor: canTrain && enough ? 'pointer' : 'not-allowed',
+                  textAlign: 'left', transition: 'border-color 0.1s, background 0.1s',
+                }}
+                onMouseEnter={e => { if (canTrain && enough) (e.currentTarget as HTMLElement).style.borderColor = 'var(--accent)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--bdr)'; }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '3px' }}>
+                  <RefreshCw size={11} color={canTrain && enough ? 'var(--accent)' : 'var(--t5)'} />
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', fontWeight: 600, color: canTrain && enough ? 'var(--t1)' : 'var(--t5)', letterSpacing: '0.04em', textTransform: 'capitalize' }}>
+                    {mode} Retraining
+                  </span>
+                </div>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--t5)', paddingLeft: '18px' }}>
+                  {mode === 'daily' ? `Min ${minSamples} samples · fast pass · ~9s` : `Min ${minSamples} samples · full pass · ~14s`}
+                  {!enough && ` · need ${minSamples - pendingCount} more`}
+                </div>
+              </button>
+            );
+          })}
+          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--t5)', marginTop: '2px', lineHeight: 1.6 }}>
+            Retraining incorporates analyst labels into the fraud detection model, updating weights and thresholds.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function CapturedSessions() {
@@ -169,6 +370,9 @@ export default function CapturedSessions() {
           )}
         </div>
       </div>
+
+      {/* Model Intelligence */}
+      <ModelIntelligencePanel />
 
       {/* KPI strip */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '20px' }}>

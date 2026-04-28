@@ -4,8 +4,10 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceLine,
 } from 'recharts';
-import { ExternalLink, ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
+import { ExternalLink, ArrowUpRight, ArrowDownRight, Minus, MessageSquare } from 'lucide-react';
 import GeoRiskMap from '../components/GeoRiskMap';
+import SessionReviewPanel from '../components/SessionReviewPanel';
+import { getFeedbackForSession, countFeedbacks } from '../lib/feedbackStore';
 import {
   SESSIONS, ALERTS, DASHBOARD_KPIs, RISK_DISTRIBUTION_24H, COLORS,
   type Session, type SessionStatus,
@@ -143,6 +145,8 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [liveSessions, setLiveSessions] = useState<Session[]>(() => [...SESSIONS].slice(0, 20));
   const [flashedId, setFlashedId] = useState<string | null>(null);
+  const [reviewSession, setReviewSession] = useState<Session | null>(null);
+  const [feedbackCount, setFeedbackCount] = useState(() => countFeedbacks());
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -222,9 +226,16 @@ export default function Dashboard() {
           <SectionHeader
             label="Active Session Feed"
             right={
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div className="animate-pulse-dot" style={{ width: '5px', height: '5px', borderRadius: '50%', background: COLORS.accent }} />
-                <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t4)' }}>refresh 4s · {liveSessions.length} sessions</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                {feedbackCount > 0 && (
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--green)', background: 'rgba(0,204,122,0.07)', border: '1px solid rgba(0,204,122,0.2)', padding: '2px 7px' }}>
+                    {feedbackCount} labeled
+                  </span>
+                )}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div className="animate-pulse-dot" style={{ width: '5px', height: '5px', borderRadius: '50%', background: COLORS.accent }} />
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t4)' }}>refresh 4s · {liveSessions.length} sessions</span>
+                </div>
               </div>
             }
           />
@@ -232,7 +243,7 @@ export default function Dashboard() {
             <table style={{ borderCollapse: 'collapse', width: '100%' }}>
               <thead>
                 <tr style={{ background: 'var(--bg)' }}>
-                  {['Session ID', 'User', 'Channel', 'Risk', '', 'Status', 'Amount', ''].map((h, i) => (
+                  {['Session ID', 'User', 'Channel', 'Risk', '', 'Status', 'Amount', 'Review'].map((h, i) => (
                     <th key={i} style={{
                       padding: '5px 10px', fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 600,
                       letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--bdr2)',
@@ -246,12 +257,12 @@ export default function Dashboard() {
               <tbody>
                 {liveSessions.map(s => {
                   const scfg = STATUS_CFG[s.status];
+                  const hasFeedback = !!getFeedbackForSession(s.id);
                   return (
                     <tr
                       key={s.id}
                       className={flashedId === s.id ? 'row-flash' : ''}
-                      style={{ cursor: 'pointer', borderBottom: '1px solid var(--card)' }}
-                      onClick={() => navigate(`/dashboard/session/${s.id}`)}
+                      style={{ borderBottom: '1px solid var(--card)' }}
                       onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.015)')}
                       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                     >
@@ -274,8 +285,25 @@ export default function Dashboard() {
                       <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono', fontSize: '11px', color: 'var(--t2)', textAlign: 'right', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
                         €{s.transactionAmount.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </td>
-                      <td style={{ padding: '6px 10px' }}>
-                        <ExternalLink size={10} color="var(--bdr2)" />
+                      <td style={{ padding: '6px 8px' }}>
+                        <button
+                          onClick={e => { e.stopPropagation(); setReviewSession(s); }}
+                          title="Review & label this session"
+                          style={{
+                            display: 'flex', alignItems: 'center', gap: '3px',
+                            background: hasFeedback ? 'rgba(0,204,122,0.07)' : 'transparent',
+                            border: `1px solid ${hasFeedback ? 'rgba(0,204,122,0.25)' : 'var(--bdr)'}`,
+                            color: hasFeedback ? 'var(--green)' : 'var(--t5)',
+                            padding: '3px 7px', cursor: 'pointer',
+                            fontFamily: 'JetBrains Mono', fontSize: '8px',
+                            transition: 'all 0.1s', whiteSpace: 'nowrap',
+                          }}
+                          onMouseEnter={e => { if (!hasFeedback) { (e.currentTarget as HTMLElement).style.color = 'var(--accent)'; (e.currentTarget as HTMLElement).style.borderColor = 'var(--accent-d)44'; } }}
+                          onMouseLeave={e => { if (!hasFeedback) { (e.currentTarget as HTMLElement).style.color = 'var(--t5)'; (e.currentTarget as HTMLElement).style.borderColor = 'var(--bdr)'; } }}
+                        >
+                          <MessageSquare size={10} />
+                          {hasFeedback ? 'Reviewed' : 'Review'}
+                        </button>
                       </td>
                     </tr>
                   );
@@ -351,6 +379,13 @@ export default function Dashboard() {
       <div style={{ marginBottom: '8px' }}>
         <GeoRiskMap />
       </div>
+
+      {/* Session review panel */}
+      <SessionReviewPanel
+        session={reviewSession}
+        onClose={() => setReviewSession(null)}
+        onSaved={() => setFeedbackCount(countFeedbacks())}
+      />
 
       {/* Risk distribution chart */}
       <div style={{ background: 'var(--surface)', border: '1px solid var(--bdr)' }}>

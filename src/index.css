@@ -128,6 +128,11 @@ body {
   animation: slide-in 0.25s ease-out forwards;
 }
 
+@keyframes slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
 /* Radial glow behind KPI area — keep class but reduce intensity */
 .kpi-glow {
   background: radial-gradient(ellipse 80% 300px at 50% -60px, rgba(170, 85, 227, 0.03) 0%, transparent 70%);
