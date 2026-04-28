@@ -7,7 +7,6 @@ import {
 import { ExternalLink, ArrowUpRight, ArrowDownRight, Minus, MessageSquare } from 'lucide-react';
 import GeoRiskMap from '../components/GeoRiskMap';
 import SessionReviewPanel from '../components/SessionReviewPanel';
-import { InterventionEnginePanel } from '../components/InterventionEngine';
 import { getFeedbackForSession, countFeedbacks } from '../lib/feedbackStore';
 import { getLiveSessions } from '../lib/liveSessionStore';
 import { getInterventionKPIs } from '../lib/interventionStore';
@@ -157,7 +156,6 @@ export default function Dashboard() {
   const [flashedId, setFlashedId] = useState<string | null>(null);
   const [reviewSession, setReviewSession] = useState<Session | null>(null);
   const [feedbackCount, setFeedbackCount] = useState(() => countFeedbacks());
-  const [interventionThreshold, setInterventionThreshold] = useState(75);
   const [intKpis, setIntKpis] = useState(() => getInterventionKPIs());
 
   // Auto-refresh mock risk scores
@@ -293,11 +291,11 @@ export default function Dashboard() {
             <table style={{ borderCollapse: 'collapse', width: '100%' }}>
               <thead>
                 <tr style={{ background: 'var(--bg)' }}>
-                  {['Session ID', 'User', 'Channel', 'Risk', '', 'Status', 'Amount', 'Review'].map((h, i) => (
+                  {['Session ID', 'User', 'Channel', 'Risk', '', 'Status', 'Time', 'Amount', 'Review'].map((h, i) => (
                     <th key={i} style={{
                       padding: '5px 10px', fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 600,
                       letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--bdr2)',
-                      borderBottom: '1px solid var(--bdr)', textAlign: i >= 6 ? 'right' : 'left', whiteSpace: 'nowrap',
+                      borderBottom: '1px solid var(--bdr)', textAlign: i >= 7 ? 'right' : 'left', whiteSpace: 'nowrap',
                     }}>
                       {h}
                     </th>
@@ -350,6 +348,9 @@ export default function Dashboard() {
                         <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: scfg.color, background: scfg.bg, padding: '2px 6px', letterSpacing: '0.06em' }}>
                           {s.status}
                         </span>
+                      </td>
+                      <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono', fontSize: '10px', color: 'var(--t4)', whiteSpace: 'nowrap' }}>
+                        {new Date(s.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}
                       </td>
                       <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono', fontSize: '11px', color: 'var(--t2)', textAlign: 'right', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
                         €{s.transactionAmount.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -442,14 +443,6 @@ export default function Dashboard() {
             ))}
           </div>
         </div>
-      </div>
-
-      {/* Intervention Engine panel */}
-      <div style={{ marginBottom: '8px' }}>
-        <InterventionEnginePanel
-          threshold={interventionThreshold}
-          onThresholdChange={setInterventionThreshold}
-        />
       </div>
 
       {/* Geo risk map */}
