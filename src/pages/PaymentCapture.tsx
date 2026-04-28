@@ -18,8 +18,8 @@ function numColor(level: Level) {
 
 function Section({ title, live, children }: { title: string; live?: boolean; children: React.ReactNode }) {
   return (
-    <div style={{ background: '#111115', border: '1px solid #1E1E22', marginBottom: '10px' }}>
-      <div style={{ padding: '8px 12px', borderBottom: '1px solid #1E1E22', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div style={{ background: 'var(--card)', border: '1px solid var(--bdr)', marginBottom: '10px' }}>
+      <div style={{ padding: '8px 12px', borderBottom: '1px solid var(--bdr)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', letterSpacing: '0.12em', textTransform: 'uppercase', color: COLORS.muted }}>
           {title}
         </span>
@@ -39,7 +39,7 @@ function Row({ label, value, level = 'normal', mono = true }: { label: string; v
   const formatted = typeof value === 'number' ? (Number.isInteger(value) ? value.toString() : value.toFixed(3)) : value;
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '3px 12px' }}>
-      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#4A4A5A' }}>{label}</span>
+      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: 'var(--t3)' }}>{label}</span>
       <span style={{ fontFamily: mono ? 'JetBrains Mono' : 'Inter', fontSize: '11px', color: numColor(level), fontWeight: level !== 'normal' ? 600 : 400 }}>
         {formatted}
       </span>
@@ -66,7 +66,7 @@ function SignalPanel({ metrics, elapsed }: { metrics: LiveMetrics; elapsed: numb
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {/* Status bar */}
-      <div style={{ background: '#0F0F12', border: '1px solid #1E1E22', padding: '9px 12px', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ background: 'var(--surface)', border: '1px solid var(--bdr)', padding: '9px 12px', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span className="animate-pulse-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: COLORS.danger, display: 'inline-block' }} />
           <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.danger, letterSpacing: '0.1em' }}>RECORDING</span>
@@ -203,8 +203,8 @@ function PaymentWidget({
 
   const inputStyle = (field: string): React.CSSProperties => ({
     width: '100%',
-    background: '#0A0A0B',
-    border: `1px solid ${focused === field ? COLORS.accent : '#2A2A32'}`,
+    background: 'var(--bg)',
+    border: `1px solid ${focused === field ? COLORS.accent : 'var(--bdr2)'}`,
     color: COLORS.primary,
     fontFamily: 'JetBrains Mono',
     fontSize: '13px',
@@ -226,7 +226,7 @@ function PaymentWidget({
 
   if (submitted) {
     return (
-      <div style={{ maxWidth: '440px', margin: '0 auto', background: '#111115', border: '1px solid #1E1E22', padding: '48px 40px', textAlign: 'center' }}>
+      <div style={{ maxWidth: '440px', margin: '0 auto', background: 'var(--card)', border: '1px solid var(--bdr)', padding: '48px 40px', textAlign: 'center' }}>
         <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(0,204,122,0.1)', border: '1px solid rgba(0,204,122,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
           <CheckCircle size={22} color={COLORS.safe} />
         </div>
@@ -239,7 +239,7 @@ function PaymentWidget({
   return (
     <div style={{ maxWidth: '440px', margin: '0 auto' }}>
       {/* Merchant header */}
-      <div style={{ background: '#111115', border: '1px solid #1E1E22', borderBottom: 'none', padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ background: 'var(--card)', border: '1px solid var(--bdr)', borderBottom: 'none', padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <div style={{ fontFamily: 'Inter', fontSize: '13px', color: COLORS.muted }}>Payment to</div>
           <div style={{ fontFamily: 'Inter', fontSize: '16px', fontWeight: 600, color: COLORS.primary }}>SW1FT Demo</div>
@@ -251,7 +251,7 @@ function PaymentWidget({
       </div>
 
       {/* Form */}
-      <div style={{ background: '#111115', border: '1px solid #1E1E22', padding: '24px' }}>
+      <div style={{ background: 'var(--card)', border: '1px solid var(--bdr)', padding: '24px' }}>
         {/* Cardholder */}
         <div style={{ marginBottom: '16px' }}>
           <label style={{ display: 'block', fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '6px' }}>
@@ -361,7 +361,7 @@ function PaymentWidget({
             width: '100%',
             background: isReady ? COLORS.accent : 'rgba(170,85,227,0.15)',
             border: 'none',
-            color: isReady ? '#0A0A0B' : 'rgba(170,85,227,0.4)',
+            color: isReady ? 'var(--bg)' : 'rgba(170,85,227,0.4)',
             fontFamily: 'JetBrains Mono',
             fontSize: '12px',
             fontWeight: 600,
@@ -421,7 +421,7 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
     textTransform: 'uppercase',
     cursor: 'pointer',
     background: tab === t ? 'rgba(170,85,227,0.08)' : 'transparent',
-    border: `1px solid ${tab === t ? COLORS.accent : '#1E1E22'}`,
+    border: `1px solid ${tab === t ? COLORS.accent : 'var(--bdr)'}`,
     color: tab === t ? COLORS.accent : COLORS.muted,
     marginRight: '4px',
     marginBottom: '4px',
@@ -432,9 +432,9 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-      <div style={{ background: '#111115', border: '1px solid #2A2A32', width: '100%', maxWidth: '780px', maxHeight: '90vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div style={{ background: 'var(--card)', border: '1px solid var(--bdr2)', width: '100%', maxWidth: '780px', maxHeight: '90vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {/* Header */}
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid #1E1E22', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--bdr)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.safe, letterSpacing: '0.12em', marginBottom: '4px' }}>BEHAVIORAL PROFILE CAPTURED</div>
             <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>
@@ -446,12 +446,12 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
               <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Analyst</div>
               <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.primary }}>{snapshot.analyst}</div>
             </div>
-            <button onClick={onClose} style={{ background: 'none', border: '1px solid #1E1E22', color: COLORS.muted, cursor: 'pointer', padding: '6px 10px', fontFamily: 'JetBrains Mono', fontSize: '11px' }}>ESC</button>
+            <button onClick={onClose} style={{ background: 'none', border: '1px solid var(--bdr)', color: COLORS.muted, cursor: 'pointer', padding: '6px 10px', fontFamily: 'JetBrains Mono', fontSize: '11px' }}>ESC</button>
           </div>
         </div>
 
         {/* Tabs */}
-        <div style={{ padding: '12px 20px', borderBottom: '1px solid #1E1E22', display: 'flex', flexWrap: 'wrap' }}>
+        <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--bdr)', display: 'flex', flexWrap: 'wrap' }}>
           {(['mouse', 'keyboard', 'session', 'attention', 'device'] as const).map(t => (
             <button key={t} style={tabStyle(t)} onClick={() => setTab(t)}>{t}</button>
           ))}
@@ -462,8 +462,8 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
           {tab === 'mouse' && (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 24px' }}>
               {Object.entries(m.mouse).map(([k, v]) => (
-                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #1A1A1E' }}>
-                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#4A4A5A' }}>{k}</span>
+                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid var(--bdr)' }}>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: 'var(--t3)' }}>{k}</span>
                   <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.primary }}>{typeof v === 'number' ? v.toFixed(3) : String(v)}</span>
                 </div>
               ))}
@@ -472,16 +472,16 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
           {tab === 'keyboard' && (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 24px' }}>
               {Object.entries(m.keyboard).map(([k, v]) => (
-                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #1A1A1E' }}>
-                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#4A4A5A' }}>{k}</span>
+                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid var(--bdr)' }}>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: 'var(--t3)' }}>{k}</span>
                   <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.primary }}>{typeof v === 'number' ? v.toFixed(3) : String(v)}</span>
                 </div>
               ))}
               <div style={{ gridColumn: '1/-1', marginTop: '12px' }}>
                 <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>Clipboard</div>
                 {Object.entries(m.clipboard).map(([k, v]) => (
-                  <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #1A1A1E' }}>
-                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#4A4A5A' }}>{k}</span>
+                  <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid var(--bdr)' }}>
+                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: 'var(--t3)' }}>{k}</span>
                     <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.primary }}>{Array.isArray(v) ? v.join(', ') || '—' : String(v)}</span>
                   </div>
                 ))}
@@ -491,8 +491,8 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
           {tab === 'session' && (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 24px' }}>
               {Object.entries(m.session).map(([k, v]) => (
-                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #1A1A1E', gridColumn: typeof v === 'object' && v !== null ? '1/-1' : 'auto' }}>
-                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#4A4A5A', flexShrink: 0, marginRight: '12px' }}>{k}</span>
+                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid var(--bdr)', gridColumn: typeof v === 'object' && v !== null ? '1/-1' : 'auto' }}>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: 'var(--t3)', flexShrink: 0, marginRight: '12px' }}>{k}</span>
                   <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.primary, wordBreak: 'break-all', textAlign: 'right' }}>
                     {typeof v === 'number' ? (k.endsWith('_ms') ? fmtMs(v) : v.toFixed(3)) : Array.isArray(v) ? v.join(' → ') || '—' : typeof v === 'object' ? JSON.stringify(v) : String(v ?? '—')}
                   </span>
@@ -503,8 +503,8 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
           {tab === 'attention' && (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 24px' }}>
               {Object.entries(m.attention).map(([k, v]) => (
-                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #1A1A1E' }}>
-                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#4A4A5A' }}>{k}</span>
+                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid var(--bdr)' }}>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: 'var(--t3)' }}>{k}</span>
                   <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.primary }}>{typeof v === 'number' && k.endsWith('_ms') ? fmtMs(v) : String(v)}</span>
                 </div>
               ))}
@@ -513,8 +513,8 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
           {tab === 'device' && (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 24px' }}>
               {Object.entries(m.device).map(([k, v]) => (
-                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #1A1A1E', gridColumn: k === 'user_agent' || k === 'languages' ? '1/-1' : 'auto' }}>
-                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#4A4A5A', flexShrink: 0, marginRight: '12px' }}>{k}</span>
+                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid var(--bdr)', gridColumn: k === 'user_agent' || k === 'languages' ? '1/-1' : 'auto' }}>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: 'var(--t3)', flexShrink: 0, marginRight: '12px' }}>{k}</span>
                   <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.primary, wordBreak: 'break-all', textAlign: 'right' }}>{String(v) || '—'}</span>
                 </div>
               ))}
@@ -523,7 +523,7 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
         </div>
 
         {/* Footer actions */}
-        <div style={{ padding: '14px 20px', borderTop: '1px solid #1E1E22', display: 'flex', gap: '10px', justifyContent: 'flex-end', alignItems: 'center' }}>
+        <div style={{ padding: '14px 20px', borderTop: '1px solid var(--bdr)', display: 'flex', gap: '10px', justifyContent: 'flex-end', alignItems: 'center' }}>
           {saved && (
             <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.safe, marginRight: 'auto' }}>
               ✓ Saved · Attributed to {snapshot.analyst}
@@ -531,14 +531,14 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
           )}
           <button
             onClick={handleExport}
-            style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'transparent', border: '1px solid #2A2A32', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '10px', letterSpacing: '0.08em', padding: '8px 14px', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'transparent', border: '1px solid var(--bdr2)', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '10px', letterSpacing: '0.08em', padding: '8px 14px', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' }}
           >
             <Download size={11} /> Export JSON
           </button>
           <button
             onClick={handleSave}
             disabled={saved}
-            style={{ display: 'flex', alignItems: 'center', gap: '6px', background: saved ? 'rgba(0,204,122,0.1)' : COLORS.accent, border: 'none', color: saved ? COLORS.safe : '#0A0A0B', fontFamily: 'JetBrains Mono', fontSize: '10px', letterSpacing: '0.08em', fontWeight: 600, padding: '8px 16px', cursor: saved ? 'default' : 'pointer', textTransform: 'uppercase' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '6px', background: saved ? 'rgba(0,204,122,0.1)' : COLORS.accent, border: 'none', color: saved ? COLORS.safe : 'var(--bg)', fontFamily: 'JetBrains Mono', fontSize: '10px', letterSpacing: '0.08em', fontWeight: 600, padding: '8px 16px', cursor: saved ? 'default' : 'pointer', textTransform: 'uppercase' }}
           >
             <Save size={11} /> {saved ? 'Saved' : 'Save to SW1FT'}
           </button>
@@ -554,10 +554,10 @@ function CompletionModal({ snapshot, onClose }: { snapshot: BehaviorSnapshot; on
 
 function IdlePanel({ onStart }: { onStart: () => void }) {
   return (
-    <div style={{ background: '#111115', border: '1px solid #1E1E22', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 32px', textAlign: 'center', gap: '0' }}>
+    <div style={{ background: 'var(--card)', border: '1px solid var(--bdr)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 32px', textAlign: 'center', gap: '0' }}>
       {/* Icon ring */}
-      <div style={{ width: '56px', height: '56px', borderRadius: '50%', border: '1px solid #2A2A32', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
-        <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#2A2A32' }} />
+      <div style={{ width: '56px', height: '56px', borderRadius: '50%', border: '1px solid var(--bdr2)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+        <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--bdr2)' }} />
       </div>
       <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.primary, letterSpacing: '0.1em', marginBottom: '8px' }}>RECORDING PAUSED</div>
       <div style={{ fontFamily: 'Inter', fontSize: '12px', color: COLORS.muted, lineHeight: 1.6, marginBottom: '32px', maxWidth: '260px' }}>
@@ -566,14 +566,14 @@ function IdlePanel({ onStart }: { onStart: () => void }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%', marginBottom: '32px', textAlign: 'left' }}>
         {['Mouse movement & clicks', 'Keystroke timing & rhythm', 'Field focus & duration', 'Clipboard activity', 'Tab switches & attention'].map(s => (
           <div key={s} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#2A2A32', flexShrink: 0 }} />
-            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#3A3A4A' }}>{s}</span>
+            <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--bdr2)', flexShrink: 0 }} />
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: 'var(--t4)' }}>{s}</span>
           </div>
         ))}
       </div>
       <button
         onClick={onStart}
-        style={{ width: '100%', background: COLORS.accent, border: 'none', color: '#0A0A0B', fontFamily: 'JetBrains Mono', fontSize: '11px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '13px', cursor: 'pointer', transition: 'opacity 0.2s' }}
+        style={{ width: '100%', background: COLORS.accent, border: 'none', color: 'var(--bg)', fontFamily: 'JetBrains Mono', fontSize: '11px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '13px', cursor: 'pointer', transition: 'opacity 0.2s' }}
       >
         ▶ Start Recording
       </button>
@@ -629,14 +629,14 @@ export default function PaymentCapture() {
   const sessionId = `SL-${startRef.current.toString(36).toUpperCase().slice(-6)}`;
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0A0A0B', padding: '24px' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg)', padding: '24px' }}>
       {/* Page header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button onClick={() => navigate('/dashboard')} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', cursor: 'pointer', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '11px', padding: 0 }}>
             <ArrowLeft size={13} /> Back
           </button>
-          <div style={{ width: '1px', height: '16px', background: '#1E1E22' }} />
+          <div style={{ width: '1px', height: '16px', background: 'var(--bdr)' }} />
           <div>
             <div style={{ fontFamily: 'Inter', fontSize: '15px', fontWeight: 600, color: COLORS.primary }}>Behavioral Capture</div>
             <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted }}>
@@ -658,7 +658,7 @@ export default function PaymentCapture() {
               onChange={e => { setUserId(e.target.value); localStorage.setItem('sw1ft_capture_user_id', e.target.value); }}
               placeholder="USR-XXXX"
               disabled={recording || submitted}
-              style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', background: '#0A0A0C', border: '1px solid #2A2A32', color: COLORS.primary, padding: '5px 8px', width: '100px', outline: 'none', opacity: (recording || submitted) ? 0.5 : 1 }}
+              style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', background: 'var(--bg)', border: '1px solid var(--bdr2)', color: COLORS.primary, padding: '5px 8px', width: '100px', outline: 'none', opacity: (recording || submitted) ? 0.5 : 1 }}
             />
           </div>
           {/* Start / Stop button */}
@@ -674,7 +674,7 @@ export default function PaymentCapture() {
             ) : (
               <button
                 onClick={handleStart}
-                style={{ display: 'flex', alignItems: 'center', gap: '7px', background: COLORS.accent, border: 'none', color: '#0A0A0B', fontFamily: 'JetBrains Mono', fontSize: '10px', fontWeight: 600, letterSpacing: '0.1em', padding: '8px 16px', cursor: 'pointer' }}
+                style={{ display: 'flex', alignItems: 'center', gap: '7px', background: COLORS.accent, border: 'none', color: 'var(--bg)', fontFamily: 'JetBrains Mono', fontSize: '10px', fontWeight: 600, letterSpacing: '0.1em', padding: '8px 16px', cursor: 'pointer' }}
               >
                 ▶ START RECORDING
               </button>

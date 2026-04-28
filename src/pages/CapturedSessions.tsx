@@ -49,7 +49,7 @@ function SessionDetail({ s }: { s: BehaviorSnapshot }) {
         fontFamily: 'JetBrains Mono', fontSize: '9px', letterSpacing: '0.1em',
         textTransform: 'uppercase', cursor: 'pointer',
         background: tab === t ? 'rgba(170,85,227,0.08)' : 'transparent',
-        border: `1px solid ${tab === t ? COLORS.accent : '#1E1E22'}`,
+        border: `1px solid ${tab === t ? COLORS.accent : 'var(--bdr)'}`,
         color: tab === t ? COLORS.accent : COLORS.muted,
         marginRight: '4px',
       }}
@@ -59,8 +59,8 @@ function SessionDetail({ s }: { s: BehaviorSnapshot }) {
   );
 
   const pairs = (obj: Record<string, unknown>) => Object.entries(obj).map(([k, v]) => (
-    <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid #16161A' }}>
-      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#4A4A5A', flexShrink: 0, marginRight: '12px' }}>{k}</span>
+    <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid var(--bdr)' }}>
+      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: 'var(--t3)', flexShrink: 0, marginRight: '12px' }}>{k}</span>
       <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.primary, textAlign: 'right', wordBreak: 'break-all' }}>
         {Array.isArray(v) ? (v.join(', ') || '—') : typeof v === 'number' ? (k.endsWith('_ms') ? fmtMs(v) : Number.isInteger(v) ? v.toString() : (v as number).toFixed(4)) : String(v ?? '—')}
       </span>
@@ -70,7 +70,7 @@ function SessionDetail({ s }: { s: BehaviorSnapshot }) {
   return (
     <tr>
       <td colSpan={11} style={{ padding: 0 }}>
-        <div style={{ background: '#0D0D10', borderBottom: '1px solid #1E1E22', padding: '16px 20px' }}>
+        <div style={{ background: '#0D0D10', borderBottom: '1px solid var(--bdr)', padding: '16px 20px' }}>
           {/* Tabs */}
           <div style={{ marginBottom: '14px', display: 'flex', flexWrap: 'wrap', gap: '0' }}>
             {tabBtn('mouse', 'Mouse')}
@@ -114,12 +114,12 @@ export default function CapturedSessions() {
 
   if (sessions.length === 0) {
     return (
-      <div style={{ padding: '32px', minHeight: '100vh', background: '#0A0A0B' }}>
+      <div style={{ padding: '32px', minHeight: '100vh', background: 'var(--bg)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px' }}>
           <button onClick={() => navigate('/dashboard')} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', cursor: 'pointer', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '11px', padding: 0 }}>
             <ArrowLeft size={13} /> Back
           </button>
-          <div style={{ width: '1px', height: '16px', background: '#1E1E22' }} />
+          <div style={{ width: '1px', height: '16px', background: 'var(--bdr)' }} />
           <span style={{ fontFamily: 'Inter', fontSize: '15px', fontWeight: 600, color: COLORS.primary }}>Captured Sessions</span>
         </div>
         <div style={{ textAlign: 'center', padding: '80px 0' }}>
@@ -136,14 +136,14 @@ export default function CapturedSessions() {
   }
 
   return (
-    <div style={{ padding: '24px', minHeight: '100vh', background: '#0A0A0B' }}>
+    <div style={{ padding: '24px', minHeight: '100vh', background: 'var(--bg)' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button onClick={() => navigate('/dashboard')} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', cursor: 'pointer', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '11px', padding: 0 }}>
             <ArrowLeft size={13} /> Back
           </button>
-          <div style={{ width: '1px', height: '16px', background: '#1E1E22' }} />
+          <div style={{ width: '1px', height: '16px', background: 'var(--bdr)' }} />
           <div>
             <div style={{ fontFamily: 'Inter', fontSize: '15px', fontWeight: 600, color: COLORS.primary }}>Captured Sessions</div>
             <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted }}>{sessions.length} behavioral profile{sessions.length !== 1 ? 's' : ''} stored locally</div>
@@ -152,7 +152,7 @@ export default function CapturedSessions() {
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <button
             onClick={() => navigate('/dashboard/payment-capture')}
-            style={{ background: COLORS.accent, border: 'none', color: '#0A0A0B', fontFamily: 'JetBrains Mono', fontSize: '10px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '8px 16px', cursor: 'pointer' }}
+            style={{ background: COLORS.accent, border: 'none', color: 'var(--bg)', fontFamily: 'JetBrains Mono', fontSize: '10px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '8px 16px', cursor: 'pointer' }}
           >
             + New Capture
           </button>
@@ -160,10 +160,10 @@ export default function CapturedSessions() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.warning }}>Clear all?</span>
               <button onClick={handleClear} style={{ background: COLORS.danger, border: 'none', color: '#fff', fontFamily: 'JetBrains Mono', fontSize: '10px', padding: '6px 12px', cursor: 'pointer' }}>Yes</button>
-              <button onClick={() => setConfirmClear(false)} style={{ background: 'transparent', border: '1px solid #1E1E22', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '10px', padding: '6px 12px', cursor: 'pointer' }}>No</button>
+              <button onClick={() => setConfirmClear(false)} style={{ background: 'transparent', border: '1px solid var(--bdr)', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '10px', padding: '6px 12px', cursor: 'pointer' }}>No</button>
             </div>
           ) : (
-            <button onClick={() => setConfirmClear(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'transparent', border: '1px solid #1E1E22', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '10px', padding: '7px 12px', cursor: 'pointer' }}>
+            <button onClick={() => setConfirmClear(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'transparent', border: '1px solid var(--bdr)', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '10px', padding: '7px 12px', cursor: 'pointer' }}>
               <Trash2 size={11} /> Clear all
             </button>
           )}
@@ -178,7 +178,7 @@ export default function CapturedSessions() {
           { label: 'Paste-Heavy', value: sessions.filter(s => s.metrics.clipboard.paste_total > 3).length, color: COLORS.warning },
           { label: 'Tab Switchers', value: sessions.filter(s => s.metrics.attention.tab_switch_count > 2).length, color: COLORS.warning },
         ].map(({ label, value, color }) => (
-          <div key={label} style={{ background: '#111115', border: '1px solid #1E1E22', padding: '14px 16px' }}>
+          <div key={label} style={{ background: 'var(--card)', border: '1px solid var(--bdr)', padding: '14px 16px' }}>
             <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>{label}</div>
             <div style={{ fontFamily: 'JetBrains Mono', fontSize: '22px', fontWeight: 600, color: color ?? COLORS.accent }}>{value}</div>
           </div>
@@ -186,7 +186,7 @@ export default function CapturedSessions() {
       </div>
 
       {/* Table */}
-      <div style={{ background: '#111115', border: '1px solid #1E1E22', overflowX: 'auto' }}>
+      <div style={{ background: 'var(--card)', border: '1px solid var(--bdr)', overflowX: 'auto' }}>
         <table className="sl-table">
           <thead>
             <tr>

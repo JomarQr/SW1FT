@@ -44,11 +44,11 @@ function CopyBtn({ text }: { text: string }) {
 
 function CodeBlock({ code }: { code: string }) {
   return (
-    <div style={{ position: 'relative', background: '#0A0A0C', border: '1px solid #1E1E22', marginTop: '10px' }}>
+    <div style={{ position: 'relative', background: 'var(--bg)', border: '1px solid var(--bdr)', marginTop: '10px' }}>
       <div style={{ position: 'absolute', top: '8px', right: '8px' }}>
         <CopyBtn text={code} />
       </div>
-      <pre style={{ margin: 0, padding: '18px 20px', overflowX: 'auto', fontFamily: 'JetBrains Mono', fontSize: '12px', lineHeight: 1.75, color: '#C8C8D4' }}>
+      <pre style={{ margin: 0, padding: '18px 20px', overflowX: 'auto', fontFamily: 'JetBrains Mono', fontSize: '12px', lineHeight: 1.75, color: 'var(--t1)' }}>
         <code>{code}</code>
       </pre>
     </div>
@@ -123,7 +123,7 @@ export function PaymentForm() {
     letterSpacing: '0.1em',
     textTransform: 'uppercase',
     cursor: 'pointer',
-    border: `1px solid ${tab === t ? COLORS.accent : '#1E1E22'}`,
+    border: `1px solid ${tab === t ? COLORS.accent : 'var(--bdr)'}`,
     background: tab === t ? 'rgba(170,85,227,0.08)' : 'transparent',
     color: tab === t ? COLORS.accent : COLORS.muted,
   });
@@ -145,7 +145,7 @@ export function PaymentForm() {
       </div>
 
       {/* Key card */}
-      <div style={{ background: '#111115', border: '1px solid #1E1E22', padding: '24px', marginBottom: '28px' }}>
+      <div style={{ background: 'var(--card)', border: '1px solid var(--bdr)', padding: '24px', marginBottom: '28px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
 
           {/* API Key */}
@@ -153,7 +153,7 @@ export function PaymentForm() {
             <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '10px' }}>
               API Key <span style={{ color: COLORS.safe, marginLeft: '8px' }}>● LIVE</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#0A0A0C', border: '1px solid #1E1E22', padding: '10px 14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--bg)', border: '1px solid var(--bdr)', padding: '10px 14px' }}>
               <span style={{ fontFamily: 'JetBrains Mono', fontSize: '12px', color: COLORS.primary, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {maskedKey}
               </span>
@@ -169,7 +169,7 @@ export function PaymentForm() {
             <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '10px' }}>
               Site ID
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#0A0A0C', border: '1px solid #1E1E22', padding: '10px 14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--bg)', border: '1px solid var(--bdr)', padding: '10px 14px' }}>
               <span style={{ fontFamily: 'JetBrains Mono', fontSize: '12px', color: COLORS.primary, flex: 1 }}>
                 {siteId}
               </span>
@@ -179,7 +179,7 @@ export function PaymentForm() {
         </div>
 
         {/* Meta row */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid #1A1A1E' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid var(--bdr)' }}>
           <div style={{ display: 'flex', gap: '24px' }}>
             {[
               { label: 'Owner',    value: analyst },
@@ -196,10 +196,10 @@ export function PaymentForm() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.warning }}>Rotate key?</span>
               <button onClick={rotateKey} style={{ background: COLORS.danger, border: 'none', color: '#fff', fontFamily: 'JetBrains Mono', fontSize: '10px', padding: '5px 10px', cursor: 'pointer' }}>Yes, rotate</button>
-              <button onClick={() => setRotateConfirm(false)} style={{ background: 'transparent', border: '1px solid #1E1E22', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '10px', padding: '5px 10px', cursor: 'pointer' }}>Cancel</button>
+              <button onClick={() => setRotateConfirm(false)} style={{ background: 'transparent', border: '1px solid var(--bdr)', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '10px', padding: '5px 10px', cursor: 'pointer' }}>Cancel</button>
             </div>
           ) : (
-            <button onClick={() => setRotateConfirm(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'transparent', border: '1px solid #1E1E22', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '10px', padding: '7px 12px', cursor: 'pointer' }}>
+            <button onClick={() => setRotateConfirm(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'transparent', border: '1px solid var(--bdr)', color: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '10px', padding: '7px 12px', cursor: 'pointer' }}>
               <RefreshCw size={11} /> Rotate key
             </button>
           )}
@@ -207,7 +207,7 @@ export function PaymentForm() {
       </div>
 
       {/* Integration snippets */}
-      <div style={{ background: '#111115', border: '1px solid #1E1E22', padding: '24px', marginBottom: '28px' }}>
+      <div style={{ background: 'var(--card)', border: '1px solid var(--bdr)', padding: '24px', marginBottom: '28px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.primary, fontWeight: 600 }}>Integration snippet</div>
           <a href="/docs" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '5px', fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.accent, textDecoration: 'none' }}>
@@ -227,7 +227,7 @@ export function PaymentForm() {
       </div>
 
       {/* Checklist */}
-      <div style={{ background: '#111115', border: '1px solid #1E1E22', padding: '24px', marginBottom: '28px' }}>
+      <div style={{ background: 'var(--card)', border: '1px solid var(--bdr)', padding: '24px', marginBottom: '28px' }}>
         <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.primary, fontWeight: 600, marginBottom: '16px' }}>Integration checklist</div>
         {[
           { done: true,  text: 'API key generated' },
@@ -236,8 +236,8 @@ export function PaymentForm() {
           { done: false, text: 'Risk signals appearing in Sessions tab' },
           { done: false, text: 'Intervention thresholds configured' },
         ].map(item => (
-          <div key={item.text} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 0', borderBottom: '1px solid #16161A' }}>
-            <div style={{ width: '16px', height: '16px', border: `1px solid ${item.done ? COLORS.safe : '#2A2A32'}`, background: item.done ? 'rgba(0,204,122,0.1)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div key={item.text} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 0', borderBottom: '1px solid var(--bdr)' }}>
+            <div style={{ width: '16px', height: '16px', border: `1px solid ${item.done ? COLORS.safe : 'var(--bdr2)'}`, background: item.done ? 'rgba(0,204,122,0.1)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               {item.done && <Check size={10} color={COLORS.safe} />}
             </div>
             <span style={{ fontFamily: 'JetBrains Mono', fontSize: '12px', color: item.done ? COLORS.primary : COLORS.muted }}>{item.text}</span>

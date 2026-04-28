@@ -20,17 +20,17 @@ function daysAgo(d: number): string {
 }
 
 export const COLORS = {
-  bg: '#0A0A0B',
-  surface: '#0F0F12',
-  card: '#111115',
-  border: '#1E1E22',
-  accent: '#AA55E3',
-  primary: '#E8E8ED',
+  bg: 'var(--bg)',
+  surface: 'var(--surface)',
+  card: 'var(--card)',
+  border: 'var(--bdr)',
+  accent: 'var(--accent)',
+  primary: 'var(--t1)',
   muted: '#6B6B7A',
-  danger: '#FF3B5C',
-  warning: '#FFB800',
-  safe: '#00CC7A',
-  orange: '#FF8C00',
+  danger: 'var(--red)',
+  warning: 'var(--yellow)',
+  safe: 'var(--green)',
+  orange: 'var(--orange)',
 };
 
 // ─── Types ─────────────────────────────────────────────────────────────────
@@ -296,10 +296,10 @@ export const SIGNAL_EFFECTIVENESS = [
 ];
 
 export const SCAM_BREAKDOWN = [
-  { name: 'Impersonation', value: 38, color: '#FF3B5C' },
-  { name: 'APP Fraud', value: 27, color: '#FF8C00' },
-  { name: 'Investment', value: 18, color: '#FFB800' },
-  { name: 'BEC', value: 11, color: '#AA55E3' },
+  { name: 'Impersonation', value: 38, color: 'var(--red)' },
+  { name: 'APP Fraud', value: 27, color: 'var(--orange)' },
+  { name: 'Investment', value: 18, color: 'var(--yellow)' },
+  { name: 'BEC', value: 11, color: 'var(--accent)' },
   { name: 'Romance', value: 6, color: '#6B6B7A' },
 ];
 

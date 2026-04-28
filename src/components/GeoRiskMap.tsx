@@ -53,7 +53,7 @@ const MARKERS: GeoMarker[] = [
   { id: 'berlin',   name: 'Germany',   city: 'Berlin',   coordinates: [13.4, 52.5], type: 'trusted',  sessions: 3,  risk: 'Low'      },
   { id: 'warsaw',   name: 'Poland',    city: 'Warsaw',   coordinates: [21.0, 52.2], type: 'trusted',  sessions: 2,  risk: 'Low'      },
   { id: 'istanbul', name: 'Turkey',    city: 'Istanbul', coordinates: [28.9, 41.0], type: 'new',      sessions: 1,  risk: 'Elevated' },
-  { id: 'dubai',    name: 'UAE',       city: 'Dubai',    coordinates: [55.3, 25.2], type: 'new',      sessions: 1,  risk: 'Elevated' },
+  { id: 'dubai',    name: 'United Arab Emirates', city: 'Dubai', coordinates: [55.3, 25.2], type: 'new', sessions: 1, risk: 'Elevated' },
   { id: 'lagos',    name: 'Nigeria',   city: 'Lagos',    coordinates: [3.4,   6.5], type: 'highrisk', sessions: 0,  risk: 'High'     },
   { id: 'moscow',   name: 'Russia',    city: 'Moscow',   coordinates: [37.6, 55.8], type: 'highrisk', sessions: 0,  risk: 'Blocked'  },
 ];
@@ -65,10 +65,10 @@ const CONNECTIONS: { from: [number, number]; to: [number, number]; delay: string
 ];
 
 const MCOL: Record<MarkerType, { stroke: string; fill: string; glow: string }> = {
-  current:  { stroke: '#AA55E3', fill: '#CC88FF', glow: 'rgba(170,85,227,0.4)'  },
-  trusted:  { stroke: '#00CC7A', fill: '#00EE8A', glow: 'rgba(0,204,122,0.3)'   },
-  new:      { stroke: '#FF8C00', fill: '#FFAA33', glow: 'rgba(255,140,0,0.3)'   },
-  highrisk: { stroke: '#FF3B5C', fill: '#FF6680', glow: 'rgba(255,59,92,0.3)'   },
+  current:  { stroke: 'var(--accent)', fill: 'var(--accent-lt)', glow: 'rgba(170,85,227,0.4)'  },
+  trusted:  { stroke: 'var(--green)', fill: 'var(--green)', glow: 'rgba(0,204,122,0.3)'   },
+  new:      { stroke: 'var(--orange)', fill: 'var(--orange)', glow: 'rgba(255,140,0,0.3)'   },
+  highrisk: { stroke: 'var(--red)', fill: 'var(--red)', glow: 'rgba(255,59,92,0.3)'   },
 };
 
 const MLABEL: Record<MarkerType, string> = {
@@ -80,7 +80,7 @@ const MLABEL: Record<MarkerType, string> = {
 
 const PROFILES: Record<string, CountryProfile> = {
   'Latvia': {
-    code: 'LV', flag: '🇱🇻', risk: 'Low', riskColor: '#00CC7A', type: 'current',
+    code: 'LV', flag: '🇱🇻', risk: 'Low', riskColor: 'var(--green)', type: 'current',
     sessions: 12, lastSeen: '2 minutes ago', transactions: 12, avgAmount: '€3,200',
     status: 'PRIMARY REGION', trustedSince: 'Jan 2023',
     distance: '0 km (home)',
@@ -93,7 +93,7 @@ const PROFILES: Record<string, CountryProfile> = {
     ],
   },
   'Lithuania': {
-    code: 'LT', flag: '🇱🇹', risk: 'Low', riskColor: '#00CC7A', type: 'trusted',
+    code: 'LT', flag: '🇱🇹', risk: 'Low', riskColor: 'var(--green)', type: 'trusted',
     sessions: 8, lastSeen: '3 days ago', transactions: 8, avgAmount: '€2,800',
     status: 'TRUSTED', trustedSince: 'Mar 2023', distance: '290 km from Riga',
     insights: [
@@ -104,7 +104,7 @@ const PROFILES: Record<string, CountryProfile> = {
     ],
   },
   'Estonia': {
-    code: 'EE', flag: '🇪🇪', risk: 'Low', riskColor: '#00CC7A', type: 'trusted',
+    code: 'EE', flag: '🇪🇪', risk: 'Low', riskColor: 'var(--green)', type: 'trusted',
     sessions: 5, lastSeen: '8 days ago', transactions: 5, avgAmount: '€3,100',
     status: 'TRUSTED', trustedSince: 'May 2023', distance: '310 km from Riga',
     insights: [
@@ -114,7 +114,7 @@ const PROFILES: Record<string, CountryProfile> = {
     ],
   },
   'Germany': {
-    code: 'DE', flag: '🇩🇪', risk: 'Low', riskColor: '#00CC7A', type: 'trusted',
+    code: 'DE', flag: '🇩🇪', risk: 'Low', riskColor: 'var(--green)', type: 'trusted',
     sessions: 3, lastSeen: '22 days ago', transactions: 3, avgAmount: '€4,600',
     status: 'TRUSTED', trustedSince: 'Sep 2023', distance: '1,380 km from Riga',
     insights: [
@@ -125,7 +125,7 @@ const PROFILES: Record<string, CountryProfile> = {
     ],
   },
   'Poland': {
-    code: 'PL', flag: '🇵🇱', risk: 'Low', riskColor: '#00CC7A', type: 'trusted',
+    code: 'PL', flag: '🇵🇱', risk: 'Low', riskColor: 'var(--green)', type: 'trusted',
     sessions: 2, lastSeen: '31 days ago', transactions: 2, avgAmount: '€1,800',
     status: 'TRUSTED', trustedSince: 'Nov 2023', distance: '640 km from Riga',
     insights: [
@@ -135,7 +135,7 @@ const PROFILES: Record<string, CountryProfile> = {
     ],
   },
   'Turkey': {
-    code: 'TR', flag: '🇹🇷', risk: 'Elevated', riskColor: '#FF8C00', type: 'new',
+    code: 'TR', flag: '🇹🇷', risk: 'Elevated', riskColor: 'var(--orange)', type: 'new',
     sessions: 1, lastSeen: '6 days ago', transactions: 1, avgAmount: '€780',
     status: 'NEW REGION', distance: '2,100 km from Riga',
     insights: [
@@ -147,7 +147,7 @@ const PROFILES: Record<string, CountryProfile> = {
     ],
   },
   'United Arab Emirates': {
-    code: 'AE', flag: '🇦🇪', risk: 'Elevated', riskColor: '#FF8C00', type: 'new',
+    code: 'AE', flag: '🇦🇪', risk: 'Elevated', riskColor: 'var(--orange)', type: 'new',
     sessions: 1, lastSeen: '6 days ago', transactions: 1, avgAmount: '€920',
     status: 'NEW REGION', distance: '4,800 km from Riga',
     insights: [
@@ -158,7 +158,7 @@ const PROFILES: Record<string, CountryProfile> = {
     ],
   },
   'Nigeria': {
-    code: 'NG', flag: '🇳🇬', risk: 'High', riskColor: '#FF3B5C', type: 'highrisk',
+    code: 'NG', flag: '🇳🇬', risk: 'High', riskColor: 'var(--red)', type: 'highrisk',
     sessions: 0, lastSeen: 'Never', transactions: 0, avgAmount: '—',
     status: 'HIGH RISK', distance: '6,700 km from Riga',
     insights: [
@@ -169,7 +169,7 @@ const PROFILES: Record<string, CountryProfile> = {
     ],
   },
   'Russia': {
-    code: 'RU', flag: '🇷🇺', risk: 'Blocked', riskColor: '#FF3B5C', type: 'highrisk',
+    code: 'RU', flag: '🇷🇺', risk: 'Blocked', riskColor: 'var(--red)', type: 'highrisk',
     sessions: 0, lastSeen: 'Never', transactions: 0, avgAmount: '—',
     status: 'BLOCKED',
     insights: [
@@ -182,7 +182,7 @@ const PROFILES: Record<string, CountryProfile> = {
 };
 
 const DEFAULT_PROFILE: CountryProfile = {
-  code: '??', flag: '🌍', risk: 'No Data', riskColor: '#3A3A4E', type: 'unknown',
+  code: '??', flag: '🌍', risk: 'No Data', riskColor: 'var(--t4)', type: 'unknown',
   sessions: 0, lastSeen: '—', transactions: 0, avgAmount: '—',
   status: 'NO SESSION DATA',
   insights: [
@@ -191,6 +191,24 @@ const DEFAULT_PROFILE: CountryProfile = {
     { icon: 'info', text: 'Deploy SDK to begin collecting regional session data' },
   ],
 };
+
+/* ── flag image ──────────────────────────────────────────────────────────── */
+
+function FlagImg({ code, height = 22 }: { code: string; height?: number }) {
+  if (code === '??') return (
+    <svg width={height * 1.5} height={height} viewBox="0 0 36 24" fill="none">
+      <rect width="36" height="24" fill="var(--bdr2)" rx="2"/>
+      <text x="18" y="17" textAnchor="middle" fontSize="14" fill="var(--t4)">?</text>
+    </svg>
+  );
+  return (
+    <img
+      src={`https://flagcdn.com/w40/${code.toLowerCase()}.png`}
+      alt={code}
+      style={{ height: `${height}px`, width: 'auto', display: 'block', objectFit: 'contain' }}
+    />
+  );
+}
 
 /* ── helpers ─────────────────────────────────────────────────────────────── */
 
@@ -226,17 +244,17 @@ function riskBadge(risk: RiskLevel, color: string) {
 
 function insightIcon(icon: Insight['icon']) {
   const s = 11;
-  if (icon === 'ok')    return <CheckCircle   size={s} color="#00CC7A" />;
-  if (icon === 'alert') return <AlertTriangle size={s} color="#FF3B5C" />;
-  if (icon === 'watch') return <AlertTriangle size={s} color="#FF8C00" />;
-  return                       <Info          size={s} color="#4A4A5E" />;
+  if (icon === 'ok')    return <CheckCircle   size={s} color="var(--green)" />;
+  if (icon === 'alert') return <AlertTriangle size={s} color="var(--red)" />;
+  if (icon === 'watch') return <AlertTriangle size={s} color="var(--orange)" />;
+  return                       <Info          size={s} color="var(--t3)" />;
 }
 
 function insightTextColor(icon: Insight['icon']) {
-  if (icon === 'ok')    return '#7A7A90';
+  if (icon === 'ok')    return 'var(--t3)';
   if (icon === 'alert') return '#CC3344';
   if (icon === 'watch') return '#CC7700';
-  return '#3A3A52';
+  return 'var(--t4)';
 }
 
 /* ── zoom button ─────────────────────────────────────────────────────────── */
@@ -248,8 +266,8 @@ function ZoomBtn({ onClick, children, title }: { onClick: () => void; children: 
       onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
       style={{
         width: '26px', height: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: hov ? '#1A1A22' : '#111116', border: '1px solid #222230',
-        color: hov ? '#C8C8D4' : '#4A4A5E', cursor: 'pointer',
+        background: hov ? 'var(--bdr)' : 'var(--card)', border: '1px solid var(--t5)',
+        color: hov ? 'var(--t1)' : 'var(--t3)', cursor: 'pointer',
         transition: 'background 0.1s, color 0.1s',
       }}>
       {children}
@@ -311,19 +329,19 @@ export default function GeoRiskMap() {
   const mS = 1 / zoom; // marker scale factor
 
   return (
-    <div style={{ background: '#0A0A0C', border: '1px solid #1A1A1F', position: 'relative' }}>
+    <div style={{ background: 'var(--bg)', border: '1px solid var(--bdr)', position: 'relative' }}>
 
       {/* ── header ─────────────────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 14px', borderBottom: '1px solid #1A1A1F', background: '#0B0B0E', flexWrap: 'wrap', gap: '6px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 14px', borderBottom: '1px solid var(--bdr)', background: 'var(--bg)', flexWrap: 'wrap', gap: '6px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <MapPin size={12} color="#AA55E3" />
-          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', fontWeight: 700, color: '#3A3A4E', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+          <MapPin size={12} color="var(--accent)" />
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', fontWeight: 700, color: 'var(--t4)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
             Global Risk Intelligence Map
           </span>
           {selectedGeo && (
             <>
-              <span style={{ color: '#222230', fontFamily: 'JetBrains Mono', fontSize: '9px' }}>▸</span>
-              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: '#AA55E3' }}>{selectedGeo}</span>
+              <span style={{ color: 'var(--t5)', fontFamily: 'JetBrains Mono', fontSize: '9px' }}>▸</span>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--accent)' }}>{selectedGeo}</span>
             </>
           )}
         </div>
@@ -331,25 +349,25 @@ export default function GeoRiskMap() {
           {(Object.entries(MCOL) as [MarkerType, typeof MCOL[MarkerType]][]).map(([t, c]) => (
             <div key={t} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: c.stroke, boxShadow: `0 0 5px ${c.glow}` }} />
-              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: '#252535', letterSpacing: '0.06em' }}>{MLABEL[t]}</span>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--t5)', letterSpacing: '0.06em' }}>{MLABEL[t]}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* ── region preset bar ──────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '0 14px', borderBottom: '1px solid #1A1A1F', background: '#09090B', overflowX: 'auto' }}>
+      <div style={{ display: 'flex', alignItems: 'center', padding: '0 14px', borderBottom: '1px solid var(--bdr)', background: 'var(--bg)', overflowX: 'auto' }}>
         {REGION_PRESETS.map((r, i) => {
           const active = activeRegion === r.id;
           return (
             <button key={r.id} onClick={() => applyRegion(r)} style={{
               padding: '7px 11px', fontFamily: 'JetBrains Mono', fontSize: '9px',
               fontWeight: active ? 600 : 400, letterSpacing: '0.08em', textTransform: 'uppercase',
-              color: active ? '#AA55E3' : '#3A3A4E',
-              background: active ? 'rgba(170,85,227,0.07)' : 'transparent',
+              color: active ? 'var(--accent)' : 'var(--t4)',
+              background: active ? 'var(--accent-bg)' : 'transparent',
               border: 'none',
-              borderBottom: active ? '2px solid #AA55E3' : '2px solid transparent',
-              borderRight: i < REGION_PRESETS.length - 1 ? '1px solid #141418' : 'none',
+              borderBottom: active ? '2px solid var(--accent)' : '2px solid transparent',
+              borderRight: i < REGION_PRESETS.length - 1 ? '1px solid var(--bdr)' : 'none',
               cursor: 'pointer', whiteSpace: 'nowrap', transition: 'color 0.1s',
             }}>
               {r.label}
@@ -357,16 +375,16 @@ export default function GeoRiskMap() {
           );
         })}
         <div style={{ flex: 1 }} />
-        <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: '#1E1E28', paddingRight: '2px', whiteSpace: 'nowrap' }}>{zoom.toFixed(1)}×</span>
+        <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--bdr)', paddingRight: '2px', whiteSpace: 'nowrap' }}>{zoom.toFixed(1)}×</span>
       </div>
 
       {/* ── map + panel ────────────────────────────────────────────────────── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 288px' }}>
 
         {/* MAP */}
-        <div style={{ position: 'relative', background: '#08080A', borderRight: '1px solid #1A1A1F', overflow: 'hidden' }}>
+        <div style={{ position: 'relative', background: 'var(--bg)', borderRight: '1px solid var(--bdr)', overflow: 'hidden' }}>
           {!geoLoaded && (
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 3, background: '#08080A' }}>
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 3, background: 'var(--bg)' }}>
               <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: '#242434', letterSpacing: '0.14em' }}>LOADING INTELLIGENCE LAYER…</span>
             </div>
           )}
@@ -374,7 +392,7 @@ export default function GeoRiskMap() {
           <ComposableMap projection="geoEqualEarth" projectionConfig={{ scale: 185 }} style={{ width: '100%', height: '440px' }}>
             <ZoomableGroup zoom={zoom} center={center} onMoveEnd={handleMoveEnd} minZoom={0.7} maxZoom={16}
               translateExtent={[[-600, -400], [1400, 820]]}>
-              <rect x={-1000} y={-1000} width={3000} height={3000} fill="#08080A" />
+              <rect x={-1000} y={-1000} width={3000} height={3000} fill="var(--bg)" />
 
               <Geographies geography={GEO_URL}>
                 {({ geographies }) => {
@@ -388,8 +406,8 @@ export default function GeoRiskMap() {
                       : prof.type === 'trusted'  ? 'rgba(0,204,122,0.08)'
                       : prof.type === 'new'      ? 'rgba(255,140,0,0.08)'
                       : prof.type === 'highrisk' ? 'rgba(255,59,92,0.08)'
-                      : '#0D0D11'
-                      : '#0D0D11';
+                      : 'var(--surface)'
+                      : 'var(--surface)';
                     const selColor = prof
                       ? prof.type === 'current'  ? 'rgba(170,85,227,0.30)'
                       : prof.type === 'trusted'  ? 'rgba(0,204,122,0.22)'
@@ -402,8 +420,8 @@ export default function GeoRiskMap() {
                       : prof.type === 'trusted'  ? 'rgba(0,204,122,0.4)'
                       : prof.type === 'new'      ? 'rgba(255,140,0,0.4)'
                       : prof.type === 'highrisk' ? 'rgba(255,59,92,0.4)'
-                      : '#2A2A36'
-                      : '#1A1A22';
+                      : 'var(--bdr2)'
+                      : 'var(--bdr)';
 
                     return (
                       <Geography
@@ -413,7 +431,7 @@ export default function GeoRiskMap() {
                         style={{
                           default: {
                             fill: isSelected ? selColor : baseColor,
-                            stroke: isSelected ? borderCol : '#1A1A22',
+                            stroke: isSelected ? borderCol : 'var(--bdr)',
                             strokeWidth: isSelected ? 0.8 * mS : 0.4 * mS,
                             outline: 'none',
                           },
@@ -499,7 +517,7 @@ export default function GeoRiskMap() {
           </div>
 
           {/* Hint */}
-          <div style={{ position: 'absolute', bottom: '12px', left: '12px', fontFamily: 'JetBrains Mono', fontSize: '8px', color: '#1A1A28', letterSpacing: '0.08em', pointerEvents: 'none', zIndex: 4 }}>
+          <div style={{ position: 'absolute', bottom: '12px', left: '12px', fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--bdr2)', letterSpacing: '0.08em', pointerEvents: 'none', zIndex: 4 }}>
             click any country or marker
           </div>
         </div>
@@ -511,50 +529,50 @@ export default function GeoRiskMap() {
             /* ── COUNTRY DETAIL ── */
             <>
               {/* Country header */}
-              <div style={{ padding: '12px 14px', borderBottom: '1px solid #1A1A1F', background: '#0B0B0E' }}>
-                <button onClick={clearSelection} style={{ display: 'flex', alignItems: 'center', gap: '5px', background: 'none', border: 'none', cursor: 'pointer', color: '#3A3A4E', fontFamily: 'JetBrains Mono', fontSize: '8px', letterSpacing: '0.08em', padding: 0, marginBottom: '10px', transition: 'color 0.1s' }}
-                  onMouseEnter={e => (e.currentTarget.style.color = '#AA55E3')}
-                  onMouseLeave={e => (e.currentTarget.style.color = '#3A3A4E')}>
+              <div style={{ padding: '12px 14px', borderBottom: '1px solid var(--bdr)', background: 'var(--bg)' }}>
+                <button onClick={clearSelection} style={{ display: 'flex', alignItems: 'center', gap: '5px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--t4)', fontFamily: 'JetBrains Mono', fontSize: '8px', letterSpacing: '0.08em', padding: 0, marginBottom: '10px', transition: 'color 0.1s' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--t4)')}>
                   <ArrowLeft size={10} /> BACK TO OVERVIEW
                 </button>
 
                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
                   <div>
-                    <div style={{ fontSize: '20px', marginBottom: '4px', lineHeight: 1 }}>{profile.flag}</div>
-                    <div style={{ fontFamily: 'Inter', fontSize: '14px', fontWeight: 600, color: '#D0D0E0', marginBottom: '3px' }}>{selectedGeo}</div>
-                    <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: '#2A2A3A', letterSpacing: '0.08em' }}>ISO: {profile.code}</div>
+                    <div style={{ marginBottom: '6px', lineHeight: 1 }}><FlagImg code={profile.code} height={20} /></div>
+                    <div style={{ fontFamily: 'Inter', fontSize: '14px', fontWeight: 600, color: 'var(--t1)', marginBottom: '3px' }}>{selectedGeo}</div>
+                    <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--bdr2)', letterSpacing: '0.08em' }}>ISO: {profile.code}</div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     {riskBadge(profile.risk, profile.riskColor)}
-                    <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: '#2A2A3A', letterSpacing: '0.08em', marginTop: '5px' }}>{profile.status}</div>
+                    <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--bdr2)', letterSpacing: '0.08em', marginTop: '5px' }}>{profile.status}</div>
                   </div>
                 </div>
               </div>
 
               {/* Session stats */}
-              <div style={{ padding: '11px 14px', borderBottom: '1px solid #1A1A1F' }}>
-                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: '#252535', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '8px' }}>
+              <div style={{ padding: '11px 14px', borderBottom: '1px solid var(--bdr)' }}>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: 'var(--t5)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '8px' }}>
                   Session Statistics
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
                   {[
                     { label: 'Sessions',     value: String(profile.sessions), color: profile.riskColor },
-                    { label: 'Transactions', value: profile.transactions > 0 ? String(profile.transactions) : '—', color: '#8888A8' },
-                    { label: 'Avg Amount',   value: profile.avgAmount,   color: '#8888A8' },
-                    { label: 'Last Seen',    value: profile.lastSeen,    color: profile.sessions > 0 ? '#8888A8' : '#3A3A4E' },
+                    { label: 'Transactions', value: profile.transactions > 0 ? String(profile.transactions) : '—', color: 'var(--t2)' },
+                    { label: 'Avg Amount',   value: profile.avgAmount,   color: 'var(--t2)' },
+                    { label: 'Last Seen',    value: profile.lastSeen,    color: profile.sessions > 0 ? 'var(--t2)' : 'var(--t4)' },
                   ].map(({ label, value, color }) => (
-                    <div key={label} style={{ background: '#0D0D12', border: '1px solid #151520', padding: '7px 9px' }}>
-                      <div style={{ fontFamily: 'JetBrains Mono', fontSize: '7px', color: '#252535', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '3px' }}>{label}</div>
+                    <div key={label} style={{ background: 'var(--surface)', border: '1px solid #151520', padding: '7px 9px' }}>
+                      <div style={{ fontFamily: 'JetBrains Mono', fontSize: '7px', color: 'var(--t5)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '3px' }}>{label}</div>
                       <div style={{ fontFamily: 'JetBrains Mono', fontSize: '13px', fontWeight: 600, color, fontVariantNumeric: 'tabular-nums' }}>{value}</div>
                     </div>
                   ))}
                 </div>
                 {[
-                  profile.trustedSince && ['Trusted Since', profile.trustedSince, '#00CC7A'],
-                  profile.distance     && ['Distance',      profile.distance,      '#4A4A5E'],
+                  profile.trustedSince && ['Trusted Since', profile.trustedSince, 'var(--green)'],
+                  profile.distance     && ['Distance',      profile.distance,      'var(--t3)'],
                 ].filter(Boolean).map(([label, value, color]) => (
-                  <div key={label as string} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid #111116' }}>
-                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: '#252535' }}>{label as string}</span>
+                  <div key={label as string} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid var(--card)' }}>
+                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--t5)' }}>{label as string}</span>
                     <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: color as string }}>{value as string}</span>
                   </div>
                 ))}
@@ -562,7 +580,7 @@ export default function GeoRiskMap() {
 
               {/* Insights */}
               <div style={{ padding: '11px 14px', flex: 1 }}>
-                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: '#252535', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '8px' }}>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: 'var(--t5)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '8px' }}>
                   Risk Assessment
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '7px' }}>
@@ -580,43 +598,43 @@ export default function GeoRiskMap() {
           ) : (
             /* ── DEFAULT OVERVIEW ── */
             <>
-              <div style={{ padding: '12px 14px', borderBottom: '1px solid #1A1A1F' }}>
-                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: '#252535', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '8px' }}>Current Session</div>
+              <div style={{ padding: '12px 14px', borderBottom: '1px solid var(--bdr)' }}>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: 'var(--t5)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '8px' }}>Current Session</div>
                 {[
                   ['Country',        'Latvia',       ''],
                   ['City',           'Riga',         ''],
-                  ['Geo Confidence', 'High',         '#AA55E3'],
-                  ['Risk Level',     'Low',          '#00CC7A'],
+                  ['Geo Confidence', 'High',         'var(--accent)'],
+                  ['Risk Level',     'Low',          'var(--green)'],
                   ['Sessions',       '12 sessions',  ''],
                   ['Timezone',       'EET (UTC+2)',   ''],
                 ].map(([lbl, val, col]) => (
-                  <div key={lbl} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid #111116' }}>
-                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: '#2E2E3E' }}>{lbl}</span>
+                  <div key={lbl} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid var(--card)' }}>
+                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--bdr2)' }}>{lbl}</span>
                     <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: col || '#7878A0' }}>{val}</span>
                   </div>
                 ))}
               </div>
 
-              <div style={{ padding: '12px 14px', borderBottom: '1px solid #1A1A1F' }}>
-                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: '#252535', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '8px' }}>Historical Pattern</div>
-                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: '#252535', marginBottom: '4px' }}>Primary Region</div>
-                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: '#00CC7A', marginBottom: '8px' }}>Baltic States</div>
-                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: '#252535', marginBottom: '5px' }}>Known Regions</div>
+              <div style={{ padding: '12px 14px', borderBottom: '1px solid var(--bdr)' }}>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: 'var(--t5)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '8px' }}>Historical Pattern</div>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t5)', marginBottom: '4px' }}>Primary Region</div>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: 'var(--green)', marginBottom: '8px' }}>Baltic States</div>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t5)', marginBottom: '5px' }}>Known Regions</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px', marginBottom: '8px' }}>
                   {['Latvia', 'Lithuania', 'Estonia', 'Germany', 'Poland'].map(r => (
-                    <span key={r} style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: '#00CC7A', background: 'rgba(0,204,122,0.06)', border: '1px solid rgba(0,204,122,0.14)', padding: '2px 5px' }}>{r}</span>
+                    <span key={r} style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--green)', background: 'rgba(0,204,122,0.06)', border: '1px solid rgba(0,204,122,0.14)', padding: '2px 5px' }}>{r}</span>
                   ))}
                 </div>
-                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: '#252535', marginBottom: '5px' }}>Flagged</div>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t5)', marginBottom: '5px' }}>Flagged</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px' }}>
                   {['Turkey', 'UAE'].map(r => (
-                    <span key={r} style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: '#FF8C00', background: 'rgba(255,140,0,0.06)', border: '1px solid rgba(255,140,0,0.14)', padding: '2px 5px' }}>{r}</span>
+                    <span key={r} style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--orange)', background: 'rgba(255,140,0,0.06)', border: '1px solid rgba(255,140,0,0.14)', padding: '2px 5px' }}>{r}</span>
                   ))}
                 </div>
               </div>
 
               <div style={{ padding: '12px 14px', flex: 1 }}>
-                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: '#252535', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '8px' }}>Geo Risk Insights</div>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: 'var(--t5)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '8px' }}>Geo Risk Insights</div>
                 {[
                   { icon: 'ok'    as const, text: 'Current session from primary trusted region' },
                   { icon: 'ok'    as const, text: 'EET timezone consistent with Baltics pattern' },
@@ -637,17 +655,17 @@ export default function GeoRiskMap() {
       </div>
 
       {/* ── bottom metrics ──────────────────────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', borderTop: '1px solid #1A1A1F' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', borderTop: '1px solid var(--bdr)' }}>
         {[
-          { label: 'Trusted Regions',    value: '5',   sub: 'LV · LT · EE · DE · PL', color: '#00CC7A' },
-          { label: 'New Regions / Month', value: '2',   sub: 'Turkey, UAE flagged',      color: '#FF8C00' },
-          { label: 'Geo Risk Score',      value: '18',  sub: 'out of 100',               color: '#AA55E3' },
-          { label: 'Last Region Change',  value: '14d', sub: 'Riga → Berlin → Riga',    color: '#4A4A5E' },
+          { label: 'Trusted Regions',    value: '5',   sub: 'LV · LT · EE · DE · PL', color: 'var(--green)' },
+          { label: 'New Regions / Month', value: '2',   sub: 'Turkey, UAE flagged',      color: 'var(--orange)' },
+          { label: 'Geo Risk Score',      value: '18',  sub: 'out of 100',               color: 'var(--accent)' },
+          { label: 'Last Region Change',  value: '14d', sub: 'Riga → Berlin → Riga',    color: 'var(--t3)' },
         ].map(({ label, value, sub, color }, i) => (
-          <div key={label} style={{ padding: '10px 14px', borderRight: i < 3 ? '1px solid #1A1A1F' : 'none', background: '#0B0B0E' }}>
-            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 600, color: '#1E1E28', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '4px' }}>{label}</div>
+          <div key={label} style={{ padding: '10px 14px', borderRight: i < 3 ? '1px solid var(--bdr)' : 'none', background: 'var(--bg)' }}>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 600, color: 'var(--bdr)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '4px' }}>{label}</div>
             <div style={{ fontFamily: 'JetBrains Mono', fontSize: '20px', fontWeight: 700, color, lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{value}</div>
-            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: '#1E1E28', marginTop: '3px' }}>{sub}</div>
+            <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--bdr)', marginTop: '3px' }}>{sub}</div>
           </div>
         ))}
       </div>
@@ -663,12 +681,12 @@ export default function GeoRiskMap() {
           <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', fontWeight: 600, color: MCOL[tooltip.marker.type].stroke, marginBottom: '3px' }}>
             {tooltip.marker.city}, {tooltip.marker.name}
           </div>
-          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: '#3A3A52', marginBottom: '2px' }}>
+          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t4)', marginBottom: '2px' }}>
             {tooltip.marker.sessions > 0 ? `${tooltip.marker.sessions} sessions` : 'No sessions · Flagged'}
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: MCOL[tooltip.marker.type].stroke }}>{MLABEL[tooltip.marker.type]}</span>
-            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: '#252535', marginLeft: '10px' }}>click to zoom</span>
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--t5)', marginLeft: '10px' }}>click to zoom</span>
           </div>
         </div>
       )}

@@ -11,17 +11,17 @@ function riskColor(score: number): string {
 }
 
 const SEVERITY_CFG: Record<AlertSeverity, { bg: string; text: string }> = {
-  CRITICAL: { bg: 'rgba(255,59,92,0.14)',  text: '#FF3B5C' },
-  HIGH:     { bg: 'rgba(255,140,0,0.12)',  text: '#FF8C00' },
-  MEDIUM:   { bg: 'rgba(255,184,0,0.12)',  text: '#FFB800' },
+  CRITICAL: { bg: 'rgba(255,59,92,0.14)',  text: 'var(--red)' },
+  HIGH:     { bg: 'rgba(255,140,0,0.12)',  text: 'var(--orange)' },
+  MEDIUM:   { bg: 'rgba(255,184,0,0.12)',  text: 'var(--yellow)' },
   LOW:      { bg: 'rgba(107,107,122,0.15)', text: '#6B6B7A' },
 };
 
 const STATUS_CFG: Record<AlertStatus, { text: string }> = {
-  PENDING:   { text: '#FFB800' },
+  PENDING:   { text: 'var(--yellow)' },
   REVIEWED:  { text: '#6B6B7A' },
-  ESCALATED: { text: '#FF8C00' },
-  BLOCKED:   { text: '#FF3B5C' },
+  ESCALATED: { text: 'var(--orange)' },
+  BLOCKED:   { text: 'var(--red)' },
 };
 
 function SeverityBadge({ severity }: { severity: AlertSeverity }) {
@@ -45,8 +45,8 @@ function ExpandedRow({ alert }: { alert: Alert }) {
   const navigate = useNavigate();
   return (
     <tr>
-      <td colSpan={9} style={{ padding: 0, background: '#0F0F12' }}>
-        <div style={{ padding: '16px 24px', borderBottom: '1px solid #1E1E22', display: 'flex', gap: '32px', alignItems: 'flex-start' }}>
+      <td colSpan={9} style={{ padding: 0, background: 'var(--surface)' }}>
+        <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--bdr)', display: 'flex', gap: '32px', alignItems: 'flex-start' }}>
           <div style={{ flex: 1 }}>
             <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px' }}>Signal Summary</div>
             {alert.signalSummary.map(s => (
@@ -55,7 +55,7 @@ function ExpandedRow({ alert }: { alert: Alert }) {
                   <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.primary }}>{s.signal}</span>
                   <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>{s.value}</span>
                 </div>
-                <div style={{ height: '3px', background: '#1E1E22' }}>
+                <div style={{ height: '3px', background: 'var(--bdr)' }}>
                   <div style={{ height: '100%', width: `${s.weight}%`, background: s.weight > 70 ? COLORS.danger : COLORS.orange }} />
                 </div>
               </div>
@@ -142,7 +142,7 @@ export default function Alerts() {
       <select
         value={filters[key]}
         onChange={e => setFilters(f => ({ ...f, [key]: e.target.value }))}
-        style={{ background: '#111115', border: '1px solid #1E1E22', color: filters[key] ? COLORS.accent : COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '10px', padding: '4px 8px', cursor: 'pointer', outline: 'none' }}
+        style={{ background: 'var(--card)', border: '1px solid var(--bdr)', color: filters[key] ? COLORS.accent : COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: '10px', padding: '4px 8px', cursor: 'pointer', outline: 'none' }}
       >
         <option value="">ALL</option>
         {opts.map(o => <option key={o} value={o}>{o}</option>)}
@@ -153,12 +153,12 @@ export default function Alerts() {
   const thStyle = (key?: typeof sortKey): React.CSSProperties => ({
     textAlign: 'left', padding: '8px 12px', fontFamily: 'JetBrains Mono', fontSize: '10px', fontWeight: 500,
     letterSpacing: '0.1em', textTransform: 'uppercase', color: key && sortKey === key ? COLORS.accent : COLORS.muted,
-    borderBottom: '1px solid #1E1E22', whiteSpace: 'nowrap', cursor: key ? 'pointer' : 'default',
+    borderBottom: '1px solid var(--bdr)', whiteSpace: 'nowrap', cursor: key ? 'pointer' : 'default',
     userSelect: 'none',
   });
 
   return (
-    <div style={{ padding: '24px', minHeight: '100vh', background: '#0A0A0B' }}>
+    <div style={{ padding: '24px', minHeight: '100vh', background: 'var(--bg)' }}>
       <div style={{ marginBottom: '20px' }}>
         <h1 style={{ fontFamily: 'Inter', fontSize: '20px', fontWeight: 600, color: COLORS.primary, margin: '0 0 4px' }}>
           Alerts Queue
@@ -169,7 +169,7 @@ export default function Alerts() {
       </div>
 
       {/* Filters */}
-      <div style={{ background: '#111115', border: '1px solid #1E1E22', padding: '12px 16px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+      <div style={{ background: 'var(--card)', border: '1px solid var(--bdr)', padding: '12px 16px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: COLORS.muted }}>
           <Filter size={12} />
           <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Filters</span>
@@ -206,10 +206,10 @@ export default function Alerts() {
       )}
 
       {/* Table */}
-      <div style={{ background: '#111115', border: '1px solid #1E1E22' }}>
+      <div style={{ background: 'var(--card)', border: '1px solid var(--bdr)' }}>
         <table style={{ borderCollapse: 'collapse', width: '100%' }}>
           <thead>
-            <tr style={{ background: '#0F0F12' }}>
+            <tr style={{ background: 'var(--surface)' }}>
               <th style={{ ...thStyle(), width: '36px', padding: '8px 12px' }}>
                 <input type="checkbox" checked={selected.size === filtered.length && filtered.length > 0} onChange={e => e.target.checked ? selectAll() : clearAll()}
                   style={{ accentColor: COLORS.accent, cursor: 'pointer', width: '13px', height: '13px' }} />
@@ -239,24 +239,24 @@ export default function Alerts() {
                   key={alert.id}
                   style={{ cursor: 'pointer', background: selected.has(alert.id) ? 'rgba(170,85,227,0.04)' : 'transparent' }}
                 >
-                  <td style={{ padding: '9px 12px', borderBottom: '1px solid #1E1E22' }}>
+                  <td style={{ padding: '9px 12px', borderBottom: '1px solid var(--bdr)' }}>
                     <input type="checkbox" checked={selected.has(alert.id)} onChange={() => toggleSelect(alert.id)}
                       style={{ accentColor: COLORS.accent, cursor: 'pointer', width: '13px', height: '13px' }} onClick={e => e.stopPropagation()} />
                   </td>
-                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'JetBrains Mono', fontSize: '12px', color: COLORS.accent }}>{alert.id}</td>
-                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'JetBrains Mono', fontSize: '12px', color: COLORS.muted }}>{alert.userId}</td>
-                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid #1E1E22' }}>
+                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid var(--bdr)', fontFamily: 'JetBrains Mono', fontSize: '12px', color: COLORS.accent }}>{alert.id}</td>
+                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid var(--bdr)', fontFamily: 'JetBrains Mono', fontSize: '12px', color: COLORS.muted }}>{alert.userId}</td>
+                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid var(--bdr)' }}>
                     <span style={{ fontFamily: 'JetBrains Mono', fontSize: '12px', fontWeight: 600, color: riskColor(alert.riskScore) }}>{alert.riskScore}</span>
                   </td>
-                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid #1E1E22' }}>
+                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid var(--bdr)' }}>
                     <SeverityBadge severity={alert.severity} />
                   </td>
-                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.primary, maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{alert.primarySignal}</td>
-                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{alert.channel}</td>
-                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'JetBrains Mono', fontSize: '12px', color: COLORS.primary }}>€{alert.transactionAmount.toLocaleString()}</td>
-                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'JetBrains Mono', fontSize: '11px', color: STATUS_CFG[alert.status].text, letterSpacing: '0.04em' }}>{alert.status}</td>
-                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted, whiteSpace: 'nowrap' }}>{fmtTime(alert.time)}</td>
-                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid #1E1E22', color: COLORS.muted }}>
+                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid var(--bdr)', fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.primary, maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{alert.primarySignal}</td>
+                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid var(--bdr)', fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{alert.channel}</td>
+                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid var(--bdr)', fontFamily: 'JetBrains Mono', fontSize: '12px', color: COLORS.primary }}>€{alert.transactionAmount.toLocaleString()}</td>
+                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid var(--bdr)', fontFamily: 'JetBrains Mono', fontSize: '11px', color: STATUS_CFG[alert.status].text, letterSpacing: '0.04em' }}>{alert.status}</td>
+                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid var(--bdr)', fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted, whiteSpace: 'nowrap' }}>{fmtTime(alert.time)}</td>
+                  <td onClick={() => toggleExpand(alert.id)} style={{ padding: '9px 12px', borderBottom: '1px solid var(--bdr)', color: COLORS.muted }}>
                     {expanded.has(alert.id) ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
                   </td>
                 </tr>

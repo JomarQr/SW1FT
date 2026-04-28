@@ -14,16 +14,16 @@ import { COLORS } from '../lib/mockData';
 /* ── Theme ──────────────────────────────────────────────────────────────────── */
 
 const C = {
-  bg:      '#0A0A0B',
-  card:    '#111115',
-  border:  '#1E1E22',
-  border2: '#2A2A32',
-  accent:  '#AA55E3',
-  primary: '#E8E8ED',
+  bg:      'var(--bg)',
+  card:    'var(--card)',
+  border:  'var(--bdr)',
+  border2: 'var(--bdr2)',
+  accent:  'var(--accent)',
+  primary: 'var(--t1)',
   muted:   '#6B6B7A',
-  safe:    '#00CC7A',
-  warn:    '#F0A500',
-  danger:  '#FF3B5C',
+  safe:    'var(--green)',
+  warn:    'var(--yellow)',
+  danger:  'var(--red)',
   mono:    'JetBrains Mono' as const,
   sans:    'Inter' as const,
 };
@@ -92,7 +92,7 @@ function KpiCard({
 function RadarTip({ active, payload }: { active?: boolean; payload?: { name: string; value: number; fill: string }[] }) {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: '#1A1A20', border: `1px solid ${C.border2}`, padding: '8px 12px', fontFamily: C.mono, fontSize: '10px' }}>
+    <div style={{ background: 'var(--bdr)', border: `1px solid ${C.border2}`, padding: '8px 12px', fontFamily: C.mono, fontSize: '10px' }}>
       {payload.map(p => (
         <div key={p.name} style={{ color: p.fill ?? C.primary }}>{p.name}: {p.value}</div>
       ))}
@@ -371,7 +371,7 @@ export default function BehaviorProfile() {
                   </defs>
                   <XAxis dataKey="label" tick={{ fill: C.muted, fontFamily: C.mono, fontSize: 9 }} axisLine={false} tickLine={false} />
                   <YAxis domain={[0, 100]} tick={{ fill: C.muted, fontFamily: C.mono, fontSize: 9 }} axisLine={false} tickLine={false} />
-                  <Tooltip contentStyle={{ background: '#1A1A20', border: `1px solid ${C.border2}`, fontFamily: C.mono, fontSize: '10px' }} />
+                  <Tooltip contentStyle={{ background: 'var(--bdr)', border: `1px solid ${C.border2}`, fontFamily: C.mono, fontSize: '10px' }} />
                   <Area type="monotone" dataKey="confidence" stroke={confColor} fill="url(#cgGrad)" strokeWidth={2} dot={false} />
                 </AreaChart>
               </ResponsiveContainer>
@@ -395,7 +395,7 @@ export default function BehaviorProfile() {
                   </defs>
                   <XAxis dataKey="label" tick={{ fill: C.muted, fontFamily: C.mono, fontSize: 9 }} axisLine={false} tickLine={false} />
                   <YAxis domain={[0, 100]} tick={{ fill: C.muted, fontFamily: C.mono, fontSize: 9 }} axisLine={false} tickLine={false} />
-                  <Tooltip contentStyle={{ background: '#1A1A20', border: `1px solid ${C.border2}`, fontFamily: C.mono, fontSize: '10px' }} />
+                  <Tooltip contentStyle={{ background: 'var(--bdr)', border: `1px solid ${C.border2}`, fontFamily: C.mono, fontSize: '10px' }} />
                   <Area type="monotone" dataKey="match" stroke={C.accent} fill="url(#stGrad)" strokeWidth={2} dot={false} />
                 </AreaChart>
               </ResponsiveContainer>

@@ -13,10 +13,10 @@ function riskColor(score: number): string {
 }
 
 const STATUS_CONFIG: Record<SessionStatus, { bg: string; text: string }> = {
-  SAFE:    { bg: 'rgba(0,204,122,0.12)',  text: '#00CC7A' },
-  WATCH:   { bg: 'rgba(255,184,0,0.12)',  text: '#FFB800' },
-  ALERT:   { bg: 'rgba(255,140,0,0.12)',  text: '#FF8C00' },
-  BLOCKED: { bg: 'rgba(255,59,92,0.14)',  text: '#FF3B5C' },
+  SAFE:    { bg: 'rgba(0,204,122,0.12)',  text: 'var(--green)' },
+  WATCH:   { bg: 'rgba(255,184,0,0.12)',  text: 'var(--yellow)' },
+  ALERT:   { bg: 'rgba(255,140,0,0.12)',  text: 'var(--orange)' },
+  BLOCKED: { bg: 'rgba(255,59,92,0.14)',  text: 'var(--red)' },
 };
 
 function fmtTime(iso: string) {
@@ -26,7 +26,7 @@ function fmtTime(iso: string) {
 const ChartTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: '#0F0F12', border: '1px solid #1E1E22', padding: '8px 12px', fontFamily: 'JetBrains Mono', fontSize: '11px' }}>
+    <div style={{ background: 'var(--surface)', border: '1px solid var(--bdr)', padding: '8px 12px', fontFamily: 'JetBrains Mono', fontSize: '11px' }}>
       <div style={{ color: COLORS.muted, marginBottom: '4px' }}>{label}s</div>
       {payload.map((p: any) => (
         <div key={p.name} style={{ color: p.color }}>
@@ -39,8 +39,8 @@ const ChartTooltip = ({ active, payload, label }: any) => {
 
 function Card({ title, children, style }: { title: string; children: React.ReactNode; style?: React.CSSProperties }) {
   return (
-    <div style={{ background: '#111115', border: '1px solid #1E1E22', ...style }}>
-      <div style={{ padding: '12px 16px', borderBottom: '1px solid #1E1E22' }}>
+    <div style={{ background: 'var(--card)', border: '1px solid var(--bdr)', ...style }}>
+      <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--bdr)' }}>
         <span style={{ fontFamily: 'Inter', fontSize: '12px', fontWeight: 500, color: COLORS.primary, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
           {title}
         </span>
@@ -54,7 +54,7 @@ function Card({ title, children, style }: { title: string; children: React.React
 
 function SignalRow({ label, value, highlight = false }: { label: string; value: React.ReactNode; highlight?: boolean }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: '1px solid #1E1E22' }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: '1px solid var(--bdr)' }}>
       <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>{label}</span>
       <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: highlight ? COLORS.danger : COLORS.primary, fontWeight: highlight ? 600 : 400 }}>
         {value}
@@ -78,7 +78,7 @@ export default function SessionDetail() {
   const statusCfg = STATUS_CONFIG[session.status];
 
   return (
-    <div style={{ padding: '24px', minHeight: '100vh', background: '#0A0A0B' }}>
+    <div style={{ padding: '24px', minHeight: '100vh', background: 'var(--bg)' }}>
 
       {/* Back + header */}
       <div style={{ marginBottom: '20px' }}>
@@ -127,7 +127,7 @@ export default function SessionDetail() {
           <SignalRow label="Scroll depth (confirm screen)" value={
             <span style={{ color: signals.scrollDepth < 40 ? COLORS.danger : COLORS.safe }}>{signals.scrollDepth}%</span>
           } />
-          <div style={{ padding: '10px 0', borderBottom: '1px solid #1E1E22' }}>
+          <div style={{ padding: '10px 0', borderBottom: '1px solid var(--bdr)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted, display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Phone size={11} /> Active call detected
@@ -156,7 +156,7 @@ export default function SessionDetail() {
           </div>
 
           {/* Scroll depth bar */}
-          <div style={{ marginTop: '8px', paddingTop: '12px', borderTop: '1px solid #1E1E22' }}>
+          <div style={{ marginTop: '8px', paddingTop: '12px', borderTop: '1px solid var(--bdr)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
               <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <Eye size={10} /> Scroll depth on confirm screen
@@ -165,7 +165,7 @@ export default function SessionDetail() {
                 {signals.scrollDepth}%
               </span>
             </div>
-            <div style={{ height: '4px', background: '#1E1E22', width: '100%' }}>
+            <div style={{ height: '4px', background: 'var(--bdr)', width: '100%' }}>
               <div style={{ height: '100%', width: `${signals.scrollDepth}%`, background: signals.scrollDepth < 40 ? COLORS.danger : COLORS.safe, transition: 'width 0.8s ease' }} />
             </div>
           </div>
@@ -176,7 +176,7 @@ export default function SessionDetail() {
           <div style={{ height: '260px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={signals.riskTimeline} margin={{ top: 5, right: 10, bottom: 0, left: -10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1E1E22" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--bdr)" vertical={false} />
                 <XAxis dataKey="t" tick={{ fill: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `${v}s`} interval={4} />
                 <YAxis domain={[0, 100]} tick={{ fill: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: 10 }} axisLine={false} tickLine={false} />
                 <Tooltip content={<ChartTooltip />} />
@@ -195,7 +195,7 @@ export default function SessionDetail() {
           <div style={{ height: '200px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={signals.typingCadenceTimeline} margin={{ top: 5, right: 10, bottom: 0, left: -10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1E1E22" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--bdr)" vertical={false} />
                 <XAxis dataKey="t" tick={{ fill: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `${v}s`} interval={5} />
                 <YAxis tick={{ fill: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: 10 }} axisLine={false} tickLine={false} />
                 <Tooltip content={<ChartTooltip />} />
@@ -212,7 +212,7 @@ export default function SessionDetail() {
           <div style={{ height: '200px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={pauseBarData} margin={{ top: 5, right: 10, bottom: 0, left: -10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1E1E22" horizontal={true} vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--bdr)" horizontal={true} vertical={false} />
                 <XAxis dataKey="name" tick={{ fill: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: 10 }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fill: COLORS.muted, fontFamily: 'JetBrains Mono', fontSize: 10 }} axisLine={false} tickLine={false} />
                 <Tooltip content={<ChartTooltip />} />
@@ -239,7 +239,7 @@ export default function SessionDetail() {
                   <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.primary }}>{c.signal}</span>
                   <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>{c.value}</span>
                 </div>
-                <div style={{ height: '5px', background: '#1E1E22', width: '100%' }}>
+                <div style={{ height: '5px', background: 'var(--bdr)', width: '100%' }}>
                   <div style={{ height: '100%', width: `${c.weight}%`, background: c.weight > 70 ? COLORS.danger : c.weight > 50 ? COLORS.orange : COLORS.warning, transition: 'width 1s ease' }} />
                 </div>
                 <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.muted, marginTop: '3px', textAlign: 'right' }}>{c.weight}% contribution</div>
@@ -258,7 +258,7 @@ export default function SessionDetail() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {signals.interventionLog.map(inv => (
-                <div key={inv.id} style={{ padding: '10px', background: '#0F0F12', border: '1px solid #1E1E22' }}>
+                <div key={inv.id} style={{ padding: '10px', background: 'var(--surface)', border: '1px solid var(--bdr)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                     <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.accent }}>{inv.id}</span>
                     <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, display: 'flex', alignItems: 'center', gap: '4px' }}>

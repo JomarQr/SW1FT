@@ -1,5 +1,49 @@
 @import "tailwindcss";
 
+/* ─── Theme tokens ──────────────────────────────────────────────────────────── */
+
+:root {
+  --bg:        #0A0A0B;
+  --surface:   #0F0F12;
+  --card:      #111115;
+  --bdr:       #1E1E22;
+  --bdr2:      #2A2A32;
+  --t1:        #E8E8ED;
+  --t2:        #6B6B7A;
+  --t3:        #4A4A5A;
+  --t4:        #3A3A4E;
+  --t5:        #252535;
+  --accent:    #AA55E3;
+  --accent-d:  #9944CC;
+  --accent-lt: #C890F0;
+  --accent-bg: rgba(170,85,227,0.07);
+  --green:     #00CC7A;
+  --red:       #FF3B5C;
+  --orange:    #FF8C00;
+  --yellow:    #FFB800;
+}
+
+[data-theme="light"] {
+  --bg:        #F4F3F8;
+  --surface:   #FFFFFF;
+  --card:      #F0EFF8;
+  --bdr:       #DDD8EC;
+  --bdr2:      #CCC5E4;
+  --t1:        #1A1020;
+  --t2:        #5A5070;
+  --t3:        #7A7090;
+  --t4:        #9A8EB0;
+  --t5:        #B8AECE;
+  --accent:    #8833CC;
+  --accent-d:  #6622AA;
+  --accent-lt: #9944CC;
+  --accent-bg: rgba(136,51,204,0.08);
+  --green:     #009955;
+  --red:       #CC2244;
+  --orange:    #BB6600;
+  --yellow:    #CC9900;
+}
+
 @theme {
   --color-bg: #0A0A0B;
   --color-surface: #0F0F12;
@@ -28,8 +72,8 @@ html, body, #root {
 }
 
 body {
-  background-color: #0A0A0B;
-  color: #E8E8ED;
+  background-color: var(--bg);
+  color: var(--t1);
   font-family: "Inter", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -41,13 +85,13 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0A0A0B;
+  background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: #2A2A32;
+  background: var(--bdr2);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3A3A44;
+  background: var(--t4);
 }
 
 /* Animations */
@@ -103,18 +147,18 @@ body {
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #2E2E3E;
-  border-bottom: 1px solid #1A1A1F;
+  color: var(--t4);
+  border-bottom: 1px solid var(--bdr);
   white-space: nowrap;
-  background: #0B0B0E;
+  background: var(--bg);
 }
 
 .sl-table td {
   padding: 6px 10px;
   font-family: "JetBrains Mono", monospace;
   font-size: 11px;
-  color: #C8C8D4;
-  border-bottom: 1px solid #131316;
+  color: var(--t1);
+  border-bottom: 1px solid var(--card);
   white-space: nowrap;
 }
 

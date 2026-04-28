@@ -18,6 +18,7 @@ import ApiKeys from './pages/ApiKeys';
 import Persona from './pages/Persona';
 import BehaviorProfile from './pages/BehaviorProfile';
 import { isAuthenticated } from './lib/auth';
+import { ThemeProvider } from './lib/ThemeContext';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -30,7 +31,7 @@ function ProtectedLayout() {
     return <Navigate to="/login" replace />;
   }
   return (
-    <div style={{ background: '#0A0A0B', height: '100vh', overflow: 'hidden' }}>
+    <div style={{ background: 'var(--bg)', height: '100vh', overflow: 'hidden' }}>
       <TopBar />
       <Sidebar />
       <main style={{ marginLeft: '200px', marginTop: '32px', height: 'calc(100vh - 32px)', overflowY: 'auto' }}>
@@ -42,6 +43,7 @@ function ProtectedLayout() {
 
 export default function App() {
   return (
+    <ThemeProvider>
     <BrowserRouter>
       <ScrollToTop />
       <Routes>
@@ -65,5 +67,6 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
+    </ThemeProvider>
   );
 }

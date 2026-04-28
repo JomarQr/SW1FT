@@ -3,8 +3,8 @@ import { ChevronDown, ChevronRight, Search, AlertTriangle, CheckCircle, Clock } 
 import { BASELINES, COLORS, type BaselineHealth, type UserBaseline } from '../lib/mockData';
 
 const HEALTH_CFG: Record<BaselineHealth, { bg: string; text: string; label: string }> = {
-  HEALTHY:    { bg: 'rgba(0,204,122,0.12)',  text: '#00CC7A', label: 'HEALTHY' },
-  DEGRADING:  { bg: 'rgba(255,184,0,0.12)',  text: '#FFB800', label: 'DEGRADING' },
+  HEALTHY:    { bg: 'rgba(0,204,122,0.12)',  text: 'var(--green)', label: 'HEALTHY' },
+  DEGRADING:  { bg: 'rgba(255,184,0,0.12)',  text: 'var(--yellow)', label: 'DEGRADING' },
   COLD_START: { bg: 'rgba(107,107,122,0.15)', text: '#6B6B7A', label: 'COLD START' },
 };
 
@@ -21,7 +21,7 @@ function ConfidenceBar({ value }: { value: number }) {
   const color = value >= 70 ? COLORS.safe : value >= 40 ? COLORS.warning : COLORS.muted;
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <div style={{ width: '60px', height: '3px', background: '#1E1E22' }}>
+      <div style={{ width: '60px', height: '3px', background: 'var(--bdr)' }}>
         <div style={{ height: '100%', width: `${value}%`, background: color }} />
       </div>
       <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color }}>{value}</span>
@@ -52,8 +52,8 @@ function ExpandedBaseline({ b }: { b: UserBaseline }) {
 
   return (
     <tr>
-      <td colSpan={8} style={{ padding: 0, background: '#0A0A0B' }}>
-        <div style={{ padding: '16px 24px', borderBottom: '1px solid #1E1E22', display: 'flex', gap: '40px' }}>
+      <td colSpan={8} style={{ padding: 0, background: 'var(--bg)' }}>
+        <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--bdr)', display: 'flex', gap: '40px' }}>
           <div>
             <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: COLORS.muted, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px' }}>
               Baseline Signal Ranges
@@ -147,7 +147,7 @@ export default function Baselines() {
   const thStyle = (key?: typeof sortKey): React.CSSProperties => ({
     textAlign: 'left', padding: '8px 12px', fontFamily: 'JetBrains Mono', fontSize: '10px', fontWeight: 500,
     letterSpacing: '0.1em', textTransform: 'uppercase', color: key && sortKey === key ? COLORS.accent : COLORS.muted,
-    borderBottom: '1px solid #1E1E22', whiteSpace: 'nowrap', cursor: key ? 'pointer' : 'default', userSelect: 'none',
+    borderBottom: '1px solid var(--bdr)', whiteSpace: 'nowrap', cursor: key ? 'pointer' : 'default', userSelect: 'none',
   });
 
   const healthCounts = {
@@ -157,7 +157,7 @@ export default function Baselines() {
   };
 
   return (
-    <div style={{ padding: '24px', minHeight: '100vh', background: '#0A0A0B' }}>
+    <div style={{ padding: '24px', minHeight: '100vh', background: 'var(--bg)' }}>
       <div style={{ marginBottom: '20px' }}>
         <h1 style={{ fontFamily: 'Inter', fontSize: '20px', fontWeight: 600, color: COLORS.primary, margin: '0 0 4px' }}>
           User Baseline Manager
@@ -179,7 +179,7 @@ export default function Baselines() {
             <div
               key={status}
               onClick={() => setHealthFilter(f => f === status ? '' : status)}
-              style={{ flex: 1, background: healthFilter === status ? `${cfg.text}15` : '#111115', border: `1px solid ${healthFilter === status ? cfg.text + '44' : '#1E1E22'}`, padding: '14px 16px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: 'all 0.15s' }}
+              style={{ flex: 1, background: healthFilter === status ? `${cfg.text}15` : 'var(--card)', border: `1px solid ${healthFilter === status ? cfg.text + '44' : 'var(--bdr)'}`, padding: '14px 16px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: 'all 0.15s' }}
             >
               <div>
                 <div style={{ fontFamily: 'Inter', fontSize: '11px', color: COLORS.muted, marginBottom: '6px' }}>{cfg.label}</div>
@@ -192,7 +192,7 @@ export default function Baselines() {
       </div>
 
       {/* Search + filter */}
-      <div style={{ background: '#111115', border: '1px solid #1E1E22', padding: '10px 16px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+      <div style={{ background: 'var(--card)', border: '1px solid var(--bdr)', padding: '10px 16px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
           <Search size={12} color={COLORS.muted} />
           <input
@@ -210,10 +210,10 @@ export default function Baselines() {
       </div>
 
       {/* Table */}
-      <div style={{ background: '#111115', border: '1px solid #1E1E22' }}>
+      <div style={{ background: 'var(--card)', border: '1px solid var(--bdr)' }}>
         <table style={{ borderCollapse: 'collapse', width: '100%' }}>
           <thead>
-            <tr style={{ background: '#0F0F12' }}>
+            <tr style={{ background: 'var(--surface)' }}>
               <th style={thStyle()}>User ID</th>
               <th style={thStyle('baselineSessions')} onClick={() => toggleSort('baselineSessions')}>
                 Sessions {sortKey === 'baselineSessions' ? (sortDir === 'desc' ? '↓' : '↑') : ''}
@@ -240,8 +240,8 @@ export default function Baselines() {
                   style={{ cursor: 'pointer' }}
                   onClick={() => toggleExpand(b.userId)}
                 >
-                  <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'JetBrains Mono', fontSize: '12px', color: COLORS.accent }}>{b.userId}</td>
-                  <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22' }}>
+                  <td style={{ padding: '10px 12px', borderBottom: '1px solid var(--bdr)', fontFamily: 'JetBrains Mono', fontSize: '12px', color: COLORS.accent }}>{b.userId}</td>
+                  <td style={{ padding: '10px 12px', borderBottom: '1px solid var(--bdr)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span style={{ fontFamily: 'JetBrains Mono', fontSize: '12px', color: b.baselineSessions < 30 ? COLORS.warning : COLORS.primary }}>
                         {b.baselineSessions}
@@ -249,16 +249,16 @@ export default function Baselines() {
                       {b.baselineSessions < 30 && <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: COLORS.warning }}>COLD</span>}
                     </div>
                   </td>
-                  <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22' }}>
+                  <td style={{ padding: '10px 12px', borderBottom: '1px solid var(--bdr)' }}>
                     <ConfidenceBar value={b.confidenceScore} />
                   </td>
-                  <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>{fmtTime(b.lastActive)}</td>
-                  <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'JetBrains Mono', fontSize: '12px', color: b.anomalyCount > 5 ? COLORS.warning : COLORS.primary }}>{b.anomalyCount}</td>
-                  <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22', fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>{b.country}</td>
-                  <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22' }}>
+                  <td style={{ padding: '10px 12px', borderBottom: '1px solid var(--bdr)', fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>{fmtTime(b.lastActive)}</td>
+                  <td style={{ padding: '10px 12px', borderBottom: '1px solid var(--bdr)', fontFamily: 'JetBrains Mono', fontSize: '12px', color: b.anomalyCount > 5 ? COLORS.warning : COLORS.primary }}>{b.anomalyCount}</td>
+                  <td style={{ padding: '10px 12px', borderBottom: '1px solid var(--bdr)', fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.muted }}>{b.country}</td>
+                  <td style={{ padding: '10px 12px', borderBottom: '1px solid var(--bdr)' }}>
                     <HealthBadge status={b.healthStatus} />
                   </td>
-                  <td style={{ padding: '10px 12px', borderBottom: '1px solid #1E1E22', color: COLORS.muted }}>
+                  <td style={{ padding: '10px 12px', borderBottom: '1px solid var(--bdr)', color: COLORS.muted }}>
                     {expanded.has(b.userId) ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
                   </td>
                 </tr>

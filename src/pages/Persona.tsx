@@ -10,27 +10,27 @@ import { SCENARIOS, type PersonaResult } from '../lib/personaEngine';
 /* ── Constants ──────────────────────────────────────────────────────────── */
 
 const C = {
-  bg:     '#0A0A0B',
-  card:   '#111115',
-  border: '#1E1E22',
-  accent: '#AA55E3',
+  bg:     'var(--bg)',
+  card:   'var(--card)',
+  border: 'var(--bdr)',
+  accent: 'var(--accent)',
   muted:  '#6B6B7A',
-  text:   '#E8E8ED',
-  subtle: '#9A9AAA',
+  text:   'var(--t1)',
+  subtle: 'var(--t2)',
 };
 
 const RISK_COLOR = {
-  Low:      '#00CC7A',
-  Medium:   '#FFB800',
-  High:     '#FF8C00',
-  Critical: '#FF3B5C',
+  Low:      'var(--green)',
+  Medium:   'var(--yellow)',
+  High:     'var(--orange)',
+  Critical: 'var(--red)',
 } as const;
 
 const ACTION_CFG = {
-  approve:       { color: '#00CC7A', bg: 'rgba(0,204,122,0.07)',   border: 'rgba(0,204,122,0.18)',  Icon: CheckCircle   },
-  cooling_off:   { color: '#FFB800', bg: 'rgba(255,184,0,0.07)',   border: 'rgba(255,184,0,0.18)',  Icon: Clock         },
-  manual_review: { color: '#FF8C00', bg: 'rgba(255,140,0,0.07)',   border: 'rgba(255,140,0,0.18)',  Icon: AlertTriangle },
-  block:         { color: '#FF3B5C', bg: 'rgba(255,59,92,0.07)',   border: 'rgba(255,59,92,0.18)',  Icon: XCircle       },
+  approve:       { color: 'var(--green)', bg: 'rgba(0,204,122,0.07)',   border: 'rgba(0,204,122,0.18)',  Icon: CheckCircle   },
+  cooling_off:   { color: 'var(--yellow)', bg: 'rgba(255,184,0,0.07)',   border: 'rgba(255,184,0,0.18)',  Icon: Clock         },
+  manual_review: { color: 'var(--orange)', bg: 'rgba(255,140,0,0.07)',   border: 'rgba(255,140,0,0.18)',  Icon: AlertTriangle },
+  block:         { color: 'var(--red)', bg: 'rgba(255,59,92,0.07)',   border: 'rgba(255,59,92,0.18)',  Icon: XCircle       },
 } as const;
 
 const SCENARIO_BTNS = [
@@ -252,7 +252,7 @@ export default function Persona() {
               </div>
               <ResponsiveContainer width="100%" height={300}>
                 <RadarChart data={data.radarData} margin={{ top: 10, right: 20, bottom: 10, left: 20 }}>
-                  <PolarGrid stroke="#1E1E22" />
+                  <PolarGrid stroke="var(--bdr)" />
                   <PolarAngleAxis dataKey="metric" tick={<RadarLabel />} />
                   <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
                   <Radar name="Baseline" dataKey="baseline"
@@ -274,11 +274,11 @@ export default function Persona() {
 
                 {data.riskFactors.length === 0 ? (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 0' }}>
-                    <CheckCircle size={13} color="#00CC7A" />
-                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: '#00CC7A' }}>No anomalies detected</span>
+                    <CheckCircle size={13} color="var(--green)" />
+                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: 'var(--green)' }}>No anomalies detected</span>
                   </div>
                 ) : data.riskFactors.map((rf, i) => {
-                  const sc = rf.severity === 'high' ? '#FF3B5C' : rf.severity === 'medium' ? '#FFB800' : '#00CC7A';
+                  const sc = rf.severity === 'high' ? 'var(--red)' : rf.severity === 'medium' ? 'var(--yellow)' : 'var(--green)';
                   return (
                     <div key={i} style={{ display: 'flex', gap: '12px', padding: '10px 0', borderBottom: `1px solid ${C.border}` }}>
                       <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: sc, flexShrink: 0, marginTop: '5px' }} />
@@ -328,11 +328,11 @@ export default function Persona() {
                       <stop offset="100%" stopColor={riskColor} stopOpacity={0}    />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1E1E22" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--bdr)" vertical={false} />
                   <XAxis dataKey="label" tick={{ fontSize: 9, fontFamily: 'JetBrains Mono', fill: '#6B6B7A' }} axisLine={false} tickLine={false} />
                   <YAxis domain={[0, 100]} tick={{ fontSize: 9, fontFamily: 'JetBrains Mono', fill: '#6B6B7A' }} axisLine={false} tickLine={false} />
                   <Tooltip
-                    contentStyle={{ background: '#111115', border: '1px solid #1E1E22', fontFamily: 'JetBrains Mono', fontSize: '11px', borderRadius: 0 }}
+                    contentStyle={{ background: 'var(--card)', border: '1px solid var(--bdr)', fontFamily: 'JetBrains Mono', fontSize: '11px', borderRadius: 0 }}
                     labelStyle={{ color: C.muted }}
                     itemStyle={{ color: riskColor }}
                     formatter={(v: number) => [`${v}`, 'Risk Score']}
@@ -341,7 +341,7 @@ export default function Persona() {
                     fill="url(#histGrad)"
                     dot={(p) => {
                       const isLast = p.index === data.history.length - 1;
-                      return <circle key={p.index} cx={p.cx} cy={p.cy} r={isLast ? 5 : 3} fill={riskColor} stroke={isLast ? '#0A0A0B' : 'none'} strokeWidth={2} />;
+                      return <circle key={p.index} cx={p.cx} cy={p.cy} r={isLast ? 5 : 3} fill={riskColor} stroke={isLast ? 'var(--bg)' : 'none'} strokeWidth={2} />;
                     }}
                   />
                 </AreaChart>
@@ -354,11 +354,11 @@ export default function Persona() {
               <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: C.muted, marginBottom: '20px' }}>Sessions by detected mode</div>
               <ResponsiveContainer width="100%" height={180}>
                 <BarChart data={data.distribution} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1E1E22" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--bdr)" vertical={false} />
                   <XAxis dataKey="label" tick={{ fontSize: 8, fontFamily: 'JetBrains Mono', fill: '#6B6B7A' }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 9, fontFamily: 'JetBrains Mono', fill: '#6B6B7A' }} axisLine={false} tickLine={false} />
                   <Tooltip
-                    contentStyle={{ background: '#111115', border: '1px solid #1E1E22', fontFamily: 'JetBrains Mono', fontSize: '11px', borderRadius: 0 }}
+                    contentStyle={{ background: 'var(--card)', border: '1px solid var(--bdr)', fontFamily: 'JetBrains Mono', fontSize: '11px', borderRadius: 0 }}
                     labelStyle={{ color: C.muted }}
                     formatter={(v: number) => [`${v} sessions`, 'Count']}
                   />
