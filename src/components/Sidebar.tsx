@@ -1,7 +1,7 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Bell, BarChart2, Users, MousePointer2,
-  Database, KeyRound, Brain, ScanFace, LogOut, Activity,
+  Database, KeyRound, Brain, ScanFace, LogOut, Activity, FlaskConical,
 } from 'lucide-react';
 import { logout } from '../lib/auth';
 
@@ -25,8 +25,9 @@ const NAV_GROUPS = [
   {
     label: 'Engine',
     items: [
-      { to: '/dashboard/persona',           icon: Brain,    label: 'Persona Engine' },
-      { to: '/dashboard/behavior-profile',  icon: ScanFace, label: 'Behavior Profile' },
+      { to: '/dashboard/persona',           icon: Brain,       label: 'Persona Engine' },
+      { to: '/dashboard/behavior-profile',  icon: ScanFace,    label: 'Behavior Profile' },
+      { to: '/dashboard/ml-models',         icon: FlaskConical, label: 'ML Models' },
     ],
   },
   {

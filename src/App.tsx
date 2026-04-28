@@ -17,6 +17,7 @@ import BlogPost from './pages/BlogPost';
 import ApiKeys from './pages/ApiKeys';
 import Persona from './pages/Persona';
 import BehaviorProfile from './pages/BehaviorProfile';
+import MLModels from './pages/MLModels';
 import { isAuthenticated } from './lib/auth';
 import { ThemeProvider } from './lib/ThemeContext';
 
@@ -63,6 +64,7 @@ export default function App() {
           <Route path="api-keys"          element={<ApiKeys />} />
           <Route path="persona"            element={<Persona />} />
           <Route path="behavior-profile"  element={<BehaviorProfile />} />
+          <Route path="ml-models"         element={<MLModels />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
