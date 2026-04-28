@@ -37,8 +37,18 @@ export default {
       return json({ ok: true, sessionId, status: 'received' }, 200);
     }
 
-    // Everything else → static assets (SPA fallback to index.html)
-    return env.ASSETS.fetch(request);
+    // Static file (has extension) — serve directly
+    if (/\.[a-z0-9]{1,8}$/i.test(url.pathname)) {
+      try { return await env.ASSETS.fetch(request); }
+      catch (_) { return new Response('Not found', { status: 404 }); }
+    }
+
+    // SPA route — always serve index.html
+    try {
+      return await env.ASSETS.fetch(`${url.protocol}//${url.host}/index.html`);
+    } catch (e) {
+      return new Response(`Failed to load app: ${e instanceof Error ? e.message : String(e)}`, { status: 500 });
+    }
   },
 };
 
