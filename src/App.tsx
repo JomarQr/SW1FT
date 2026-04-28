@@ -28,6 +28,10 @@ function ScrollToTop() {
   return null;
 }
 
+function AdminRoute() {
+  return isAdmin() ? <AdminPanel /> : <Navigate to="/dashboard" replace />;
+}
+
 function ProtectedLayout() {
   if (!isAuthenticated()) {
     return <Navigate to="/login" replace />;
@@ -66,7 +70,7 @@ export default function App() {
           <Route path="persona"            element={<Persona />} />
           <Route path="behavior-profile"  element={<BehaviorProfile />} />
           <Route path="ml-models"         element={<MLModels />} />
-          <Route path="admin"             element={isAdmin() ? <AdminPanel /> : <Navigate to="/dashboard" replace />} />
+          <Route path="admin"             element={<AdminRoute />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

@@ -16,7 +16,7 @@ function defaults(): AppUser[] {
   const now = new Date().toISOString();
   return [
     { id: 'usr-admin',   username: 'admin',   password: 'admin',        role: 'superadmin', displayName: 'Admin',       createdAt: now, createdBy: 'system' },
-    { id: 'usr-analyst', username: 'analyst', password: 'sentinel2026', role: 'analyst',    displayName: 'J. Springis', createdAt: now, createdBy: 'system' },
+    { id: 'usr-analyst', username: 'analyst', password: 'sentinel2026', role: 'superadmin', displayName: 'J. Springis', createdAt: now, createdBy: 'system' },
   ];
 }
 
@@ -28,7 +28,17 @@ export function getUsers(): AppUser[] {
       localStorage.setItem(KEY, JSON.stringify(seed));
       return seed;
     }
-    return JSON.parse(raw);
+    const list: AppUser[] = JSON.parse(raw);
+    // Ensure the two built-in accounts always have superadmin role
+    let dirty = false;
+    for (const u of list) {
+      if ((u.id === 'usr-admin' || u.id === 'usr-analyst') && u.role !== 'superadmin') {
+        u.role = 'superadmin';
+        dirty = true;
+      }
+    }
+    if (dirty) localStorage.setItem(KEY, JSON.stringify(list));
+    return list;
   } catch {
     return defaults();
   }

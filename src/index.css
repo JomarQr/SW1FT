@@ -94,6 +94,17 @@ body {
   background: var(--t4);
 }
 
+/* Fix browser autofill overriding input text color */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #E8E8ED !important;
+  -webkit-box-shadow: 0 0 0 1000px #0A0A0B inset !important;
+  caret-color: #E8E8ED;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
 /* Animations */
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; transform: scale(1); }
