@@ -3,6 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Lock, Shield, CheckCircle, Download, Save, CreditCard, Eye, EyeOff } from 'lucide-react';
 import { useBehaviorCapture, type BehaviorSnapshot, type LiveMetrics } from '../lib/useBehaviorCapture';
 import { saveSession } from '../lib/behaviorStore';
+import {
+  computeRiskScore, getRiskLevel, getRecommendedActions, getTopRiskFactors,
+  saveIntervention, type InterventionRecord,
+} from '../lib/interventionStore';
+import { snapshotToSession, saveLiveSession } from '../lib/liveSessionStore';
+import { InterventionModal } from '../components/InterventionEngine';
 import { getUsername } from '../lib/auth';
 import { COLORS } from '../lib/mockData';
 
@@ -356,7 +362,7 @@ function PaymentWidget({
           disabled={!isReady}
           onMouseEnter={onSubmitHoverStart}
           onMouseLeave={onSubmitHoverEnd}
-          onClick={() => isReady && onPay({ name, card, expiry })}
+          onClick={() => isReady && onPay({ name, card, expiry, _amount: '47.99' })}
           style={{
             width: '100%',
             background: isReady ? COLORS.accent : 'rgba(170,85,227,0.15)',
@@ -600,6 +606,10 @@ export default function PaymentCapture() {
   const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startRef = useRef(Date.now());
 
+  // Intervention flow state
+  const [pendingIntervention, setPendingIntervention] = useState<InterventionRecord | null>(null);
+  const [paymentAmount, setPaymentAmount] = useState(0);
+
   function handleStart() {
     startRef.current = Date.now();
     setElapsed(0);
@@ -614,12 +624,67 @@ export default function PaymentCapture() {
 
   useEffect(() => () => { if (elapsedRef.current) clearInterval(elapsedRef.current); }, []);
 
-  function handlePay() {
+  function handlePay(amount: number) {
     const snap = finalize(analyst, userId.trim() || undefined);
     setSnapshot(snap);
     setSubmitted(true);
-    setShowModal(true);
     handleStop();
+    setPaymentAmount(amount);
+
+    const score = computeRiskScore(snap);
+    const level = getRiskLevel(score);
+
+    // Always save to live session store (appears in Dashboard)
+    const liveSession = snapshotToSession(snap, amount);
+    saveLiveSession(liveSession);
+    saveSession(snap);
+
+    if (level !== 'APPROVE') {
+      // Build intervention record
+      const intervention: InterventionRecord = {
+        id: `INT-${snap.session_id}`,
+        session_id: snap.session_id,
+        user_id: snap.user_id ?? snap.analyst,
+        timestamp: new Date().toISOString(),
+        risk_score: score,
+        risk_level: level,
+        recommended_actions: getRecommendedActions(level),
+        user_action: 'pending',
+        outcome: 'pending',
+        top_risk_factors: getTopRiskFactors(snap),
+        amount,
+      };
+      saveIntervention(intervention);
+      window.dispatchEvent(new CustomEvent('sw1ft_new_intervention'));
+      setPendingIntervention(intervention);
+    } else {
+      setShowModal(true);
+    }
+  }
+
+  function handleInterventionCancel() {
+    if (pendingIntervention) {
+      const updated = { ...pendingIntervention, user_action: 'cancel' as const, outcome: 'fraud_prevented' as const };
+      saveIntervention(updated);
+      window.dispatchEvent(new CustomEvent('sw1ft_new_intervention'));
+      // Update live session status to BLOCKED
+      if (snapshot) {
+        const ls = snapshotToSession(snapshot, paymentAmount, updated.id);
+        saveLiveSession({ ...ls, status: 'BLOCKED', riskScore: updated.risk_score });
+      }
+    }
+    setPendingIntervention(null);
+    setShowModal(true);
+  }
+
+  function handleInterventionProceed() {
+    if (pendingIntervention) {
+      const updated = { ...pendingIntervention, user_action: 'proceed' as const, outcome: 'monitoring' as const };
+      saveIntervention(updated);
+      window.dispatchEvent(new CustomEvent('sw1ft_new_intervention'));
+    }
+    setPendingIntervention(null);
+    setShowModal(true);
   }
 
   function handleCloseModal() {
@@ -688,7 +753,7 @@ export default function PaymentCapture() {
         {/* Left: payment widget — containerRef wraps only this area */}
         <div ref={containerRef}>
           <PaymentWidget
-            onPay={handlePay}
+            onPay={(fields) => handlePay(parseFloat(fields._amount ?? '47.99'))}
             onSubmitHoverStart={onSubmitHoverStart}
             onSubmitHoverEnd={onSubmitHoverEnd}
             submitted={submitted}
@@ -713,6 +778,15 @@ export default function PaymentCapture() {
           }
         </div>
       </div>
+
+      {/* Intervention modal — shown before completion if risk is elevated */}
+      {pendingIntervention && (
+        <InterventionModal
+          record={pendingIntervention}
+          onCancel={handleInterventionCancel}
+          onProceed={handleInterventionProceed}
+        />
+      )}
 
       {showModal && snapshot && (
         <CompletionModal snapshot={snapshot} onClose={handleCloseModal} />

@@ -7,7 +7,10 @@ import {
 import { ExternalLink, ArrowUpRight, ArrowDownRight, Minus, MessageSquare } from 'lucide-react';
 import GeoRiskMap from '../components/GeoRiskMap';
 import SessionReviewPanel from '../components/SessionReviewPanel';
+import { InterventionEnginePanel } from '../components/InterventionEngine';
 import { getFeedbackForSession, countFeedbacks } from '../lib/feedbackStore';
+import { getLiveSessions } from '../lib/liveSessionStore';
+import { getInterventionKPIs } from '../lib/interventionStore';
 import {
   SESSIONS, ALERTS, DASHBOARD_KPIs, RISK_DISTRIBUTION_24H, COLORS,
   type Session, type SessionStatus,
@@ -143,24 +146,57 @@ function SectionHeader({ label, right }: { label: string; right?: React.ReactNod
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [liveSessions, setLiveSessions] = useState<Session[]>(() => [...SESSIONS].slice(0, 20));
+
+  // Merge mock sessions with real captured sessions (captured on top)
+  const [liveSessions, setLiveSessions] = useState<Session[]>(() => {
+    const captured = getLiveSessions();
+    const mock = [...SESSIONS].slice(0, 20);
+    const ids = new Set(captured.map(s => s.id));
+    return [...captured, ...mock.filter(s => !ids.has(s.id))].slice(0, 25);
+  });
   const [flashedId, setFlashedId] = useState<string | null>(null);
   const [reviewSession, setReviewSession] = useState<Session | null>(null);
   const [feedbackCount, setFeedbackCount] = useState(() => countFeedbacks());
+  const [interventionThreshold, setInterventionThreshold] = useState(75);
+  const [intKpis, setIntKpis] = useState(() => getInterventionKPIs());
 
+  // Auto-refresh mock risk scores
   useEffect(() => {
     const id = setInterval(() => {
       setLiveSessions(prev => {
-        const i = Math.floor(Math.random() * prev.length);
+        // Only mutate mock sessions, not captured ones
+        const idx = prev.findIndex(s => !(s as any)._captured);
+        if (idx < 0) return prev;
         const delta = Math.floor(Math.random() * 9) - 4;
-        const updated = { ...prev[i], riskScore: Math.min(100, Math.max(0, prev[i].riskScore + delta)) };
-        const next = [...prev]; next[i] = updated;
+        const updated = { ...prev[idx], riskScore: Math.min(100, Math.max(0, prev[idx].riskScore + delta)) };
+        const next = [...prev]; next[idx] = updated;
         setFlashedId(updated.id);
         setTimeout(() => setFlashedId(null), 500);
         return next;
       });
     }, 4000);
     return () => clearInterval(id);
+  }, []);
+
+  // Inject new captured sessions in real-time
+  useEffect(() => {
+    function onNewSession() {
+      const captured = getLiveSessions();
+      setLiveSessions(prev => {
+        const ids = new Set(captured.map(s => s.id));
+        const mock = prev.filter(s => !(s as any)._captured);
+        return [...captured, ...mock.filter(s => !ids.has(s.id))].slice(0, 25);
+      });
+    }
+    function onNewIntervention() {
+      setIntKpis(getInterventionKPIs());
+    }
+    window.addEventListener('sw1ft_new_session', onNewSession);
+    window.addEventListener('sw1ft_new_intervention', onNewIntervention);
+    return () => {
+      window.removeEventListener('sw1ft_new_session', onNewSession);
+      window.removeEventListener('sw1ft_new_intervention', onNewIntervention);
+    };
   }, []);
 
   const kpis = DASHBOARD_KPIs;
@@ -196,9 +232,9 @@ export default function Dashboard() {
         />
         <KpiCard
           label="Interventions"
-          value={kpis.interventionsDeployed}
+          value={kpis.interventionsDeployed + intKpis.total_triggered}
           format={n => String(n)}
-          sub="3 active"
+          sub={intKpis.total_triggered > 0 ? `${intKpis.total_triggered} live` : '0 live'}
           subColor={COLORS.orange}
         />
         <KpiCard
@@ -266,7 +302,10 @@ export default function Dashboard() {
                       onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.015)')}
                       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                     >
-                      <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.accent, whiteSpace: 'nowrap' }}>{s.id}</td>
+                      <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono', fontSize: '11px', color: (s as any)._captured ? '#C890F0' : COLORS.accent, whiteSpace: 'nowrap' }}>
+                        {(s as any)._captured && <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#00CC7A', marginRight: 5, verticalAlign: 'middle', boxShadow: '0 0 5px #00CC7A' }} />}
+                        {s.id}
+                      </td>
                       <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono', fontSize: '10px', color: 'var(--t3)', whiteSpace: 'nowrap' }}>{s.userId}</td>
                       <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t4)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{s.channel}</td>
                       <td style={{ padding: '6px 4px 6px 10px' }}>
@@ -373,6 +412,14 @@ export default function Dashboard() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Intervention Engine panel */}
+      <div style={{ marginBottom: '8px' }}>
+        <InterventionEnginePanel
+          threshold={interventionThreshold}
+          onThresholdChange={setInterventionThreshold}
+        />
       </div>
 
       {/* Geo risk map */}
