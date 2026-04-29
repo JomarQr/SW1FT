@@ -4,12 +4,13 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceLine,
 } from 'recharts';
-import { ExternalLink, ArrowUpRight, ArrowDownRight, Minus, MessageSquare, Smartphone } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Minus, MessageSquare, Smartphone, X } from 'lucide-react';
 import GeoRiskMap from '../components/GeoRiskMap';
 import SessionReviewPanel from '../components/SessionReviewPanel';
 import { getFeedbackForSession, countFeedbacks } from '../lib/feedbackStore';
-import { getLiveSessions } from '../lib/liveSessionStore';
-import { getInterventionKPIs } from '../lib/interventionStore';
+import { getLiveSessions, type CapturedSession } from '../lib/liveSessionStore';
+import { getInterventionKPIs, getRiskLevel } from '../lib/interventionStore';
+import { getSessions as getBehaviorSessions } from '../lib/behaviorStore';
 import { getRole, getUsername } from '../lib/auth';
 import {
   SESSIONS, ALERTS, DASHBOARD_KPIs, RISK_DISTRIBUTION_24H, COLORS,
@@ -142,6 +143,347 @@ function SectionHeader({ label, right }: { label: string; right?: React.ReactNod
   );
 }
 
+/* ── transaction detail modal ────────────────────────────────────────────── */
+
+type BioTab = 'mouse' | 'keyboard' | 'clipboard' | 'attention' | 'session' | 'device';
+
+function BRow({
+  label, value, anomaly,
+}: {
+  label: string;
+  value: string | number;
+  anomaly?: 'warn' | 'alert';
+}) {
+  const color = anomaly === 'alert' ? COLORS.danger : anomaly === 'warn' ? COLORS.warning : 'var(--t2)';
+  const display = typeof value === 'number'
+    ? (Number.isInteger(value) ? value.toString() : value.toFixed(3))
+    : (value || '—');
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid var(--bdr)' }}>
+      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: 'var(--t4)' }}>{label}</span>
+      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color, fontWeight: anomaly ? 600 : 400 }}>{display}</span>
+    </div>
+  );
+}
+
+function BiometricPanel({ tab, m }: { tab: BioTab; m: NonNullable<ReturnType<typeof getBehaviorSessions>[0]>['metrics'] }) {
+  const fmtMs = (ms: number) => ms >= 1000 ? `${(ms / 1000).toFixed(2)}s` : `${Math.round(ms)}ms`;
+
+  if (tab === 'mouse') {
+    const mm = m.mouse;
+    return (
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 24px' }}>
+        <BRow label="move_count"        value={mm.move_count} />
+        <BRow label="click_count"       value={mm.click_count} />
+        <BRow label="dbl_click_count"   value={mm.dbl_click_count} />
+        <BRow label="right_click_count" value={mm.right_click_count} />
+        <BRow label="velocity_mean"     value={`${mm.velocity_mean.toFixed(2)} px/ms`} anomaly={mm.velocity_mean > 15 ? 'alert' : mm.velocity_mean > 8 ? 'warn' : undefined} />
+        <BRow label="velocity_max"      value={`${mm.velocity_max.toFixed(2)} px/ms`} />
+        <BRow label="velocity_std"      value={mm.velocity_std} />
+        <BRow label="acceleration_mean" value={mm.acceleration_mean} />
+        <BRow label="total_distance_px" value={`${mm.total_distance_px.toLocaleString()} px`} />
+        <BRow label="path_efficiency"   value={mm.path_efficiency} anomaly={mm.path_efficiency < 0.4 ? 'warn' : undefined} />
+        <BRow label="tremor_index"      value={mm.tremor_index} anomaly={mm.tremor_index > 5 ? 'warn' : undefined} />
+        <BRow label="direction_angle_std" value={mm.direction_angle_std} />
+        <BRow label="curvature_mean"    value={mm.curvature_mean} />
+        <BRow label="idle_period_count" value={mm.idle_period_count} />
+        <BRow label="longest_idle_ms"   value={fmtMs(mm.longest_idle_ms)} />
+        <BRow label="overshoot_count"   value={mm.overshoot_count} anomaly={mm.overshoot_count > 5 ? 'warn' : undefined} />
+        <BRow label="correction_count"  value={mm.correction_count} />
+        <BRow label="last_position"     value={`${mm.last_x}, ${mm.last_y}`} />
+      </div>
+    );
+  }
+
+  if (tab === 'keyboard') {
+    const kb = m.keyboard;
+    const cl = m.clipboard;
+    return (
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 24px' }}>
+        <BRow label="total_keys"         value={kb.total_keys} />
+        <BRow label="backspace_count"    value={kb.backspace_count} anomaly={kb.backspace_count > 15 ? 'warn' : undefined} />
+        <BRow label="typing_speed_cps"   value={`${kb.typing_speed_cps.toFixed(2)} c/s`} />
+        <BRow label="typing_speed_peak"  value={`${kb.typing_speed_peak.toFixed(2)} c/s`} />
+        <BRow label="dwell_time_mean"    value={fmtMs(kb.dwell_time_mean)} />
+        <BRow label="dwell_time_std"     value={fmtMs(kb.dwell_time_std)} />
+        <BRow label="flight_time_mean"   value={fmtMs(kb.flight_time_mean)} />
+        <BRow label="flight_time_std"    value={fmtMs(kb.flight_time_std)} />
+        <BRow label="error_rate"         value={`${(kb.error_rate * 100).toFixed(1)}%`} anomaly={kb.error_rate > 0.25 ? 'alert' : kb.error_rate > 0.1 ? 'warn' : undefined} />
+        <BRow label="rhythm_consistency" value={kb.rhythm_consistency} anomaly={kb.rhythm_consistency < 0.3 ? 'warn' : undefined} />
+        <BRow label="burst_count"        value={kb.burst_count} />
+        <BRow label="modifier_usage_ratio" value={`${(kb.modifier_usage_ratio * 100).toFixed(1)}%`} />
+        <BRow label="long_pause_count"   value={kb.long_pause_count} anomaly={kb.long_pause_count > 5 ? 'warn' : undefined} />
+        <div style={{ gridColumn: '1/-1', marginTop: '10px' }}>
+          <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--t4)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '4px' }}>Clipboard</div>
+          <BRow label="paste_total" value={cl.paste_total} anomaly={cl.paste_total > 3 ? 'warn' : undefined} />
+          <BRow label="copy_total"  value={cl.copy_total} />
+          <BRow label="cut_total"   value={cl.cut_total} />
+          <BRow label="paste_fields" value={cl.paste_fields.join(', ') || '—'} />
+        </div>
+      </div>
+    );
+  }
+
+  if (tab === 'clipboard') {
+    const se = m.session;
+    return (
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 24px' }}>
+        <BRow label="paste_vs_type_ratio" value={`${(se.paste_vs_type_ratio * 100).toFixed(1)}%`} anomaly={se.paste_vs_type_ratio > 0.3 ? 'alert' : se.paste_vs_type_ratio > 0.1 ? 'warn' : undefined} />
+        <BRow label="paste_total"  value={m.clipboard.paste_total} anomaly={m.clipboard.paste_total > 3 ? 'warn' : undefined} />
+        <BRow label="copy_total"   value={m.clipboard.copy_total} />
+        <BRow label="cut_total"    value={m.clipboard.cut_total} />
+        <BRow label="paste_fields" value={m.clipboard.paste_fields.join(', ') || 'none'} />
+      </div>
+    );
+  }
+
+  if (tab === 'attention') {
+    const at = m.attention;
+    return (
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 24px' }}>
+        <BRow label="tab_switch_count"    value={at.tab_switch_count} anomaly={at.tab_switch_count > 3 ? 'alert' : at.tab_switch_count > 1 ? 'warn' : undefined} />
+        <BRow label="total_time_away_ms"  value={fmtMs(at.total_time_away_ms)} anomaly={at.total_time_away_ms > 10000 ? 'warn' : undefined} />
+        <BRow label="longest_absence_ms" value={fmtMs(at.longest_absence_ms)} />
+        <BRow label="blur_events"         value={at.blur_events} />
+        <BRow label="focus_events"        value={at.focus_events} />
+        <BRow label="visibility_changes"  value={at.visibility_changes} />
+        <BRow label="window_resize_count" value={at.window_resize_count} />
+      </div>
+    );
+  }
+
+  if (tab === 'session') {
+    const se = m.session;
+    return (
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 24px' }}>
+        <BRow label="total_duration_ms"        value={fmtMs(se.total_duration_ms)} />
+        <BRow label="first_interaction_ms"     value={se.first_interaction_ms !== null ? fmtMs(se.first_interaction_ms) : '—'} />
+        <BRow label="hesitation_submit_ms"     value={fmtMs(se.hesitation_before_submit_ms)} anomaly={se.hesitation_before_submit_ms > 5000 ? 'warn' : undefined} />
+        <BRow label="scroll_depth_pct"         value={`${se.scroll_depth_pct.toFixed(1)}%`} anomaly={se.scroll_depth_pct < 20 ? 'warn' : undefined} />
+        <BRow label="scroll_dir_changes"       value={se.scroll_direction_changes} />
+        <BRow label="scroll_speed_mean"        value={se.scroll_speed_mean} />
+        <BRow label="paste_vs_type_ratio"      value={`${(se.paste_vs_type_ratio * 100).toFixed(1)}%`} anomaly={se.paste_vs_type_ratio > 0.3 ? 'alert' : se.paste_vs_type_ratio > 0.1 ? 'warn' : undefined} />
+        <BRow label="form_nav_style"           value={se.form_navigation_style} />
+        <div style={{ gridColumn: '1/-1', marginTop: '6px' }}>
+          <BRow label="field_order" value={se.field_order.join(' → ') || '—'} />
+        </div>
+        {Object.entries(se.field_durations).map(([f, ms]) => (
+          <BRow key={f} label={`time_in_${f}`} value={fmtMs(ms)} />
+        ))}
+        {Object.entries(se.field_revisions).map(([f, n]) => (
+          <BRow key={f} label={`revisions_${f}`} value={n} anomaly={(n as number) > 5 ? 'warn' : undefined} />
+        ))}
+      </div>
+    );
+  }
+
+  if (tab === 'device') {
+    const dv = m.device;
+    return (
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 24px' }}>
+        <BRow label="platform"        value={dv.platform || '—'} />
+        <BRow label="cpu_cores"       value={dv.cpu_cores} />
+        <BRow label="memory_gb"       value={dv.memory_gb || '—'} />
+        <BRow label="screen"          value={`${dv.screen_width}×${dv.screen_height}`} />
+        <BRow label="viewport"        value={`${dv.viewport_width}×${dv.viewport_height}`} />
+        <BRow label="dpr"             value={dv.device_pixel_ratio} />
+        <BRow label="color_depth"     value={`${dv.color_depth}bit`} />
+        <BRow label="timezone"        value={dv.timezone} />
+        <BRow label="language"        value={dv.language} />
+        <BRow label="local_hour"      value={dv.local_hour} />
+        <BRow label="touch_points"    value={dv.touch_points_max} />
+        <BRow label="connection"      value={dv.connection_type} />
+        <BRow label="connection_speed" value={dv.connection_speed ? `${dv.connection_speed} Mbps` : '—'} />
+        <div style={{ gridColumn: '1/-1', marginTop: '4px' }}>
+          <BRow label="user_agent" value={dv.user_agent} />
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
+
+function TransactionDetailModal({ session, onClose }: { session: Session; onClose: () => void }) {
+  const [tab, setTab] = useState<BioTab>('mouse');
+  const captured = !!(session as CapturedSession)._captured;
+  const snapshot = captured
+    ? getBehaviorSessions().find(s => s.session_id === (session as CapturedSession)._snapshot_id)
+    : null;
+  const m = snapshot?.metrics ?? null;
+  const level = getRiskLevel(session.riskScore);
+  const levelColor = level === 'HIGH_RISK' ? COLORS.danger : level === 'STEP_UP' ? COLORS.orange : level === 'SOFT_WARNING' ? COLORS.warning : COLORS.safe;
+  const levelLabel = level.replace('_', ' ');
+  const scfg = STATUS_CFG[session.status];
+  const fmtMs = (ms: number) => ms >= 1000 ? `${(ms / 1000).toFixed(2)}s` : `${Math.round(ms)}ms`;
+
+  useEffect(() => {
+    const fn = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', fn);
+    return () => window.removeEventListener('keydown', fn);
+  }, [onClose]);
+
+  const BIO_TABS: { id: BioTab; label: string }[] = [
+    { id: 'mouse',     label: 'Mouse'     },
+    { id: 'keyboard',  label: 'Keyboard'  },
+    { id: 'clipboard', label: 'Clipboard' },
+    { id: 'attention', label: 'Attention' },
+    { id: 'session',   label: 'Session'   },
+    { id: 'device',    label: 'Device'    },
+  ];
+
+  return (
+    <div
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.82)', zIndex: 900, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
+      onClick={onClose}
+    >
+      <div
+        style={{ background: 'var(--card)', border: '1px solid var(--bdr2)', width: '100%', maxWidth: '960px', maxHeight: '88vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* ── Header ─────────────────────────────────────────────────────── */}
+        <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--bdr)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0, background: 'var(--bg)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {captured && (
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#00CC7A', boxShadow: '0 0 5px #00CC7A', display: 'inline-block', flexShrink: 0 }} />
+            )}
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '12px', fontWeight: 600, color: captured ? '#C890F0' : COLORS.accent }}>{session.id}</span>
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--bdr2)' }}>·</span>
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: 'var(--t3)' }}>{session.userId}</span>
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--bdr2)' }}>·</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', fontFamily: 'JetBrains Mono', fontSize: '9px', color: session.channel === 'mobile' ? COLORS.accent : 'var(--t4)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              {session.channel === 'mobile' && <Smartphone size={9} />}
+              {session.channel}
+            </span>
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--bdr2)' }}>·</span>
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t4)' }}>{new Date(session.startTime).toLocaleString([], { hour12: false })}</span>
+          </div>
+          <button onClick={onClose} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '26px', height: '26px', background: 'none', border: '1px solid var(--bdr)', color: 'var(--t4)', cursor: 'pointer', borderRadius: '2px' }}>
+            <X size={12} />
+          </button>
+        </div>
+
+        {/* ── Body ───────────────────────────────────────────────────────── */}
+        <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '260px 1fr', overflow: 'hidden' }}>
+
+          {/* LEFT — overview + signals */}
+          <div style={{ borderRight: '1px solid var(--bdr)', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+
+            {/* Risk score hero */}
+            <div style={{ padding: '20px 16px', borderBottom: '1px solid var(--bdr)' }}>
+              <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--t4)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '12px' }}>Risk Assessment</div>
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: '10px', marginBottom: '8px' }}>
+                <span style={{ fontFamily: 'JetBrains Mono', fontSize: '52px', fontWeight: 700, color: levelColor, lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
+                  {session.riskScore}
+                </span>
+                <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: levelColor, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px', opacity: 0.9 }}>
+                  {levelLabel}
+                </span>
+              </div>
+              <div style={{ width: '100%', height: '4px', background: 'var(--bdr)', borderRadius: '2px', overflow: 'hidden', marginBottom: '16px' }}>
+                <div style={{ width: `${session.riskScore}%`, height: '100%', background: `linear-gradient(90deg, ${COLORS.safe}, ${levelColor})`, borderRadius: '2px' }} />
+              </div>
+              {/* Key metrics */}
+              {[
+                { label: 'Amount',   value: `€${session.transactionAmount.toLocaleString('de-DE', { minimumFractionDigits: 2 })}` },
+                { label: 'Status',   value: session.status, color: scfg.color },
+                { label: 'Country',  value: session.country },
+                ...(m ? [{ label: 'Duration', value: fmtMs(m.session.total_duration_ms) }] : []),
+                ...(m ? [{ label: 'Hesitation', value: fmtMs(m.session.hesitation_before_submit_ms), anomaly: m.session.hesitation_before_submit_ms > 5000 }] : []),
+              ].map(({ label, value, color, anomaly }) => (
+                <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: '1px solid var(--bdr)' }}>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t4)' }}>{label}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: color ?? (anomaly ? COLORS.warning : 'var(--t2)'), fontWeight: anomaly ? 600 : 400 }}>{value}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Signal contributions */}
+            {session.signals.signalContributions.length > 0 && (
+              <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--bdr)' }}>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--t4)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '12px' }}>Signal Contributions</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {session.signals.signalContributions.map((sig, i) => {
+                    const barColor = sig.weight >= 70 ? COLORS.danger : sig.weight >= 50 ? COLORS.orange : sig.weight >= 30 ? COLORS.warning : COLORS.accent;
+                    return (
+                      <div key={i}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t3)' }}>{sig.signal}</span>
+                          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: barColor, fontWeight: 600 }}>{sig.value}</span>
+                        </div>
+                        <div style={{ height: '3px', background: 'var(--bdr)', borderRadius: '2px' }}>
+                          <div style={{ width: `${sig.weight}%`, height: '100%', background: barColor, borderRadius: '2px', transition: 'width 0.4s ease' }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Explainability */}
+            <div style={{ padding: '14px 16px', flex: 1 }}>
+              <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--t4)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '8px' }}>Model Explanation</div>
+              <div style={{ fontFamily: 'Inter', fontSize: '11px', color: 'var(--t3)', lineHeight: 1.65 }}>
+                {session.signals.explainabilityText}
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT — biometric tabs */}
+          <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            {m ? (
+              <>
+                {/* Tab strip */}
+                <div style={{ display: 'flex', borderBottom: '1px solid var(--bdr)', background: 'var(--bg)', flexShrink: 0, padding: '0 4px' }}>
+                  {BIO_TABS.map(({ id, label }) => (
+                    <button key={id} onClick={() => setTab(id)} style={{
+                      padding: '9px 12px',
+                      fontFamily: 'JetBrains Mono', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase',
+                      background: 'none', border: 'none',
+                      borderBottom: tab === id ? `2px solid ${COLORS.accent}` : '2px solid transparent',
+                      color: tab === id ? COLORS.accent : 'var(--t4)',
+                      cursor: 'pointer', marginBottom: '-1px',
+                      transition: 'color 0.12s',
+                    }}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                {/* Tab content */}
+                <div style={{ flex: 1, overflowY: 'auto', padding: '14px 16px' }}>
+                  <BiometricPanel tab={tab} m={m} />
+                </div>
+              </>
+            ) : (
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '32px' }}>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t4)', letterSpacing: '0.12em', textTransform: 'uppercase', textAlign: 'center' }}>
+                  Raw biometric data available for captured sessions only
+                </div>
+                <div style={{ fontFamily: 'Inter', fontSize: '12px', color: 'var(--t4)', textAlign: 'center', lineHeight: 1.6, maxWidth: '280px' }}>
+                  Use the <strong style={{ color: 'var(--t3)' }}>Capture</strong> page to run a live behavioral session. Full mouse, keyboard, clipboard, attention and device metrics will appear here.
+                </div>
+                {/* Summary from signals */}
+                <div style={{ width: '100%', marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  {[
+                    { label: 'Typing cadence deviation', value: `${session.signals.typingCadenceDeviation.toFixed(2)} SD` },
+                    { label: 'Pre-confirmation pause',   value: `${session.signals.preConfirmationPause}s (baseline ${session.signals.preConfirmationPauseBaseline}s)` },
+                    { label: 'Scroll depth',             value: `${session.signals.scrollDepth}%` },
+                    { label: 'Active call detected',     value: session.signals.activeCallDetected ? 'YES' : 'No' },
+                    { label: 'Remote access detected',   value: session.signals.remoteAccessDetected ? 'YES' : 'No' },
+                  ].map(({ label, value }) => (
+                    <BRow key={label} label={label} value={value} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ── main ─────────────────────────────────────────────────────────────────── */
 
 export default function Dashboard() {
@@ -162,6 +504,7 @@ export default function Dashboard() {
   });
   const [flashedId, setFlashedId] = useState<string | null>(null);
   const [reviewSession, setReviewSession] = useState<Session | null>(null);
+  const [detailSession, setDetailSession] = useState<Session | null>(null);
   const [feedbackCount, setFeedbackCount] = useState(() => countFeedbacks());
   const [intKpis, setIntKpis] = useState(() => getInterventionKPIs());
 
@@ -334,14 +677,14 @@ export default function Dashboard() {
                     <tr
                       key={s.id}
                       className={flashedId === s.id ? 'row-flash' : ''}
-                      onClick={needsReview ? () => setReviewSession(s) : undefined}
+                      onClick={() => setDetailSession(s)}
                       style={{
                         borderBottom: '1px solid var(--card)',
                         background: rowBg,
                         borderLeft: needsReview
                           ? `3px solid ${s.riskScore >= 81 ? COLORS.danger : COLORS.orange}`
                           : undefined,
-                        cursor: needsReview ? 'pointer' : 'default',
+                        cursor: 'pointer',
                         transition: 'background 0.15s',
                       }}
                       onMouseEnter={e => (e.currentTarget.style.background = hoverBg)}
@@ -478,6 +821,14 @@ export default function Dashboard() {
         onClose={() => setReviewSession(null)}
         onSaved={() => setFeedbackCount(countFeedbacks())}
       />
+
+      {/* Transaction detail modal */}
+      {detailSession && (
+        <TransactionDetailModal
+          session={detailSession}
+          onClose={() => setDetailSession(null)}
+        />
+      )}
 
       {/* Risk distribution chart */}
       <div style={{ background: 'var(--surface)', border: '1px solid var(--bdr)' }}>
