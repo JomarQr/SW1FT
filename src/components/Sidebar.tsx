@@ -1,7 +1,7 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Bell, BarChart2, Users, MousePointer2,
-  Database, KeyRound, Brain, ScanFace, LogOut, Activity, FlaskConical, ShieldCheck, Smartphone,
+  Database, KeyRound, Brain, ScanFace, LogOut, Activity, FlaskConical, ShieldCheck,
 } from 'lucide-react';
 import { logout, getRole, getCurrentUser } from '../lib/auth';
 import type { Role } from '../lib/userStore';
@@ -22,7 +22,6 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
     label: 'Data',
     items: [
       { to: '/dashboard/payment-capture',   icon: MousePointer2, label: 'Capture',      roles: ['superadmin', 'analyst', 'client'] },
-      { to: '/dashboard/mobile-demo',       icon: Smartphone,    label: 'Mobile Demo',  roles: ['superadmin', 'analyst', 'client'] },
       { to: '/dashboard/captured-sessions', icon: Database,      label: 'Sessions',     roles: ['superadmin', 'analyst', 'client'] },
     ],
   },

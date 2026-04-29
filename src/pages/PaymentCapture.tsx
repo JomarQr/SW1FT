@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Lock, Shield, CheckCircle, Download, Save, CreditCard, Eye, EyeOff, Monitor, Smartphone } from 'lucide-react';
 import PhoneFrame from '../components/PhoneFrame';
+import { MobileArcBankApp, DesktopArcBankApp } from '../components/ArcBankApp';
 import { useBehaviorCapture, type BehaviorSnapshot, type LiveMetrics } from '../lib/useBehaviorCapture';
 import { saveSession } from '../lib/behaviorStore';
 import {
@@ -599,7 +600,8 @@ export default function PaymentCapture() {
     enabled: recording,
     containerRef,
   });
-  const [captureMode, setCaptureMode] = useState<'desktop' | 'mobile'>('desktop');
+  const [platform, setPlatform] = useState<'desktop' | 'mobile'>('desktop');
+  const [demoType, setDemoType] = useState<'payment' | 'app'>('payment');
   const [submitted, setSubmitted] = useState(false);
   const [snapshot, setSnapshot] = useState<BehaviorSnapshot | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -622,7 +624,7 @@ export default function PaymentCapture() {
   useEffect(() => () => { if (elapsedRef.current) clearInterval(elapsedRef.current); }, []);
 
   function handlePay(amount: number) {
-    const snap = finalize(analyst, userId.trim() || undefined, captureMode === 'mobile' ? 'mobile' : 'web');
+    const snap = finalize(analyst, userId.trim() || undefined, platform === 'mobile' ? 'mobile' : 'web');
     setSnapshot(snap);
     setSubmitted(true);
     handleStop();
@@ -696,30 +698,56 @@ export default function PaymentCapture() {
               style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', background: 'var(--bg)', border: '1px solid var(--bdr2)', color: COLORS.primary, padding: '5px 8px', width: '100px', outline: 'none', opacity: (recording || submitted) ? 0.5 : 1 }}
             />
           </div>
-          {/* Desktop / Mobile toggle */}
+          {/* Mode selector — 2 toggles: platform + demo type */}
           {!submitted && (
-            <div style={{ display: 'flex', border: '1px solid var(--bdr)', overflow: 'hidden' }}>
-              {(['desktop', 'mobile'] as const).map(mode => (
-                <button
-                  key={mode}
-                  onClick={() => !recording && setCaptureMode(mode)}
-                  disabled={recording}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '5px',
-                    padding: '6px 12px',
-                    background: captureMode === mode ? 'rgba(170,85,227,0.12)' : 'transparent',
-                    border: 'none',
-                    color: captureMode === mode ? COLORS.accent : COLORS.muted,
-                    fontFamily: 'JetBrains Mono', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase',
-                    cursor: recording ? 'not-allowed' : 'pointer',
-                    opacity: recording ? 0.5 : 1,
-                    borderRight: mode === 'desktop' ? '1px solid var(--bdr)' : 'none',
-                  }}
-                >
-                  {mode === 'desktop' ? <Monitor size={11} /> : <Smartphone size={11} />}
-                  {mode}
-                </button>
-              ))}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {/* Platform */}
+              <div style={{ display: 'flex', border: '1px solid var(--bdr)', overflow: 'hidden' }}>
+                {(['desktop', 'mobile'] as const).map((p, i) => (
+                  <button
+                    key={p}
+                    onClick={() => !recording && setPlatform(p)}
+                    disabled={recording}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '5px',
+                      padding: '6px 11px',
+                      background: platform === p ? 'rgba(170,85,227,0.12)' : 'transparent',
+                      border: 'none',
+                      color: platform === p ? COLORS.accent : COLORS.muted,
+                      fontFamily: 'JetBrains Mono', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase',
+                      cursor: recording ? 'not-allowed' : 'pointer',
+                      opacity: recording ? 0.5 : 1,
+                      borderRight: i === 0 ? '1px solid var(--bdr)' : 'none',
+                    }}
+                  >
+                    {p === 'desktop' ? <Monitor size={11} /> : <Smartphone size={11} />}
+                    {p}
+                  </button>
+                ))}
+              </div>
+              {/* Demo type */}
+              <div style={{ display: 'flex', border: '1px solid var(--bdr)', overflow: 'hidden' }}>
+                {(['payment', 'app'] as const).map((t, i) => (
+                  <button
+                    key={t}
+                    onClick={() => !recording && setDemoType(t)}
+                    disabled={recording}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '5px',
+                      padding: '6px 11px',
+                      background: demoType === t ? 'rgba(170,85,227,0.12)' : 'transparent',
+                      border: 'none',
+                      color: demoType === t ? COLORS.accent : COLORS.muted,
+                      fontFamily: 'JetBrains Mono', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase',
+                      cursor: recording ? 'not-allowed' : 'pointer',
+                      opacity: recording ? 0.5 : 1,
+                      borderRight: i === 0 ? '1px solid var(--bdr)' : 'none',
+                    }}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
@@ -733,14 +761,14 @@ export default function PaymentCapture() {
                 <span className="animate-pulse-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: COLORS.danger, display: 'inline-block', flexShrink: 0 }} />
                 RECORDING · STOP
               </button>
-            ) : (
+            ) : demoType === 'payment' ? (
               <button
                 onClick={handleStart}
                 style={{ display: 'flex', alignItems: 'center', gap: '7px', background: COLORS.accent, border: 'none', color: 'var(--bg)', fontFamily: 'JetBrains Mono', fontSize: '10px', fontWeight: 600, letterSpacing: '0.1em', padding: '8px 16px', cursor: 'pointer' }}
               >
                 ▶ START RECORDING
               </button>
-            )
+            ) : null
           )}
         </div>
       </div>
@@ -748,23 +776,41 @@ export default function PaymentCapture() {
       {/* Main grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '20px', alignItems: 'start' }}>
         {/* Left: payment widget — containerRef wraps only this area */}
-        <div ref={containerRef} style={{ display: 'flex', flexDirection: 'column', alignItems: captureMode === 'mobile' ? 'center' : 'stretch' }}>
-          {captureMode === 'mobile' ? (
-            <PhoneFrame height={680}>
-              <div style={{ background: '#0A0A0B', minHeight: '100%', padding: '8px 0 24px' }}>
-                <PaymentWidget
-                  onPay={(fields) => handlePay(parseFloat(fields._amount ?? '47.99'))}
-                  onSubmitHoverStart={onSubmitHoverStart}
-                  onSubmitHoverEnd={onSubmitHoverEnd}
-                  submitted={submitted}
-                />
-              </div>
-            </PhoneFrame>
+        <div ref={containerRef} style={{ display: 'flex', flexDirection: 'column', alignItems: (platform === 'mobile' || demoType === 'app') ? 'center' : 'stretch' }}>
+          {demoType === 'payment' ? (
+            platform === 'mobile' ? (
+              <PhoneFrame height={680}>
+                <div style={{ background: '#0A0A0B', minHeight: '100%', padding: '8px 0 24px' }}>
+                  <PaymentWidget
+                    onPay={(fields) => handlePay(parseFloat(fields._amount ?? '47.99'))}
+                    onSubmitHoverStart={onSubmitHoverStart}
+                    onSubmitHoverEnd={onSubmitHoverEnd}
+                    submitted={submitted}
+                  />
+                </div>
+              </PhoneFrame>
+            ) : (
+              <PaymentWidget
+                onPay={(fields) => handlePay(parseFloat(fields._amount ?? '47.99'))}
+                onSubmitHoverStart={onSubmitHoverStart}
+                onSubmitHoverEnd={onSubmitHoverEnd}
+                submitted={submitted}
+              />
+            )
+          ) : platform === 'mobile' ? (
+            <MobileArcBankApp
+              onStart={handleStart}
+              onConfirm={handlePay}
+              onHoverStart={onSubmitHoverStart}
+              onHoverEnd={onSubmitHoverEnd}
+              submitted={submitted}
+            />
           ) : (
-            <PaymentWidget
-              onPay={(fields) => handlePay(parseFloat(fields._amount ?? '47.99'))}
-              onSubmitHoverStart={onSubmitHoverStart}
-              onSubmitHoverEnd={onSubmitHoverEnd}
+            <DesktopArcBankApp
+              onStart={handleStart}
+              onConfirm={handlePay}
+              onHoverStart={onSubmitHoverStart}
+              onHoverEnd={onSubmitHoverEnd}
               submitted={submitted}
             />
           )}
@@ -784,7 +830,19 @@ export default function PaymentCapture() {
         <div style={{ position: 'sticky', top: '24px', maxHeight: 'calc(100vh - 96px)', overflowY: 'auto' }}>
           {recording || submitted
             ? <SignalPanel metrics={metrics} elapsed={elapsed} />
-            : <IdlePanel onStart={handleStart} />
+            : demoType === 'app'
+              ? (
+                <div style={{ background: 'var(--card)', border: '1px solid var(--bdr)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 32px', textAlign: 'center', gap: '0' }}>
+                  <div style={{ width: '56px', height: '56px', borderRadius: '50%', border: '1px solid var(--bdr2)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--bdr2)' }} />
+                  </div>
+                  <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: COLORS.primary, letterSpacing: '0.1em', marginBottom: '8px' }}>AWAITING INTERACTION</div>
+                  <div style={{ fontFamily: 'Inter', fontSize: '12px', color: COLORS.muted, lineHeight: 1.6, maxWidth: '260px' }}>
+                    Interact with the ArcBank app. Recording starts automatically when you tap <strong style={{ color: COLORS.primary }}>Send</strong>.
+                  </div>
+                </div>
+              )
+              : <IdlePanel onStart={handleStart} />
           }
         </div>
       </div>
