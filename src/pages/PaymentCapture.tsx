@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Lock, Shield, CheckCircle, Download, Save, CreditCard, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, Lock, Shield, CheckCircle, Download, Save, CreditCard, Eye, EyeOff, Monitor, Smartphone } from 'lucide-react';
+import PhoneFrame from '../components/PhoneFrame';
 import { useBehaviorCapture, type BehaviorSnapshot, type LiveMetrics } from '../lib/useBehaviorCapture';
 import { saveSession } from '../lib/behaviorStore';
 import {
@@ -598,6 +599,7 @@ export default function PaymentCapture() {
     enabled: recording,
     containerRef,
   });
+  const [captureMode, setCaptureMode] = useState<'desktop' | 'mobile'>('desktop');
   const [submitted, setSubmitted] = useState(false);
   const [snapshot, setSnapshot] = useState<BehaviorSnapshot | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -620,7 +622,7 @@ export default function PaymentCapture() {
   useEffect(() => () => { if (elapsedRef.current) clearInterval(elapsedRef.current); }, []);
 
   function handlePay(amount: number) {
-    const snap = finalize(analyst, userId.trim() || undefined);
+    const snap = finalize(analyst, userId.trim() || undefined, captureMode === 'mobile' ? 'mobile' : 'web');
     setSnapshot(snap);
     setSubmitted(true);
     handleStop();
@@ -694,6 +696,33 @@ export default function PaymentCapture() {
               style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', background: 'var(--bg)', border: '1px solid var(--bdr2)', color: COLORS.primary, padding: '5px 8px', width: '100px', outline: 'none', opacity: (recording || submitted) ? 0.5 : 1 }}
             />
           </div>
+          {/* Desktop / Mobile toggle */}
+          {!submitted && (
+            <div style={{ display: 'flex', border: '1px solid var(--bdr)', overflow: 'hidden' }}>
+              {(['desktop', 'mobile'] as const).map(mode => (
+                <button
+                  key={mode}
+                  onClick={() => !recording && setCaptureMode(mode)}
+                  disabled={recording}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '5px',
+                    padding: '6px 12px',
+                    background: captureMode === mode ? 'rgba(170,85,227,0.12)' : 'transparent',
+                    border: 'none',
+                    color: captureMode === mode ? COLORS.accent : COLORS.muted,
+                    fontFamily: 'JetBrains Mono', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase',
+                    cursor: recording ? 'not-allowed' : 'pointer',
+                    opacity: recording ? 0.5 : 1,
+                    borderRight: mode === 'desktop' ? '1px solid var(--bdr)' : 'none',
+                  }}
+                >
+                  {mode === 'desktop' ? <Monitor size={11} /> : <Smartphone size={11} />}
+                  {mode}
+                </button>
+              ))}
+            </div>
+          )}
+
           {/* Start / Stop button */}
           {!submitted && (
             recording ? (
@@ -719,13 +748,26 @@ export default function PaymentCapture() {
       {/* Main grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '20px', alignItems: 'start' }}>
         {/* Left: payment widget — containerRef wraps only this area */}
-        <div ref={containerRef}>
-          <PaymentWidget
-            onPay={(fields) => handlePay(parseFloat(fields._amount ?? '47.99'))}
-            onSubmitHoverStart={onSubmitHoverStart}
-            onSubmitHoverEnd={onSubmitHoverEnd}
-            submitted={submitted}
-          />
+        <div ref={containerRef} style={{ display: 'flex', flexDirection: 'column', alignItems: captureMode === 'mobile' ? 'center' : 'stretch' }}>
+          {captureMode === 'mobile' ? (
+            <PhoneFrame height={680}>
+              <div style={{ background: '#0A0A0B', minHeight: '100%', padding: '8px 0 24px' }}>
+                <PaymentWidget
+                  onPay={(fields) => handlePay(parseFloat(fields._amount ?? '47.99'))}
+                  onSubmitHoverStart={onSubmitHoverStart}
+                  onSubmitHoverEnd={onSubmitHoverEnd}
+                  submitted={submitted}
+                />
+              </div>
+            </PhoneFrame>
+          ) : (
+            <PaymentWidget
+              onPay={(fields) => handlePay(parseFloat(fields._amount ?? '47.99'))}
+              onSubmitHoverStart={onSubmitHoverStart}
+              onSubmitHoverEnd={onSubmitHoverEnd}
+              submitted={submitted}
+            />
+          )}
           {submitted && (
             <div style={{ marginTop: '16px', textAlign: 'center' }}>
               <button

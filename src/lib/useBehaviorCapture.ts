@@ -76,6 +76,7 @@ export interface BehaviorSnapshot {
   captured_at: string;
   analyst: string;
   user_id?: string;
+  channel: 'web' | 'mobile';
   metrics: LiveMetrics;
   total_features: number;
 }
@@ -524,7 +525,7 @@ export function useBehaviorCapture(options: {
     return () => clearInterval(timer);
   }, [enabled]);
 
-  const finalize = useCallback((analyst: string, userId?: string): BehaviorSnapshot => {
+  const finalize = useCallback((analyst: string, userId?: string, channel: 'web' | 'mobile' = 'web'): BehaviorSnapshot => {
     const m = metrics;
     const featureCount =
       Object.keys(m.device).length + Object.keys(m.mouse).length +
@@ -535,6 +536,7 @@ export function useBehaviorCapture(options: {
       captured_at: new Date().toISOString(),
       analyst,
       user_id: userId || undefined,
+      channel,
       metrics: JSON.parse(JSON.stringify(m)),
       total_features: featureCount,
     };

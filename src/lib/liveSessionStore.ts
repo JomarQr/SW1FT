@@ -81,7 +81,7 @@ export function snapshotToSession(
     _intervention_id: interventionId,
     id: snap.session_id,
     userId: snap.user_id ?? snap.analyst,
-    channel: 'web',
+    channel: snap.channel,
     riskScore: score,
     status: statusFromScore(score),
     startTime: snap.captured_at,

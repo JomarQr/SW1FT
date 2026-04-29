@@ -338,6 +338,7 @@ function makeSessions(
       captured_at: ts2.toISOString(),
       analyst: 'demo',
       user_id: undefined,
+      channel: 'web' as const,
       total_features: 62,
       metrics: {
         device: {

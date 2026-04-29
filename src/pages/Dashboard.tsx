@@ -4,7 +4,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceLine,
 } from 'recharts';
-import { ExternalLink, ArrowUpRight, ArrowDownRight, Minus, MessageSquare } from 'lucide-react';
+import { ExternalLink, ArrowUpRight, ArrowDownRight, Minus, MessageSquare, Smartphone } from 'lucide-react';
 import GeoRiskMap from '../components/GeoRiskMap';
 import SessionReviewPanel from '../components/SessionReviewPanel';
 import { getFeedbackForSession, countFeedbacks } from '../lib/feedbackStore';
@@ -352,7 +352,12 @@ export default function Dashboard() {
                         {s.id}
                       </td>
                       <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono', fontSize: '10px', color: 'var(--t3)', whiteSpace: 'nowrap' }}>{s.userId}</td>
-                      <td style={{ padding: '6px 10px', fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t4)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{s.channel}</td>
+                      <td style={{ padding: '6px 10px' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontFamily: 'JetBrains Mono', fontSize: '9px', color: s.channel === 'mobile' ? COLORS.accent : 'var(--t4)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                          {s.channel === 'mobile' && <Smartphone size={10} />}
+                          {s.channel}
+                        </span>
+                      </td>
                       <td style={{ padding: '6px 4px 6px 10px' }}>
                         <div style={{ width: '36px', height: '2px', background: 'var(--bdr)' }}>
                           <div style={{ width: `${s.riskScore}%`, height: '100%', background: riskColor(s.riskScore), transition: 'width 0.5s ease' }} />
