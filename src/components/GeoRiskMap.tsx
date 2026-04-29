@@ -558,9 +558,6 @@ export default function GeoRiskMap() {
             </ZoomableGroup>
           </ComposableMap>
 
-          {/* Vignette */}
-          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none',
-            background: 'radial-gradient(ellipse 92% 92% at 50% 50%, transparent 55%, rgba(8,8,10,0.6) 100%)' }} />
 
           {/* Zoom controls */}
           <div style={{ position: 'absolute', bottom: '12px', right: '12px', display: 'flex', flexDirection: 'column', gap: '3px', zIndex: 4 }}>

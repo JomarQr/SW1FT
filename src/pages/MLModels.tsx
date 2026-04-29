@@ -16,21 +16,21 @@ import evalData from '../data/mlEvalData.json';
 const API = '/api/ml';
 
 const C = {
-  accent: '#AA55E3',
-  accentD: '#9944CC',
-  accentLt: '#C890F0',
-  green: '#00CC7A',
-  red: '#FF3B5C',
-  orange: '#FF8C00',
-  yellow: '#FFB800',
+  accent: 'var(--accent)',
+  accentD: 'var(--accent-d)',
+  accentLt: 'var(--accent-lt)',
+  green: 'var(--green)',
+  red: 'var(--red)',
+  orange: 'var(--orange)',
+  yellow: 'var(--yellow)',
   blue: '#5B9BD5',
-  muted: '#6B6B7A',
-  t1: '#E8E8ED',
-  t2: '#9B9BAA',
-  t3: '#4A4A5A',
-  bdr: '#1E1E22',
-  surface: '#0F0F12',
-  card: '#111115',
+  muted: 'var(--t2)',
+  t1: 'var(--t1)',
+  t2: 'var(--t3)',
+  t3: 'var(--t3)',
+  bdr: 'var(--bdr)',
+  surface: 'var(--surface)',
+  card: 'var(--card)',
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -162,11 +162,17 @@ function Section({ title, icon: Icon, children, defaultOpen = true }: {
 function ConfusionMatrix({ cm }: { cm: number[][] }) {
   const [[tn, fp], [fn, tp]] = cm;
   const total = tn + fp + fn + tp;
+  const CM = {
+    green:  { hex: '#00CC7A', bg: 'rgba(0,204,122,0.07)',   bdr: 'rgba(0,204,122,0.2)'  },
+    red:    { hex: '#FF3B5C', bg: 'rgba(255,59,92,0.07)',   bdr: 'rgba(255,59,92,0.2)'  },
+    orange: { hex: '#FF8C00', bg: 'rgba(255,140,0,0.07)',   bdr: 'rgba(255,140,0,0.2)'  },
+    blue:   { hex: '#5B9BD5', bg: 'rgba(91,155,213,0.07)',  bdr: 'rgba(91,155,213,0.2)' },
+  };
   const cells = [
-    { label: 'True Neg', value: tn, pct: tn / total, color: C.green, pos: [0, 0] },
-    { label: 'False Pos', value: fp, pct: fp / total, color: C.red, pos: [0, 1] },
-    { label: 'False Neg', value: fn, pct: fn / total, color: C.orange, pos: [1, 0] },
-    { label: 'True Pos', value: tp, pct: tp / total, color: C.blue, pos: [1, 1] },
+    { label: 'True Neg',  value: tn, pct: tn / total, cm: CM.green  },
+    { label: 'False Pos', value: fp, pct: fp / total, cm: CM.red    },
+    { label: 'False Neg', value: fn, pct: fn / total, cm: CM.orange },
+    { label: 'True Pos',  value: tp, pct: tp / total, cm: CM.blue   },
   ];
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
@@ -189,11 +195,11 @@ function ConfusionMatrix({ cm }: { cm: number[][] }) {
         <div style={{ display: 'grid', gridTemplateColumns: '120px 120px', gap: 4 }}>
           {cells.map(cell => (
             <div key={cell.label} style={{
-              height: 100, background: `${cell.color}12`,
-              border: `1px solid ${cell.color}33`,
+              height: 100, background: cell.cm.bg,
+              border: `1px solid ${cell.cm.bdr}`,
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4,
             }}>
-              <div style={{ fontFamily: 'JetBrains Mono', fontSize: '24px', fontWeight: 700, color: cell.color }}>{cell.value.toLocaleString()}</div>
+              <div style={{ fontFamily: 'JetBrains Mono', fontSize: '24px', fontWeight: 700, color: cell.cm.hex }}>{cell.value.toLocaleString()}</div>
               <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: C.muted }}>{(cell.pct * 100).toFixed(1)}%</div>
               <div style={{ fontFamily: 'Inter', fontSize: '10px', color: C.t2 }}>{cell.label}</div>
             </div>
