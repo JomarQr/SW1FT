@@ -1,8 +1,53 @@
 import type { BehaviorSnapshot, LiveMetrics } from './useBehaviorCapture';
 import type { Session, SessionSignals } from './mockData';
 import { computeRiskScore } from './interventionStore';
+import { getSessions as getBehaviorSnapshots } from './behaviorStore';
 
 const KEY = 'sw1ft_live_captured';
+
+const TZ_TO_ISO2: Record<string, string> = {
+  'Europe/Riga': 'LV', 'Europe/Vilnius': 'LT', 'Europe/Tallinn': 'EE',
+  'Europe/Berlin': 'DE', 'Europe/Warsaw': 'PL', 'Europe/Helsinki': 'FI',
+  'Europe/Stockholm': 'SE', 'Europe/Copenhagen': 'DK', 'Europe/Oslo': 'NO',
+  'Europe/Amsterdam': 'NL', 'Europe/Brussels': 'BE', 'Europe/Paris': 'FR',
+  'Europe/Madrid': 'ES', 'Europe/Rome': 'IT', 'Europe/Vienna': 'AT',
+  'Europe/Zurich': 'CH', 'Europe/Prague': 'CZ', 'Europe/Budapest': 'HU',
+  'Europe/Bucharest': 'RO', 'Europe/Sofia': 'BG', 'Europe/Athens': 'GR',
+  'Europe/Istanbul': 'TR', 'Europe/Kyiv': 'UA', 'Europe/Moscow': 'RU',
+  'Europe/London': 'GB', 'Europe/Dublin': 'IE', 'Europe/Lisbon': 'PT',
+  'Europe/Minsk': 'BY', 'Europe/Chisinau': 'MD',
+  'Europe/Bratislava': 'SK', 'Europe/Ljubljana': 'SI', 'Europe/Zagreb': 'HR',
+  'Europe/Belgrade': 'RS', 'Europe/Sarajevo': 'BA', 'Europe/Skopje': 'MK',
+  'Europe/Podgorica': 'ME', 'Europe/Tirane': 'AL', 'Europe/Nicosia': 'CY',
+  'Europe/Valletta': 'MT', 'Europe/Luxembourg': 'LU',
+  'America/New_York': 'US', 'America/Chicago': 'US', 'America/Denver': 'US',
+  'America/Los_Angeles': 'US', 'America/Phoenix': 'US', 'America/Anchorage': 'US',
+  'America/Honolulu': 'US', 'America/Toronto': 'CA', 'America/Vancouver': 'CA',
+  'America/Sao_Paulo': 'BR', 'America/Mexico_City': 'MX', 'America/Buenos_Aires': 'AR',
+  'America/Santiago': 'CL', 'America/Lima': 'PE', 'America/Bogota': 'CO',
+  'America/Caracas': 'VE', 'America/Montevideo': 'UY',
+  'Asia/Dubai': 'AE', 'Asia/Tokyo': 'JP', 'Asia/Shanghai': 'CN',
+  'Asia/Hong_Kong': 'HK', 'Asia/Seoul': 'KR', 'Asia/Singapore': 'SG',
+  'Asia/Mumbai': 'IN', 'Asia/Kolkata': 'IN', 'Asia/Karachi': 'PK',
+  'Asia/Dhaka': 'BD', 'Asia/Bangkok': 'TH', 'Asia/Jakarta': 'ID',
+  'Asia/Manila': 'PH', 'Asia/Kuala_Lumpur': 'MY', 'Asia/Taipei': 'TW',
+  'Asia/Riyadh': 'SA', 'Asia/Kuwait': 'KW', 'Asia/Qatar': 'QA',
+  'Asia/Bahrain': 'BH', 'Asia/Tehran': 'IR', 'Asia/Baghdad': 'IQ',
+  'Asia/Beirut': 'LB', 'Asia/Jerusalem': 'IL', 'Asia/Almaty': 'KZ',
+  'Asia/Tashkent': 'UZ', 'Asia/Baku': 'AZ', 'Asia/Tbilisi': 'GE',
+  'Asia/Yerevan': 'AM', 'Asia/Colombo': 'LK', 'Asia/Kathmandu': 'NP',
+  'Asia/Yangon': 'MM', 'Asia/Ho_Chi_Minh': 'VN', 'Asia/Phnom_Penh': 'KH',
+  'Africa/Cairo': 'EG', 'Africa/Lagos': 'NG', 'Africa/Johannesburg': 'ZA',
+  'Africa/Nairobi': 'KE', 'Africa/Accra': 'GH', 'Africa/Casablanca': 'MA',
+  'Africa/Tunis': 'TN', 'Africa/Algiers': 'DZ', 'Africa/Khartoum': 'SD',
+  'Africa/Addis_Ababa': 'ET', 'Africa/Dar_es_Salaam': 'TZ',
+  'Australia/Sydney': 'AU', 'Australia/Melbourne': 'AU', 'Australia/Brisbane': 'AU',
+  'Australia/Perth': 'AU', 'Pacific/Auckland': 'NZ',
+};
+
+function countryFromTimezone(tz: string): string {
+  return TZ_TO_ISO2[tz] ?? 'GB';
+}
 
 export interface CapturedSession extends Session {
   _captured: true;
@@ -205,7 +250,7 @@ function sdkPayloadToSession(p: SdkPayload): RemoteSession {
     status:           statusFromScore(score),
     startTime:        p.receivedAt ?? p.captured_at,
     transactionAmount: 0,
-    country:          'GB',
+    country:          countryFromTimezone(fullMetrics?.device?.timezone ?? ''),
     signals,
   };
 }
@@ -242,7 +287,7 @@ export function snapshotToSession(
     status: statusFromScore(score),
     startTime: snap.captured_at,
     transactionAmount: amount,
-    country: 'GB',
+    country: countryFromTimezone(snap.metrics.device.timezone ?? ''),
     signals: signalsFromSnapshot(snap, score),
   };
 }
@@ -256,8 +301,25 @@ export function saveLiveSession(s: CapturedSession): void {
 }
 
 export function getLiveSessions(): CapturedSession[] {
-  try { return JSON.parse(localStorage.getItem(KEY) ?? '[]'); }
-  catch { return []; }
+  try {
+    const sessions: CapturedSession[] = JSON.parse(localStorage.getItem(KEY) ?? '[]');
+    // Migrate old sessions that were stored with country: 'GB' fallback
+    let dirty = false;
+    const snapshots = getBehaviorSnapshots();
+    const snapMap = new Map(snapshots.map(s => [s.session_id, s]));
+    for (const s of sessions) {
+      if (s.country === 'GB' && s._snapshot_id) {
+        const snap = snapMap.get(s._snapshot_id);
+        const tz = snap?.metrics?.device?.timezone;
+        if (tz) {
+          const fixed = countryFromTimezone(tz);
+          if (fixed !== 'GB') { s.country = fixed; dirty = true; }
+        }
+      }
+    }
+    if (dirty) localStorage.setItem(KEY, JSON.stringify(sessions));
+    return sessions;
+  } catch { return []; }
 }
 
 export function clearLiveSessions(): void {

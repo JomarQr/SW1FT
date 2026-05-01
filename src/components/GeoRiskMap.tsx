@@ -1,23 +1,24 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
-  ComposableMap, Geographies, Geography, Marker, Line, ZoomableGroup,
+  ComposableMap, Geographies, Geography, Marker, ZoomableGroup,
 } from 'react-simple-maps';
 import { geoCentroid, geoBounds } from 'd3-geo';
 import {
   CheckCircle, AlertTriangle, Info, MapPin, Plus, Minus, RotateCcw, ArrowLeft,
 } from 'lucide-react';
+import type { Session } from '../lib/mockData';
 
 /* ══════════════════════════════════════════════════════════ types & constants */
 
 const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
 
-type MarkerType = 'current' | 'trusted' | 'new' | 'highrisk';
-type RiskLevel  = 'Low' | 'Medium' | 'Elevated' | 'High' | 'Blocked' | 'No Data';
+type MarkerType = 'trusted' | 'new' | 'highrisk';
+type RiskLevel  = 'Low' | 'Elevated' | 'High' | 'Blocked' | 'No Data';
 
-interface GeoMarker {
-  id: string; name: string; city: string;
+interface LiveMarker {
+  iso2: string; name: string;
   coordinates: [number, number]; type: MarkerType;
-  sessions: number; risk: string;
+  sessions: number; maxRisk: number;
 }
 
 interface RegionPreset { id: string; label: string; center: [number, number]; zoom: number; }
@@ -28,7 +29,6 @@ interface CountryProfile {
   code: string; risk: RiskLevel; riskColor: string;
   type: MarkerType | 'unknown'; sessions: number; lastSeen: string;
   transactions: number; avgAmount: string; status: string;
-  trustedSince?: string; distance?: string;
   insights: Insight[];
 }
 
@@ -75,6 +75,52 @@ const NAME_TO_CODE: Record<string, string> = {
   'Zambia': 'zm', 'Zimbabwe': 'zw',
 };
 
+/* ── ISO-2 → approx center coordinates [lon, lat] ───────────────────────── */
+
+const ISO2_COORDS: Record<string, [number, number]> = {
+  'af': [67.7, 33.9], 'al': [20.2, 41.2], 'dz': [3.0, 28.0], 'ao': [18.5, -11.2],
+  'ar': [-63.6, -38.4], 'am': [45.0, 40.1], 'au': [133.8, -25.3], 'at': [14.5, 47.5],
+  'az': [47.6, 40.1], 'bh': [50.5, 26.2], 'bd': [90.4, 23.7], 'by': [28.0, 53.5],
+  'be': [4.5, 50.5], 'bo': [-64.7, -16.3], 'ba': [17.7, 43.9], 'bw': [24.7, -22.3],
+  'br': [-51.9, -14.2], 'bg': [25.5, 42.7], 'kh': [104.9, 12.6], 'cm': [12.3, 3.9],
+  'ca': [-96.8, 56.1], 'cl': [-71.5, -35.7], 'cn': [104.2, 35.9], 'co': [-74.3, 4.6],
+  'cg': [15.8, -0.2], 'cd': [24.0, -2.9], 'cr': [-83.8, 9.7], 'hr': [15.2, 45.1],
+  'cu': [-79.5, 21.5], 'cy': [33.4, 35.1], 'cz': [15.5, 49.8], 'dk': [10.0, 56.3],
+  'do': [-70.2, 18.7], 'ec': [-77.4, -1.8], 'eg': [30.8, 26.8], 'sv': [-88.9, 13.8],
+  'er': [39.8, 15.2], 'ee': [25.0, 58.6], 'et': [40.5, 9.1], 'fi': [25.7, 61.9],
+  'fr': [2.2, 46.2], 'ga': [11.6, -0.8], 'ge': [43.4, 42.3], 'de': [10.5, 51.2],
+  'gh': [-1.0, 7.9], 'gr': [21.8, 39.1], 'gt': [-90.2, 15.8], 'gn': [-11.8, 10.9],
+  'ht': [-72.3, 18.9], 'hn': [-86.2, 15.2], 'hu': [19.5, 47.2], 'is': [-19.0, 65.0],
+  'in': [78.9, 20.6], 'id': [113.9, -0.8], 'ir': [53.7, 32.4], 'iq': [43.7, 33.2],
+  'ie': [-8.2, 53.4], 'il': [34.9, 31.5], 'it': [12.6, 41.9], 'jm': [-77.3, 18.1],
+  'jp': [138.3, 36.2], 'jo': [36.2, 31.2], 'kz': [67.0, 48.0], 'ke': [37.9, 0.0],
+  'kp': [127.5, 40.3], 'kr': [127.8, 35.9], 'xk': [20.9, 42.6], 'kw': [47.5, 29.3],
+  'kg': [74.8, 41.2], 'la': [102.5, 19.9], 'lv': [24.6, 56.9], 'lb': [35.9, 33.9],
+  'ly': [17.2, 26.3], 'lt': [23.9, 55.2], 'lu': [6.1, 49.8], 'mg': [46.9, -18.8],
+  'my': [109.7, 4.2], 'ml': [-2.0, 17.6], 'mt': [14.4, 35.9], 'mr': [-10.9, 21.0],
+  'mx': [-102.6, 23.6], 'md': [28.4, 47.4], 'mn': [103.8, 46.9], 'me': [19.4, 42.7],
+  'ma': [-7.1, 31.8], 'mz': [35.5, -18.7], 'mm': [95.9, 21.9], 'na': [18.5, -22.0],
+  'np': [84.1, 28.4], 'nl': [5.3, 52.3], 'nz': [174.9, -40.9], 'ni': [-85.2, 12.9],
+  'ne': [8.1, 17.6], 'ng': [8.7, 9.1], 'mk': [21.7, 41.6], 'no': [8.5, 60.5],
+  'om': [57.6, 22.0], 'pk': [30.4, 69.3], 'ps': [35.3, 31.9], 'pa': [-80.8, 8.5],
+  'py': [-58.4, -23.4], 'pe': [-75.0, -9.2], 'ph': [122.9, 12.9], 'pl': [19.1, 51.9],
+  'pt': [-8.2, 39.4], 'qa': [51.2, 25.4], 'ro': [24.9, 45.9], 'ru': [98.1, 61.5],
+  'rw': [29.9, -1.9], 'sa': [45.1, 23.9], 'sn': [-14.5, 14.5], 'rs': [21.0, 44.0],
+  'sl': [-11.8, 8.5], 'sk': [19.7, 48.7], 'si': [14.5, 46.1], 'so': [46.2, 5.2],
+  'za': [25.1, -29.0], 'ss': [31.3, 6.9], 'es': [-3.7, 40.4], 'lk': [80.8, 7.9],
+  'sd': [30.2, 15.6], 'se': [18.6, 59.3], 'ch': [8.2, 46.8], 'sy': [38.3, 35.0],
+  'tw': [120.9, 23.7], 'tj': [71.3, 38.9], 'tz': [34.9, -6.4], 'th': [100.9, 15.9],
+  'tg': [0.8, 8.6], 'tn': [9.6, 33.9], 'tr': [35.2, 39.0], 'tm': [59.6, 40.7],
+  'ug': [32.4, 1.4], 'ua': [31.2, 48.4], 'ae': [53.8, 23.4], 'gb': [-2.0, 53.0],
+  'us': [-99.1, 38.3], 'uy': [-55.8, -32.5], 'uz': [63.9, 41.4], 've': [-66.6, 6.4],
+  'vn': [108.3, 14.1], 'ye': [47.6, 15.6], 'zm': [27.8, -13.1], 'zw': [29.9, -19.0],
+  'sg': [103.8, 1.4], 'hk': [114.2, 22.3],
+};
+
+const ISO2_NAME: Record<string, string> = Object.fromEntries(
+  Object.entries(NAME_TO_CODE).map(([name, code]) => [code, name])
+);
+
 /* ── region presets ──────────────────────────────────────────────────────── */
 
 const REGION_PRESETS: RegionPreset[] = [
@@ -87,141 +133,16 @@ const REGION_PRESETS: RegionPreset[] = [
   { id: 'asia',     label: 'Asia',        center: [105, 30],  zoom: 2   },
 ];
 
-/* ── markers ─────────────────────────────────────────────────────────────── */
+/* ── marker colours ──────────────────────────────────────────────────────── */
 
-const MARKERS: GeoMarker[] = [
-  { id: 'riga',     name: 'Latvia',    city: 'Riga',     coordinates: [24.1, 56.9], type: 'current',  sessions: 12, risk: 'Low'      },
-  { id: 'vilnius',  name: 'Lithuania', city: 'Vilnius',  coordinates: [25.3, 54.7], type: 'trusted',  sessions: 8,  risk: 'Low'      },
-  { id: 'tallinn',  name: 'Estonia',   city: 'Tallinn',  coordinates: [24.7, 59.4], type: 'trusted',  sessions: 5,  risk: 'Low'      },
-  { id: 'berlin',   name: 'Germany',   city: 'Berlin',   coordinates: [13.4, 52.5], type: 'trusted',  sessions: 3,  risk: 'Low'      },
-  { id: 'warsaw',   name: 'Poland',    city: 'Warsaw',   coordinates: [21.0, 52.2], type: 'trusted',  sessions: 2,  risk: 'Low'      },
-  { id: 'istanbul', name: 'Turkey',    city: 'Istanbul', coordinates: [28.9, 41.0], type: 'new',      sessions: 1,  risk: 'Elevated' },
-  { id: 'dubai',    name: 'United Arab Emirates', city: 'Dubai', coordinates: [55.3, 25.2], type: 'new', sessions: 1, risk: 'Elevated' },
-  { id: 'lagos',    name: 'Nigeria',   city: 'Lagos',    coordinates: [3.4,   6.5], type: 'highrisk', sessions: 0,  risk: 'High'     },
-  { id: 'moscow',   name: 'Russia',    city: 'Moscow',   coordinates: [37.6, 55.8], type: 'highrisk', sessions: 0,  risk: 'Blocked'  },
-];
-
-const CONNECTIONS: { from: [number, number]; to: [number, number]; delay: string }[] = [
-  { from: [13.4, 52.5], to: [24.1, 56.9], delay: '0s'   },
-  { from: [25.3, 54.7], to: [24.1, 56.9], delay: '0.9s' },
-  { from: [21.0, 52.2], to: [24.1, 56.9], delay: '1.7s' },
-];
-
-const MCOL: Record<MarkerType, { stroke: string; fill: string; glow: string }> = {
-  current:  { stroke: 'var(--accent)', fill: 'var(--accent-lt)', glow: 'rgba(170,85,227,0.4)'  },
-  trusted:  { stroke: 'var(--green)', fill: 'var(--green)', glow: 'rgba(0,204,122,0.3)'   },
-  new:      { stroke: 'var(--orange)', fill: 'var(--orange)', glow: 'rgba(255,140,0,0.3)'   },
-  highrisk: { stroke: 'var(--red)', fill: 'var(--red)', glow: 'rgba(255,59,92,0.3)'   },
+const MCOL: Record<MarkerType, { stroke: string; fill: string }> = {
+  trusted:  { stroke: 'var(--green)',  fill: 'var(--green)'  },
+  new:      { stroke: 'var(--orange)', fill: 'var(--orange)' },
+  highrisk: { stroke: 'var(--red)',    fill: 'var(--red)'    },
 };
 
 const MLABEL: Record<MarkerType, string> = {
-  current: 'Current Session', trusted: 'Trusted Region',
-  new: 'New Region', highrisk: 'High Risk',
-};
-
-/* ── country profiles ────────────────────────────────────────────────────── */
-
-const PROFILES: Record<string, CountryProfile> = {
-  'Latvia': {
-    code: 'LV', risk: 'Low', riskColor: 'var(--green)', type: 'current',
-    sessions: 12, lastSeen: '2 minutes ago', transactions: 12, avgAmount: '€3,200',
-    status: 'PRIMARY REGION', trustedSince: 'Jan 2023',
-    distance: '0 km (home)',
-    insights: [
-      { icon: 'ok',    text: 'Primary session origin — 12 sessions over 14 months' },
-      { icon: 'ok',    text: 'Consistent EET timezone across all sessions' },
-      { icon: 'ok',    text: 'Device fingerprint stable — no hardware changes detected' },
-      { icon: 'ok',    text: 'No geo anomalies in last 90 days' },
-      { icon: 'info',  text: 'User locale LV-LV matches region consistently' },
-    ],
-  },
-  'Lithuania': {
-    code: 'LT', risk: 'Low', riskColor: 'var(--green)', type: 'trusted',
-    sessions: 8, lastSeen: '3 days ago', transactions: 8, avgAmount: '€2,800',
-    status: 'TRUSTED', trustedSince: 'Mar 2023', distance: '290 km from Riga',
-    insights: [
-      { icon: 'ok',   text: '8 sessions recorded — established secondary region' },
-      { icon: 'ok',   text: 'Adjacent Baltic region, 290 km from primary location' },
-      { icon: 'ok',   text: 'EET timezone match — consistent with user pattern' },
-      { icon: 'info', text: 'Typical business travel pattern observed' },
-    ],
-  },
-  'Estonia': {
-    code: 'EE', risk: 'Low', riskColor: 'var(--green)', type: 'trusted',
-    sessions: 5, lastSeen: '8 days ago', transactions: 5, avgAmount: '€3,100',
-    status: 'TRUSTED', trustedSince: 'May 2023', distance: '310 km from Riga',
-    insights: [
-      { icon: 'ok',   text: '5 sessions — known regional travel destination' },
-      { icon: 'ok',   text: 'Northern Baltic region, 310 km from Riga' },
-      { icon: 'ok',   text: 'Seasonal pattern consistent with historical behaviour' },
-    ],
-  },
-  'Germany': {
-    code: 'DE', risk: 'Low', riskColor: 'var(--green)', type: 'trusted',
-    sessions: 3, lastSeen: '22 days ago', transactions: 3, avgAmount: '€4,600',
-    status: 'TRUSTED', trustedSince: 'Sep 2023', distance: '1,380 km from Riga',
-    insights: [
-      { icon: 'ok',    text: '3 sessions — likely business travel to Berlin' },
-      { icon: 'ok',    text: 'CET timezone shift recorded and expected' },
-      { icon: 'info',  text: 'Higher transaction amounts consistent with business context' },
-      { icon: 'info',  text: 'Last arc routed Berlin → Riga same-day return' },
-    ],
-  },
-  'Poland': {
-    code: 'PL', risk: 'Low', riskColor: 'var(--green)', type: 'trusted',
-    sessions: 2, lastSeen: '31 days ago', transactions: 2, avgAmount: '€1,800',
-    status: 'TRUSTED', trustedSince: 'Nov 2023', distance: '640 km from Riga',
-    insights: [
-      { icon: 'ok',   text: '2 sessions — transit-pattern consistent with travel' },
-      { icon: 'ok',   text: 'CET timezone, adjacent to known Baltic corridor' },
-      { icon: 'info', text: 'Low transaction volume — monitoring recommended' },
-    ],
-  },
-  'Turkey': {
-    code: 'TR', risk: 'Elevated', riskColor: 'var(--orange)', type: 'new',
-    sessions: 1, lastSeen: '6 days ago', transactions: 1, avgAmount: '€780',
-    status: 'NEW REGION', distance: '2,100 km from Riga',
-    insights: [
-      { icon: 'watch', text: 'First session ever recorded from Turkey' },
-      { icon: 'watch', text: 'Geographic distance from primary: 2,100 km' },
-      { icon: 'watch', text: "TRT timezone — 2h ahead of user's normal EET" },
-      { icon: 'info',  text: 'Low transaction amount — below typical average' },
-      { icon: 'info',  text: 'Recommend step-up authentication on next session' },
-    ],
-  },
-  'United Arab Emirates': {
-    code: 'AE', risk: 'Elevated', riskColor: 'var(--orange)', type: 'new',
-    sessions: 1, lastSeen: '6 days ago', transactions: 1, avgAmount: '€920',
-    status: 'NEW REGION', distance: '4,800 km from Riga',
-    insights: [
-      { icon: 'watch', text: 'First session from UAE — outside known travel pattern' },
-      { icon: 'watch', text: '4,800 km from primary region — significant deviation' },
-      { icon: 'watch', text: 'Gulf Standard Time — 3h ahead of EET' },
-      { icon: 'alert', text: 'Concurrent Baltic session within 24h window — verify travel' },
-    ],
-  },
-  'Nigeria': {
-    code: 'NG', risk: 'High', riskColor: 'var(--red)', type: 'highrisk',
-    sessions: 0, lastSeen: 'Never', transactions: 0, avgAmount: '—',
-    status: 'HIGH RISK', distance: '6,700 km from Riga',
-    insights: [
-      { icon: 'alert', text: 'No sessions on record — region blocked by policy' },
-      { icon: 'alert', text: 'Elevated APP fraud origin rate — EU PSP watchlist' },
-      { icon: 'alert', text: 'Any session from this region triggers auto-review' },
-      { icon: 'info',  text: 'Block enforced since Jan 2024 — PSP directive' },
-    ],
-  },
-  'Russia': {
-    code: 'RU', risk: 'Blocked', riskColor: 'var(--red)', type: 'highrisk',
-    sessions: 0, lastSeen: 'Never', transactions: 0, avgAmount: '—',
-    status: 'BLOCKED',
-    insights: [
-      { icon: 'alert', text: 'Region blocked — regulatory restriction (EU sanctions)' },
-      { icon: 'alert', text: 'All payment sessions from RU are auto-rejected' },
-      { icon: 'alert', text: 'VPN/proxy detection active for this region' },
-      { icon: 'info',  text: 'Policy enforced since Feb 2022' },
-    ],
-  },
+  trusted: 'Safe', new: 'Watch', highrisk: 'High Risk',
 };
 
 const DEFAULT_PROFILE: CountryProfile = {
@@ -235,25 +156,88 @@ const DEFAULT_PROFILE: CountryProfile = {
   ],
 };
 
-/* ── flag image ──────────────────────────────────────────────────────────── */
+/* ── helpers ─────────────────────────────────────────────────────────────── */
 
-function FlagImg({ code, height = 22 }: { code: string; height?: number }) {
-  if (code === '??') return (
-    <svg width={height * 1.5} height={height} viewBox="0 0 36 24" fill="none">
-      <rect width="36" height="24" fill="var(--bdr2)" rx="2"/>
-      <text x="18" y="17" textAnchor="middle" fontSize="14" fill="var(--t4)">?</text>
-    </svg>
-  );
-  return (
-    <img
-      src={`https://flagcdn.com/w40/${code.toLowerCase()}.png`}
-      alt={code}
-      style={{ height: `${height}px`, width: 'auto', display: 'block', objectFit: 'contain' }}
-    />
-  );
+function typeFromMaxRisk(maxRisk: number): MarkerType {
+  if (maxRisk >= 65) return 'highrisk';
+  if (maxRisk >= 40) return 'new';
+  return 'trusted';
 }
 
-/* ── helpers ─────────────────────────────────────────────────────────────── */
+function riskLevelFromScore(score: number): RiskLevel {
+  if (score >= 85) return 'Blocked';
+  if (score >= 65) return 'High';
+  if (score >= 40) return 'Elevated';
+  return 'Low';
+}
+
+function riskColorFromScore(score: number): string {
+  if (score >= 65) return 'var(--red)';
+  if (score >= 40) return 'var(--orange)';
+  return 'var(--green)';
+}
+
+function formatRelativeTime(isoString: string): string {
+  const diff = Date.now() - new Date(isoString).getTime();
+  const secs = Math.floor(diff / 1000);
+  if (secs < 60) return `${secs}s ago`;
+  const mins = Math.floor(secs / 60);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
+}
+
+function buildLiveProfile(
+  countryName: string,
+  iso2: string,
+  countrySessions: Session[],
+): CountryProfile {
+  if (!countrySessions.length) return DEFAULT_PROFILE;
+
+  const maxRisk = Math.max(...countrySessions.map(s => s.riskScore));
+  const risk = riskLevelFromScore(maxRisk);
+  const riskColor = riskColorFromScore(maxRisk);
+  const type = typeFromMaxRisk(maxRisk);
+
+  const sorted = [...countrySessions].sort((a, b) =>
+    new Date(b.startTime).getTime() - new Date(a.startTime).getTime(),
+  );
+  const lastSeen = formatRelativeTime(sorted[0].startTime);
+
+  const totalAmount = countrySessions.reduce((sum, s) => sum + (s.transactionAmount ?? 0), 0);
+  const txWithAmount = countrySessions.filter(s => (s.transactionAmount ?? 0) > 0);
+  const avgAmount = txWithAmount.length > 0
+    ? `€${Math.round(totalAmount / txWithAmount.length).toLocaleString('en')}`
+    : '—';
+
+  const alertSessions = countrySessions.filter(s => s.status === 'ALERT' || s.status === 'BLOCKED');
+  const watchSessions = countrySessions.filter(s => s.status === 'WATCH');
+
+  const insights: Insight[] = [];
+  const riskIcon: Insight['icon'] = risk === 'Low' ? 'ok' : risk === 'Elevated' ? 'watch' : 'alert';
+  insights.push({ icon: riskIcon, text: `${countrySessions.length} session${countrySessions.length !== 1 ? 's' : ''} recorded from ${countryName}` });
+  if (alertSessions.length > 0)
+    insights.push({ icon: 'alert', text: `${alertSessions.length} high-risk session${alertSessions.length !== 1 ? 's' : ''} detected` });
+  if (watchSessions.length > 0)
+    insights.push({ icon: 'watch', text: `${watchSessions.length} session${watchSessions.length !== 1 ? 's' : ''} flagged for review` });
+  if (maxRisk < 40)
+    insights.push({ icon: 'ok', text: 'All sessions within normal risk parameters' });
+  insights.push({ icon: 'info', text: `Most recent activity: ${lastSeen}` });
+  if (maxRisk >= 40)
+    insights.push({ icon: 'info', text: `Peak risk score: ${maxRisk}/100` });
+
+  return {
+    code: iso2.toUpperCase(), risk, riskColor, type,
+    sessions: countrySessions.length,
+    lastSeen,
+    transactions: txWithAmount.length,
+    avgAmount,
+    status: risk === 'Blocked' ? 'BLOCKED' : risk === 'High' ? 'HIGH RISK' : risk === 'Elevated' ? 'ELEVATED' : 'ACTIVE',
+    insights,
+  };
+}
 
 function getCountryView(geo: GeoJSON.Feature): { center: [number, number]; zoom: number } {
   const centroid = geoCentroid(geo);
@@ -300,7 +284,21 @@ function insightTextColor(icon: Insight['icon']) {
   return 'var(--t4)';
 }
 
-/* ── zoom button ─────────────────────────────────────────────────────────── */
+function FlagImg({ code, height = 22 }: { code: string; height?: number }) {
+  if (code === '??') return (
+    <svg width={height * 1.5} height={height} viewBox="0 0 36 24" fill="none">
+      <rect width="36" height="24" fill="var(--bdr2)" rx="2"/>
+      <text x="18" y="17" textAnchor="middle" fontSize="14" fill="var(--t4)">?</text>
+    </svg>
+  );
+  return (
+    <img
+      src={`https://flagcdn.com/w40/${code.toLowerCase()}.png`}
+      alt={code}
+      style={{ height: `${height}px`, width: 'auto', display: 'block', objectFit: 'contain' }}
+    />
+  );
+}
 
 function ZoomBtn({ onClick, children, title }: { onClick: () => void; children: React.ReactNode; title?: string }) {
   const [hov, setHov] = useState(false);
@@ -320,15 +318,65 @@ function ZoomBtn({ onClick, children, title }: { onClick: () => void; children: 
 
 /* ══════════════════════════════════════════════════════════════ component ══ */
 
-export default function GeoRiskMap() {
+export default function GeoRiskMap({ sessions = [] }: { sessions?: Session[] }) {
   const [zoom,          setZoom]          = useState(1);
   const [center,        setCenter]        = useState<[number, number]>([20, 22]);
   const [activeRegion,  setActiveRegion]  = useState('world');
   const [selectedGeo,   setSelectedGeo]   = useState<string | null>(null);
   const [selectedCode,  setSelectedCode]  = useState<string | null>(null);
   const [profile,       setProfile]       = useState<CountryProfile | null>(null);
-  const [tooltip,       setTooltip]       = useState<{ x: number; y: number; marker: GeoMarker } | null>(null);
+  const [tooltip,       setTooltip]       = useState<{ x: number; y: number; marker: LiveMarker } | null>(null);
   const [geoLoaded,     setGeoLoaded]     = useState(false);
+
+  /* ── build live markers from real sessions ─────────────────────────────── */
+
+  const liveMarkers = useMemo((): LiveMarker[] => {
+    if (!sessions.length) return [];
+
+    const byCountry = new Map<string, { count: number; maxRisk: number }>();
+    for (const s of sessions) {
+      const iso2 = (s.country ?? 'GB').toLowerCase();
+      const existing = byCountry.get(iso2);
+      if (existing) {
+        existing.count++;
+        existing.maxRisk = Math.max(existing.maxRisk, s.riskScore);
+      } else {
+        byCountry.set(iso2, { count: 1, maxRisk: s.riskScore });
+      }
+    }
+
+    return Array.from(byCountry.entries())
+      .map(([iso2, data]): LiveMarker | null => {
+        const coords = ISO2_COORDS[iso2];
+        if (!coords) return null;
+        return {
+          iso2,
+          name: ISO2_NAME[iso2] ?? iso2.toUpperCase(),
+          coordinates: coords,
+          type: typeFromMaxRisk(data.maxRisk),
+          sessions: data.count,
+          maxRisk: data.maxRisk,
+        };
+      })
+      .filter((m): m is LiveMarker => m !== null);
+  }, [sessions]);
+
+  const iso2ToMaxRisk = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const m of liveMarkers) map.set(m.iso2, m.maxRisk);
+    return map;
+  }, [liveMarkers]);
+
+  /* ── summary stats ─────────────────────────────────────────────────────── */
+
+  const stats = useMemo(() => {
+    const total   = sessions.length;
+    const high    = sessions.filter(s => s.riskScore >= 65).length;
+    const avgRisk = total > 0 ? Math.round(sessions.reduce((s, x) => s + x.riskScore, 0) / total) : 0;
+    const countries = liveMarkers.length;
+    const topCountries = [...liveMarkers].sort((a, b) => b.sessions - a.sessions).slice(0, 5);
+    return { total, high, avgRisk, countries, topCountries };
+  }, [sessions, liveMarkers]);
 
   const handleMoveEnd = useCallback(
     ({ zoom: z, coordinates }: { zoom: number; coordinates: [number, number] }) => {
@@ -342,44 +390,37 @@ export default function GeoRiskMap() {
     setZoom(r.zoom); setCenter(r.center); setActiveRegion(r.id);
   }
 
-  function resolveCode(name: string): string | null {
-    const p = PROFILES[name];
-    if (p) return p.code.toLowerCase();
-    return NAME_TO_CODE[name] ?? null;
-  }
-
   function handleCountryClick(geo: GeoJSON.Feature) {
-    const name   = (geo.properties as Record<string, string>)?.name ?? '—';
+    const name  = (geo.properties as Record<string, string>)?.name ?? '—';
     const { center: c, zoom: z } = getCountryView(geo);
-    setCenter(c);
-    setZoom(z);
-    setActiveRegion('');
+    setCenter(c); setZoom(z); setActiveRegion('');
     setSelectedGeo(name);
-    setSelectedCode(resolveCode(name));
-    setProfile(PROFILES[name] ?? DEFAULT_PROFILE);
+    const iso2 = NAME_TO_CODE[name] ?? null;
+    setSelectedCode(iso2);
+    const countrySessions = iso2
+      ? sessions.filter(s => (s.country ?? 'GB').toLowerCase() === iso2)
+      : [];
+    setProfile(iso2 ? buildLiveProfile(name, iso2, countrySessions) : DEFAULT_PROFILE);
   }
 
-  function handleMarkerClick(m: GeoMarker) {
+  function handleMarkerClick(m: LiveMarker) {
     const tgt = Math.min(10, Math.max(zoom * 2, 5));
-    setCenter(m.coordinates);
-    setZoom(tgt);
-    setActiveRegion('');
+    setCenter(m.coordinates); setZoom(tgt); setActiveRegion('');
     setSelectedGeo(m.name);
-    setSelectedCode(resolveCode(m.name));
-    setProfile(PROFILES[m.name] ?? DEFAULT_PROFILE);
+    setSelectedCode(m.iso2);
+    const countrySessions = sessions.filter(s => (s.country ?? 'GB').toLowerCase() === m.iso2);
+    setProfile(buildLiveProfile(m.name, m.iso2, countrySessions));
   }
 
   function clearSelection() {
-    setSelectedGeo(null);
-    setSelectedCode(null);
-    setProfile(null);
+    setSelectedGeo(null); setSelectedCode(null); setProfile(null);
     applyRegion(REGION_PRESETS[0]);
   }
 
   function zoomIn()  { setZoom(z => Math.min(15, +(z * 1.5).toFixed(2)));  setActiveRegion(''); }
   function zoomOut() { setZoom(z => Math.max(0.7, +(z / 1.5).toFixed(2))); setActiveRegion(''); }
 
-  const mS = 1 / zoom; // marker scale factor
+  const mS = 1 / zoom;
 
   return (
     <div style={{ background: 'var(--bg)', border: '1px solid var(--bdr)', position: 'relative' }}>
@@ -401,7 +442,7 @@ export default function GeoRiskMap() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           {(Object.entries(MCOL) as [MarkerType, typeof MCOL[MarkerType]][]).map(([t, c]) => (
             <div key={t} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: c.stroke, boxShadow: `0 0 5px ${c.glow}` }} />
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: c.stroke }} />
               <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--t5)', letterSpacing: '0.06em' }}>{MLABEL[t]}</span>
             </div>
           ))}
@@ -451,29 +492,25 @@ export default function GeoRiskMap() {
                 {({ geographies }) => {
                   if (!geoLoaded && geographies.length > 0) setTimeout(() => setGeoLoaded(true), 0);
                   return geographies.map(geo => {
-                    const name      = geo.properties?.name ?? '';
+                    const name       = geo.properties?.name ?? '';
                     const isSelected = name === selectedGeo;
-                    const prof      = PROFILES[name];
-                    const baseColor = prof
-                      ? prof.type === 'current'  ? 'rgba(170,85,227,0.12)'
-                      : prof.type === 'trusted'  ? 'rgba(0,204,122,0.08)'
-                      : prof.type === 'new'      ? 'rgba(255,140,0,0.08)'
-                      : prof.type === 'highrisk' ? 'rgba(255,59,92,0.08)'
-                      : 'var(--surface)'
+                    const iso2       = NAME_TO_CODE[name] ?? null;
+                    const maxRisk    = iso2 ? (iso2ToMaxRisk.get(iso2) ?? -1) : -1;
+
+                    const baseColor = maxRisk >= 0
+                      ? maxRisk >= 65 ? 'rgba(255,59,92,0.10)'
+                      : maxRisk >= 40 ? 'rgba(255,140,0,0.09)'
+                      : 'rgba(0,204,122,0.07)'
                       : 'var(--surface)';
-                    const selColor = prof
-                      ? prof.type === 'current'  ? 'rgba(170,85,227,0.30)'
-                      : prof.type === 'trusted'  ? 'rgba(0,204,122,0.22)'
-                      : prof.type === 'new'      ? 'rgba(255,140,0,0.22)'
-                      : prof.type === 'highrisk' ? 'rgba(255,59,92,0.22)'
-                      : 'rgba(255,255,255,0.06)'
+                    const selColor = maxRisk >= 0
+                      ? maxRisk >= 65 ? 'rgba(255,59,92,0.24)'
+                      : maxRisk >= 40 ? 'rgba(255,140,0,0.22)'
+                      : 'rgba(0,204,122,0.20)'
                       : 'rgba(255,255,255,0.06)';
-                    const borderCol = prof
-                      ? prof.type === 'current'  ? 'rgba(170,85,227,0.5)'
-                      : prof.type === 'trusted'  ? 'rgba(0,204,122,0.4)'
-                      : prof.type === 'new'      ? 'rgba(255,140,0,0.4)'
-                      : prof.type === 'highrisk' ? 'rgba(255,59,92,0.4)'
-                      : 'var(--bdr2)'
+                    const borderCol = maxRisk >= 0
+                      ? maxRisk >= 65 ? 'rgba(255,59,92,0.45)'
+                      : maxRisk >= 40 ? 'rgba(255,140,0,0.40)'
+                      : 'rgba(0,204,122,0.35)'
                       : 'var(--bdr)';
 
                     return (
@@ -484,7 +521,7 @@ export default function GeoRiskMap() {
                         style={{
                           default: {
                             fill: isSelected ? selColor : baseColor,
-                            stroke: isSelected ? borderCol : 'var(--bdr)',
+                            stroke: isSelected ? borderCol : maxRisk >= 0 ? borderCol : 'var(--bdr)',
                             strokeWidth: isSelected ? 0.8 * mS : 0.4 * mS,
                             outline: 'none',
                           },
@@ -508,56 +545,29 @@ export default function GeoRiskMap() {
                 }}
               </Geographies>
 
-              {/* Connection arcs */}
-              {CONNECTIONS.map((c, i) => (
-                <Line key={i} from={c.from} to={c.to}
-                  stroke="rgba(170,85,227,0.25)" strokeWidth={1.2 * mS}
-                  strokeLinecap="round"
-                  strokeDasharray={`${5 * mS} ${7 * mS}`}
-                  style={{ animation: `geo-dash 3s linear ${c.delay} infinite` }} />
-              ))}
-
-              {/* Markers */}
-              {MARKERS.map(m => {
-                const col      = MCOL[m.type];
-                const isCur    = m.type === 'current';
-                const isSel    = m.name === selectedGeo;
-                const r        = (isCur ? 5.5 : 3.5) * mS;
-                const ringMult = isSel ? 1.4 : 1;
+              {/* Live session markers */}
+              {liveMarkers.map(m => {
+                const col   = MCOL[m.type];
+                const isSel = m.name === selectedGeo;
+                const r     = 3.5 * mS;
                 return (
-                  <Marker key={m.id} coordinates={m.coordinates}
+                  <Marker key={m.iso2} coordinates={m.coordinates}
                     onClick={() => handleMarkerClick(m)}
                     onMouseEnter={(e: React.MouseEvent) => setTooltip({ x: e.clientX, y: e.clientY, marker: m })}
                     onMouseMove={(e: React.MouseEvent)  => setTooltip(t => t ? { ...t, x: e.clientX, y: e.clientY } : null)}
                     onMouseLeave={() => setTooltip(null)}
                     style={{ cursor: 'pointer' }}>
-                    {isCur ? (
-                      <g>
-                        <circle r={r * 4.5 * ringMult} fill="none" stroke={col.stroke} strokeWidth={0.4 * mS} opacity={0.10}
-                          style={{ animation: 'geo-ring 2.5s ease-out 0s infinite', transformOrigin: '0 0' }} />
-                        <circle r={r * 3   * ringMult} fill="none" stroke={col.stroke} strokeWidth={0.6 * mS} opacity={0.18}
-                          style={{ animation: 'geo-ring 2.5s ease-out 0.6s infinite', transformOrigin: '0 0' }} />
-                        <circle r={r * 1.8 * ringMult} fill="none" stroke={col.stroke} strokeWidth={0.9 * mS} opacity={0.28}
-                          style={{ animation: 'geo-ring 2.5s ease-out 1.1s infinite', transformOrigin: '0 0' }} />
-                        <circle r={r * 1.4} fill={col.stroke} opacity={0.15} />
-                        <circle r={r}       fill="none" stroke={col.stroke} strokeWidth={1.2 * mS} />
-                        <circle r={r * 0.6} fill={col.fill} />
-                        <circle r={r * 0.24} fill="#FFFFFF" opacity={0.7} />
-                      </g>
-                    ) : (
-                      <g>
-                        {isSel && <circle r={r * 2.2} fill={col.stroke} opacity={0.15} />}
-                        <circle r={r * 1.8} fill={col.stroke} opacity={0.10} />
-                        <circle r={r}       fill="none" stroke={col.stroke} strokeWidth={1 * mS} />
-                        <circle r={r * 0.6} fill={col.fill} opacity={0.9} />
-                      </g>
-                    )}
+                    <g>
+                      {isSel && <circle r={r * 2.4} fill={col.stroke} opacity={0.15} />}
+                      <circle r={r * 1.8} fill={col.stroke} opacity={0.10} />
+                      <circle r={r}       fill="none" stroke={col.stroke} strokeWidth={1 * mS} />
+                      <circle r={r * 0.6} fill={col.fill} opacity={0.9} />
+                    </g>
                   </Marker>
                 );
               })}
             </ZoomableGroup>
           </ComposableMap>
-
 
           {/* Zoom controls */}
           <div style={{ position: 'absolute', bottom: '12px', right: '12px', display: 'flex', flexDirection: 'column', gap: '3px', zIndex: 4 }}>
@@ -578,7 +588,6 @@ export default function GeoRiskMap() {
           {profile && selectedGeo ? (
             /* ── COUNTRY DETAIL ── */
             <>
-              {/* Country header */}
               <div style={{ padding: '12px 14px', borderBottom: '1px solid var(--bdr)', background: 'var(--bg)' }}>
                 <button onClick={clearSelection} style={{ display: 'flex', alignItems: 'center', gap: '5px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--t4)', fontFamily: 'JetBrains Mono', fontSize: '8px', letterSpacing: '0.08em', padding: 0, marginBottom: '10px', transition: 'color 0.1s' }}
                   onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
@@ -599,17 +608,16 @@ export default function GeoRiskMap() {
                 </div>
               </div>
 
-              {/* Session stats */}
               <div style={{ padding: '11px 14px', borderBottom: '1px solid var(--bdr)' }}>
                 <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: 'var(--t5)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '8px' }}>
                   Session Statistics
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   {[
-                    { label: 'Sessions',     value: String(profile.sessions), color: profile.riskColor },
+                    { label: 'Sessions',     value: String(profile.sessions),                                   color: profile.riskColor },
                     { label: 'Transactions', value: profile.transactions > 0 ? String(profile.transactions) : '—', color: 'var(--t2)' },
-                    { label: 'Avg Amount',   value: profile.avgAmount,   color: 'var(--t2)' },
-                    { label: 'Last Seen',    value: profile.lastSeen,    color: profile.sessions > 0 ? 'var(--t2)' : 'var(--t4)' },
+                    { label: 'Avg Amount',   value: profile.avgAmount,                                          color: 'var(--t2)' },
+                    { label: 'Last Seen',    value: profile.lastSeen,                                           color: profile.sessions > 0 ? 'var(--t2)' : 'var(--t4)' },
                   ].map(({ label, value, color }) => (
                     <div key={label} style={{ background: 'var(--surface)', border: '1px solid #151520', padding: '7px 9px' }}>
                       <div style={{ fontFamily: 'JetBrains Mono', fontSize: '7px', color: 'var(--t5)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '3px' }}>{label}</div>
@@ -617,18 +625,8 @@ export default function GeoRiskMap() {
                     </div>
                   ))}
                 </div>
-                {[
-                  profile.trustedSince && ['Trusted Since', profile.trustedSince, 'var(--green)'],
-                  profile.distance     && ['Distance',      profile.distance,      'var(--t3)'],
-                ].filter(Boolean).map(([label, value, color]) => (
-                  <div key={label as string} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid var(--card)' }}>
-                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--t5)' }}>{label as string}</span>
-                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: color as string }}>{value as string}</span>
-                  </div>
-                ))}
               </div>
 
-              {/* Insights */}
               <div style={{ padding: '11px 14px', flex: 1 }}>
                 <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: 'var(--t5)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '8px' }}>
                   Risk Assessment
@@ -649,49 +647,64 @@ export default function GeoRiskMap() {
             /* ── DEFAULT OVERVIEW ── */
             <>
               <div style={{ padding: '12px 14px', borderBottom: '1px solid var(--bdr)' }}>
-                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: 'var(--t5)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '8px' }}>Current Session</div>
-                {[
-                  ['Country',        'Latvia',       ''],
-                  ['City',           'Riga',         ''],
-                  ['Geo Confidence', 'High',         'var(--accent)'],
-                  ['Risk Level',     'Low',          'var(--green)'],
-                  ['Sessions',       '12 sessions',  ''],
-                  ['Timezone',       'EET (UTC+2)',   ''],
-                ].map(([lbl, val, col]) => (
-                  <div key={lbl} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid var(--card)' }}>
-                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--bdr2)' }}>{lbl}</span>
-                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: col || '#7878A0' }}>{val}</span>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: 'var(--t5)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '8px' }}>Session Summary</div>
+                {sessions.length === 0 ? (
+                  <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t5)', padding: '8px 0' }}>
+                    No sessions captured yet. Connect the SDK to begin collecting geo data.
                   </div>
-                ))}
+                ) : (
+                  <>
+                    {[
+                      ['Total Sessions',   String(stats.total),     ''],
+                      ['Unique Countries', String(stats.countries),  'var(--accent)'],
+                      ['High Risk',        String(stats.high),       stats.high > 0 ? 'var(--red)' : 'var(--green)'],
+                      ['Avg Risk Score',   `${stats.avgRisk}/100`,   stats.avgRisk >= 65 ? 'var(--red)' : stats.avgRisk >= 40 ? 'var(--orange)' : 'var(--green)'],
+                    ].map(([lbl, val, col]) => (
+                      <div key={lbl} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid var(--card)' }}>
+                        <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--bdr2)' }}>{lbl}</span>
+                        <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: col || '#7878A0' }}>{val}</span>
+                      </div>
+                    ))}
+                  </>
+                )}
               </div>
 
-              <div style={{ padding: '12px 14px', borderBottom: '1px solid var(--bdr)' }}>
-                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: 'var(--t5)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '8px' }}>Historical Pattern</div>
-                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t5)', marginBottom: '4px' }}>Primary Region</div>
-                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: 'var(--green)', marginBottom: '8px' }}>Baltic States</div>
-                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t5)', marginBottom: '5px' }}>Known Regions</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px', marginBottom: '8px' }}>
-                  {['Latvia', 'Lithuania', 'Estonia', 'Germany', 'Poland'].map(r => (
-                    <span key={r} style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--green)', background: 'rgba(0,204,122,0.06)', border: '1px solid rgba(0,204,122,0.14)', padding: '2px 5px' }}>{r}</span>
-                  ))}
+              {stats.topCountries.length > 0 && (
+                <div style={{ padding: '12px 14px', borderBottom: '1px solid var(--bdr)' }}>
+                  <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: 'var(--t5)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '8px' }}>Top Countries</div>
+                  {stats.topCountries.map(m => {
+                    const col = MCOL[m.type];
+                    return (
+                      <div key={m.iso2} onClick={() => handleMarkerClick(m)}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid var(--card)', cursor: 'pointer' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: col.stroke, flexShrink: 0 }} />
+                          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t3)' }}>{m.name}</span>
+                        </div>
+                        <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: col.stroke }}>{m.sessions} session{m.sessions !== 1 ? 's' : ''}</span>
+                      </div>
+                    );
+                  })}
                 </div>
-                <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t5)', marginBottom: '5px' }}>Flagged</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px' }}>
-                  {['Turkey', 'UAE'].map(r => (
-                    <span key={r} style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--orange)', background: 'rgba(255,140,0,0.06)', border: '1px solid rgba(255,140,0,0.14)', padding: '2px 5px' }}>{r}</span>
-                  ))}
-                </div>
-              </div>
+              )}
 
               <div style={{ padding: '12px 14px', flex: 1 }}>
                 <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 700, color: 'var(--t5)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '8px' }}>Geo Risk Insights</div>
-                {[
-                  { icon: 'ok'    as const, text: 'Current session from primary trusted region' },
-                  { icon: 'ok'    as const, text: 'EET timezone consistent with Baltics pattern' },
-                  { icon: 'ok'    as const, text: 'Locale EU-LV matches established user profile' },
-                  { icon: 'watch' as const, text: 'First session from Turkey — new region flagged' },
-                  { icon: 'watch' as const, text: 'UAE session logged 6d ago — outside core region' },
-                  { icon: 'info'  as const, text: 'Distance from last trusted session: 1,380 km' },
+                {sessions.length === 0 ? (
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', marginBottom: '6px' }}>
+                    {insightIcon('info')}
+                    <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'var(--t4)', lineHeight: 1.55 }}>
+                      Deploy the SDK on your payment pages to start mapping real transaction origins
+                    </span>
+                  </div>
+                ) : [
+                  stats.high === 0
+                    ? { icon: 'ok'    as const, text: 'No high-risk sessions detected across all regions' }
+                    : { icon: 'alert' as const, text: `${stats.high} high-risk session${stats.high !== 1 ? 's' : ''} require attention` },
+                  stats.countries > 1
+                    ? { icon: 'info' as const, text: `Sessions spanning ${stats.countries} countries` }
+                    : { icon: 'info' as const, text: 'All sessions from a single country' },
+                  { icon: 'info' as const, text: 'Click a country or marker for detailed breakdown' },
                 ].map((ins, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', marginBottom: '6px' }}>
                     <div style={{ flexShrink: 0, marginTop: '1px' }}>{insightIcon(ins.icon)}</div>
@@ -707,10 +720,10 @@ export default function GeoRiskMap() {
       {/* ── bottom metrics ──────────────────────────────────────────────────── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', borderTop: '1px solid var(--bdr)' }}>
         {[
-          { label: 'Trusted Regions',    value: '5',   sub: 'LV · LT · EE · DE · PL', color: 'var(--green)' },
-          { label: 'New Regions / Month', value: '2',   sub: 'Turkey, UAE flagged',      color: 'var(--orange)' },
-          { label: 'Geo Risk Score',      value: '18',  sub: 'out of 100',               color: 'var(--accent)' },
-          { label: 'Last Region Change',  value: '14d', sub: 'Riga → Berlin → Riga',    color: 'var(--t3)' },
+          { label: 'Active Countries',    value: String(stats.countries),                           sub: stats.countries > 0 ? stats.topCountries.slice(0, 3).map(m => m.iso2.toUpperCase()).join(' · ') : 'no data', color: 'var(--green)'  },
+          { label: 'High Risk Sessions',  value: String(stats.high),                                sub: 'ALERT + BLOCKED',   color: stats.high > 0 ? 'var(--red)' : 'var(--green)'   },
+          { label: 'Avg Risk Score',      value: stats.total > 0 ? `${stats.avgRisk}` : '—',        sub: 'out of 100',        color: 'var(--accent)' },
+          { label: 'Total Sessions',      value: String(stats.total),                               sub: 'live + SDK',        color: 'var(--t3)'     },
         ].map(({ label, value, sub, color }, i) => (
           <div key={label} style={{ padding: '10px 14px', borderRight: i < 3 ? '1px solid var(--bdr)' : 'none', background: 'var(--bg)' }}>
             <div style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', fontWeight: 600, color: 'var(--bdr)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '4px' }}>{label}</div>
@@ -726,13 +739,13 @@ export default function GeoRiskMap() {
           position: 'fixed', left: tooltip.x + 14, top: tooltip.y - 52, zIndex: 9999,
           background: '#0E0E14', border: `1px solid ${MCOL[tooltip.marker.type].stroke}55`,
           padding: '8px 12px', pointerEvents: 'none', minWidth: '140px',
-          boxShadow: `0 8px 32px rgba(0,0,0,0.7), 0 0 10px ${MCOL[tooltip.marker.type].glow}`,
+          boxShadow: '0 8px 32px rgba(0,0,0,0.7)',
         }}>
           <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', fontWeight: 600, color: MCOL[tooltip.marker.type].stroke, marginBottom: '3px' }}>
-            {tooltip.marker.city}, {tooltip.marker.name}
+            {tooltip.marker.name}
           </div>
           <div style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t4)', marginBottom: '2px' }}>
-            {tooltip.marker.sessions > 0 ? `${tooltip.marker.sessions} sessions` : 'No sessions · Flagged'}
+            {tooltip.marker.sessions} session{tooltip.marker.sessions !== 1 ? 's' : ''} · max risk {tooltip.marker.maxRisk}
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: MCOL[tooltip.marker.type].stroke }}>{MLABEL[tooltip.marker.type]}</span>

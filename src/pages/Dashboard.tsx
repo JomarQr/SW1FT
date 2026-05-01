@@ -1032,7 +1032,7 @@ export default function Dashboard() {
 
       {/* Geo risk map */}
       <div style={{ marginBottom: '8px' }}>
-        <GeoRiskMap />
+        <GeoRiskMap sessions={liveSessions} />
       </div>
 
       {/* Session review panel */}
