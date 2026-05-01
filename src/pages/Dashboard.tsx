@@ -8,7 +8,7 @@ import { ArrowUpRight, ArrowDownRight, Minus, MessageSquare, Smartphone, X } fro
 import GeoRiskMap from '../components/GeoRiskMap';
 import SessionReviewPanel from '../components/SessionReviewPanel';
 import { getFeedbackForSession, countFeedbacks } from '../lib/feedbackStore';
-import { getLiveSessions, type CapturedSession } from '../lib/liveSessionStore';
+import { getLiveSessions, fetchRemoteSessions, type CapturedSession, type RemoteSession } from '../lib/liveSessionStore';
 import { getInterventionKPIs, getRiskLevel } from '../lib/interventionStore';
 import { getSessions as getBehaviorSessions } from '../lib/behaviorStore';
 import { getRole, getUsername } from '../lib/auth';
@@ -769,6 +769,27 @@ export default function Dashboard() {
       window.removeEventListener('sw1ft_new_intervention', onNewIntervention);
     };
   }, []);
+
+  // Poll worker for sessions captured from external sites via the SDK
+  useEffect(() => {
+    if (isClient) return; // clients only see their own sessions
+    async function syncRemote() {
+      const remote = await fetchRemoteSessions();
+      if (remote.length === 0) return;
+      setLiveSessions(prev => {
+        const remoteIds = new Set(remote.map((s: RemoteSession) => s.id));
+        // Drop stale remote entries, keep captured + mock
+        const base = prev.filter(s => !(s as any)._remote || remoteIds.has(s.id));
+        const existingIds = new Set(base.map(s => s.id));
+        const fresh = remote.filter((s: RemoteSession) => !existingIds.has(s.id));
+        if (fresh.length === 0) return prev;
+        return [...fresh, ...base].slice(0, 50);
+      });
+    }
+    syncRemote();
+    const id = setInterval(syncRemote, 30_000);
+    return () => clearInterval(id);
+  }, [isClient]);
 
   const kpis = DASHBOARD_KPIs;
   const topAlerts = [...ALERTS].sort((a, b) => b.riskScore - a.riskScore).slice(0, 8);

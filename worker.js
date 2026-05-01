@@ -1,8 +1,11 @@
 const CORS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, X-SW1FT-Key',
 };
+
+const SESSIONS_KEY = 'sessions_list';
+const MAX_STORED   = 200;
 
 export default {
   async fetch(request, env) {
@@ -24,17 +27,44 @@ export default {
       try { body = await request.json(); }
       catch { return json({ error: 'Invalid JSON body' }, 400); }
 
-      const sessionId = body.sessionId || ('ses_' + Date.now().toString(36));
+      const sessionId = body.session_id || body.sessionId || ('ses_' + Date.now().toString(36));
+      const record = { ...body, session_id: sessionId, receivedAt: new Date().toISOString() };
 
       if (env.SW1FT_SESSIONS) {
+        // Store individual session for direct lookup
         await env.SW1FT_SESSIONS.put(
-          sessionId,
-          JSON.stringify({ ...body, receivedAt: new Date().toISOString() }),
-          { expirationTtl: 60 * 60 * 24 * 30 }
+          `ses:${sessionId}`,
+          JSON.stringify(record),
+          { expirationTtl: 60 * 60 * 24 * 30 },
         );
+        // Update rolling list (read-modify-write; fine at demo scale)
+        const existing = await env.SW1FT_SESSIONS.get(SESSIONS_KEY, { type: 'json' }) ?? [];
+        const updated = [record, ...existing.filter(s => s.session_id !== sessionId)].slice(0, MAX_STORED);
+        await env.SW1FT_SESSIONS.put(SESSIONS_KEY, JSON.stringify(updated), { expirationTtl: 60 * 60 * 24 * 30 });
       }
 
       return json({ ok: true, sessionId, status: 'received' }, 200);
+    }
+
+    // GET /api/sessions — return stored sessions (dashboard polling)
+    if (request.method === 'GET' && url.pathname === '/api/sessions') {
+      const sessions = (env.SW1FT_SESSIONS
+        ? await env.SW1FT_SESSIONS.get(SESSIONS_KEY, { type: 'json' })
+        : null) ?? [];
+      const limit = parseInt(url.searchParams.get('limit') ?? '50', 10);
+      return json({ sessions: sessions.slice(0, limit), total: sessions.length }, 200);
+    }
+
+    // DELETE /api/sessions/:id — remove a single session
+    if (request.method === 'DELETE' && url.pathname.startsWith('/api/sessions/')) {
+      const id = url.pathname.split('/').pop();
+      if (env.SW1FT_SESSIONS && id) {
+        await env.SW1FT_SESSIONS.delete(`ses:${id}`);
+        const existing = await env.SW1FT_SESSIONS.get(SESSIONS_KEY, { type: 'json' }) ?? [];
+        const updated = existing.filter(s => s.session_id !== id);
+        await env.SW1FT_SESSIONS.put(SESSIONS_KEY, JSON.stringify(updated));
+      }
+      return json({ ok: true }, 200);
     }
 
     // Static file (has extension) — serve directly
