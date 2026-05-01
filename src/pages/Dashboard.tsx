@@ -9,6 +9,7 @@ import GeoRiskMap from '../components/GeoRiskMap';
 import SessionReviewPanel from '../components/SessionReviewPanel';
 import { getFeedbackForSession, countFeedbacks } from '../lib/feedbackStore';
 import { getLiveSessions, fetchRemoteSessions, type CapturedSession, type RemoteSession } from '../lib/liveSessionStore';
+import type { LiveMetrics } from '../lib/useBehaviorCapture';
 import { getInterventionKPIs, getRiskLevel } from '../lib/interventionStore';
 import { getSessions as getBehaviorSessions } from '../lib/behaviorStore';
 import { getRole, getUsername } from '../lib/auth';
@@ -527,10 +528,11 @@ function BiometricPanel({ tab, m }: { tab: BioTab; m: NonNullable<ReturnType<typ
 function TransactionDetailModal({ session, onClose }: { session: Session; onClose: () => void }) {
   const [tab, setTab] = useState<BioTab>('mouse');
   const captured = !!(session as CapturedSession)._captured;
+  const remote   = !!(session as RemoteSession)._remote;
   const snapshot = captured
     ? getBehaviorSessions().find(s => s.session_id === (session as CapturedSession)._snapshot_id)
     : null;
-  const m = snapshot?.metrics ?? null;
+  const m: LiveMetrics | null = snapshot?.metrics ?? (session as RemoteSession)._metrics ?? null;
   const level = getRiskLevel(session.riskScore);
   const levelColor = level === 'HIGH_RISK' ? COLORS.danger : level === 'STEP_UP' ? COLORS.orange : level === 'SOFT_WARNING' ? COLORS.warning : COLORS.safe;
   const levelLabel = level.replace('_', ' ');
@@ -566,6 +568,9 @@ function TransactionDetailModal({ session, onClose }: { session: Session; onClos
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             {captured && (
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#00CC7A', boxShadow: '0 0 5px #00CC7A', display: 'inline-block', flexShrink: 0 }} />
+            )}
+            {remote && (
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#5B9BD5', boxShadow: '0 0 5px #5B9BD5', display: 'inline-block', flexShrink: 0 }} />
             )}
             <span style={{ fontFamily: 'JetBrains Mono', fontSize: '12px', fontWeight: 600, color: captured ? '#C890F0' : COLORS.accent }}>{session.id}</span>
             <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--bdr2)' }}>·</span>

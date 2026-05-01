@@ -1,4 +1,4 @@
-import type { BehaviorSnapshot } from './useBehaviorCapture';
+import type { BehaviorSnapshot, LiveMetrics } from './useBehaviorCapture';
 import type { Session, SessionSignals } from './mockData';
 import { computeRiskScore } from './interventionStore';
 
@@ -15,6 +15,7 @@ export interface RemoteSession extends Session {
   _remote: true;
   _page_url: string;
   _api_key: string;
+  _metrics: import('./useBehaviorCapture').LiveMetrics | null;
 }
 
 function statusFromScore(score: number): Session['status'] {
@@ -83,134 +84,129 @@ interface SdkPayload {
   captured_at: string;
   page_url?: string;
   receivedAt?: string;
-  metrics?: {
-    mouse?:     { avg_speed_px_ms?: number; click_count?: number; path_efficiency?: number };
-    keyboard?:  { total_keys?: number; error_rate?: number; backspace_count?: number; avg_dwell_ms?: number; rhythm_consistency?: number };
-    clipboard?: { paste_total?: number; copy_total?: number; cut_total?: number; paste_vs_type_ratio?: number };
-    attention?: { tab_switch_count?: number; window_blur_count?: number; hidden_time_ms?: number };
-    scroll?:    { event_count?: number; max_depth?: number };
-    session?:   { total_duration_ms?: number; time_to_first_input_ms?: number; idle_ratio?: number };
-    device?:    { platform?: string; screen_w?: number; screen_h?: number; viewport_w?: number; viewport_h?: number; pixel_ratio?: number; touch?: boolean };
+  // v0.2+ sends full LiveMetrics
+  metrics?: Partial<LiveMetrics> & {
+    // v0.1 compat fields (ignored if full metrics present)
+    scroll?: { max_depth?: number };
+    attention?: { hidden_time_ms?: number; tab_switch_count?: number };
+    clipboard?: { paste_total?: number; paste_vs_type_ratio?: number };
   };
 }
 
-function sdkRiskScore(p: SdkPayload): number {
-  const m = p.metrics ?? {};
-  const kb = m.keyboard  ?? {};
-  const cl = m.clipboard ?? {};
-  const at = m.attention ?? {};
-  const sc = m.scroll    ?? {};
-  let score = 0;
-
-  // Paste vs type ratio
-  const pvt = cl.paste_vs_type_ratio ?? 0;
-  if      (pvt > 0.75) score += 22;
-  else if (pvt > 0.50) score += 12;
-  else if (pvt > 0.30) score += 5;
-
-  // Tab switches
-  const tabs = at.tab_switch_count ?? 0;
-  if      (tabs >= 5) score += 22;
-  else if (tabs >= 3) score += 14;
-  else if (tabs >= 2) score += 6;
-
-  // Clipboard pastes
-  const pastes = cl.paste_total ?? 0;
-  if      (pastes >= 6) score += 18;
-  else if (pastes >= 4) score += 10;
-  else if (pastes >= 3) score += 4;
-
-  // Time away
-  const away = at.hidden_time_ms ?? 0;
-  if      (away > 25_000) score += 18;
-  else if (away > 15_000) score += 10;
-  else if (away > 8_000)  score += 4;
-
-  // Scroll depth (max_depth is 0–1)
-  const depth = (sc.max_depth ?? 1) * 100;
-  if      (depth < 8)  score += 22;
-  else if (depth < 20) score += 12;
-  else if (depth < 35) score += 5;
-
-  // Backspaces
-  const bs = kb.backspace_count ?? 0;
-  if      (bs > 20) score += 10;
-  else if (bs > 12) score += 5;
-
-  // Very fast typing → bot signal
-  const dwell = kb.avg_dwell_ms ?? 100;
-  if (dwell < 40 && (kb.total_keys ?? 0) > 20) score += 12;
-
-  return Math.min(100, score);
-}
-
-function sdkSignals(p: SdkPayload, score: number): SessionSignals {
-  const m   = p.metrics   ?? {};
-  const cl  = m.clipboard ?? {};
-  const at  = m.attention ?? {};
-  const sc  = m.scroll    ?? {};
-  const dur = m.session?.total_duration_ms ?? 30_000;
-
-  const contributions: SessionSignals['signalContributions'] = [];
-  const pvt = cl.paste_vs_type_ratio ?? 0;
-  if (pvt > 0.05)
-    contributions.push({ signal: 'Paste vs type ratio', weight: Math.round(pvt * 100), value: `${(pvt * 100).toFixed(0)}%` });
-  const tabs = at.tab_switch_count ?? 0;
-  if (tabs > 0)
-    contributions.push({ signal: 'Tab switches', weight: Math.min(80, tabs * 15), value: `×${tabs}` });
-  const pastes = cl.paste_total ?? 0;
-  if (pastes > 0)
-    contributions.push({ signal: 'Clipboard pastes', weight: Math.min(60, pastes * 12), value: `×${pastes}` });
-  const depth = (sc.max_depth ?? 1) * 100;
-  if (depth < 60)
-    contributions.push({ signal: 'Scroll depth', weight: Math.round(60 - depth), value: `${depth.toFixed(0)}%` });
-
-  const riskTimeline = Array.from({ length: 8 }, (_, i) => ({
-    t: Math.round((dur / 7) * i),
-    value: Math.max(0, Math.min(100, score - 20 + Math.round((i / 7) * 20) + Math.round(Math.sin(i) * 8))),
-  }));
-  const typingTimeline = Array.from({ length: 8 }, (_, i) => ({
-    t: Math.round((dur / 7) * i),
-    value: parseFloat(((m.keyboard?.avg_dwell_ms ?? 80) / 1000 + Math.sin(i * 1.4) * 0.02).toFixed(3)),
-  }));
-
-  const primary = contributions[0];
+function sdkToFullMetrics(m: SdkPayload['metrics']): LiveMetrics | null {
+  if (!m) return null;
+  // Detect v0.2+ by presence of session.hesitation_before_submit_ms
+  const sess = m.session as any;
+  if (sess && 'hesitation_before_submit_ms' in sess) {
+    return m as LiveMetrics;
+  }
+  // v0.1 fallback — map old fields to new structure as best we can
+  const sc  = (m as any).scroll    ?? {};
+  const at  = (m as any).attention ?? {};
+  const cl  = (m as any).clipboard ?? {};
+  const kb  = (m as any).keyboard  ?? {};
+  const dv  = (m as any).device    ?? {};
+  const mo  = (m as any).mouse     ?? {};
   return {
-    typingCadenceDeviation: parseFloat(((m.keyboard?.avg_dwell_ms ?? 80) / 10).toFixed(2)),
-    preConfirmationPause: 0,
-    preConfirmationPauseBaseline: 2.1,
-    scrollDepth: Math.round(depth),
-    activeCallDetected: tabs >= 3,
-    remoteAccessDetected: false,
-    timeSinceLastCall: 0,
-    typingCadenceTimeline: typingTimeline,
-    riskTimeline,
-    interventionLog: [],
-    signalContributions: contributions,
-    explainabilityText: primary
-      ? `Risk score ${score}/100 · ${primary.signal} ${primary.value}.`
-      : `Risk score ${score}/100 · Behavioral baseline from ${p.page_url ?? 'external site'}.`,
+    device: {
+      screen_width: dv.screen_w ?? 0, screen_height: dv.screen_h ?? 0,
+      viewport_width: dv.viewport_w ?? 0, viewport_height: dv.viewport_h ?? 0,
+      device_pixel_ratio: dv.pixel_ratio ?? 1, color_depth: 24,
+      platform: dv.platform ?? 'unknown', vendor: '', touch_points_max: dv.touch ? 1 : 0,
+      user_agent: '', language: '', languages: '',
+      timezone: 'unknown', timezone_offset: 0, cpu_cores: 0, memory_gb: 0,
+      local_hour: new Date().getHours(), local_day_of_week: new Date().getDay(),
+      connection_type: 'unknown', connection_speed: 0,
+    },
+    mouse: {
+      move_count: 0, click_count: mo.click_count ?? 0, dbl_click_count: mo.double_click_count ?? 0,
+      right_click_count: mo.right_click_count ?? 0,
+      velocity_mean: mo.avg_speed_px_ms ?? 0, velocity_max: 0, velocity_std: mo.speed_std ?? 0,
+      acceleration_mean: 0, idle_period_count: 0, longest_idle_ms: 0,
+      total_distance_px: mo.total_distance_px ?? 0,
+      path_efficiency: mo.path_efficiency ?? 1, tremor_index: 0,
+      direction_angle_std: 0, curvature_mean: 0, hover_duration_mean: 0,
+      last_x: 0, last_y: 0, overshoot_count: 0, correction_count: 0,
+    },
+    keyboard: {
+      total_keys: kb.total_keys ?? 0, backspace_count: kb.backspace_count ?? 0,
+      typing_speed_cps: 0, typing_speed_peak: 0,
+      dwell_time_mean: kb.avg_dwell_ms ?? 0, dwell_time_std: 0,
+      flight_time_mean: kb.avg_flight_ms ?? 0, flight_time_std: kb.flight_std_ms ?? 0,
+      error_rate: kb.error_rate ?? 0, rhythm_consistency: kb.rhythm_consistency ?? 0,
+      burst_count: 0, modifier_usage_ratio: 0, long_pause_count: 0,
+    },
+    clipboard: {
+      paste_total: cl.paste_total ?? 0, copy_total: cl.copy_total ?? 0,
+      cut_total: cl.cut_total ?? 0, paste_fields: [],
+    },
+    attention: {
+      tab_switch_count: at.tab_switch_count ?? 0,
+      total_time_away_ms: at.hidden_time_ms ?? 0, longest_absence_ms: 0,
+      window_resize_count: 0, blur_events: at.window_blur_count ?? 0,
+      focus_events: 0, visibility_changes: 0,
+    },
+    session: {
+      first_interaction_ms: null, field_order: [], field_durations: {}, field_revisions: {},
+      paste_vs_type_ratio: cl.paste_vs_type_ratio ?? 0,
+      scroll_depth_pct: (sc.max_depth ?? 0) * 100,
+      scroll_direction_changes: 0, scroll_speed_mean: 0,
+      total_duration_ms: (m as any).session?.total_duration_ms ?? 0,
+      hesitation_before_submit_ms: 0, form_navigation_style: 'click',
+    },
+    events_per_second: 0,
+    raw_event_count: 0,
   };
 }
 
 function sdkPayloadToSession(p: SdkPayload): RemoteSession {
-  const score = sdkRiskScore(p);
+  const fullMetrics = sdkToFullMetrics(p.metrics ?? null);
+
+  // Build a minimal BehaviorSnapshot so computeRiskScore works unchanged
+  let score = 0;
+  if (fullMetrics) {
+    const snap: BehaviorSnapshot = {
+      session_id:     p.session_id,
+      captured_at:    p.captured_at,
+      analyst:        'sdk',
+      channel:        'web',
+      metrics:        fullMetrics,
+      total_features: 65,
+    };
+    score = computeRiskScore(snap);
+  }
+
   let domain = 'external';
   try { domain = new URL(p.page_url ?? '').hostname; } catch (_) {}
+
+  // Re-use signalsFromSnapshot for rich signal breakdown
+  const signals = fullMetrics
+    ? signalsFromSnapshot(
+        { session_id: p.session_id, captured_at: p.captured_at, analyst: 'sdk', channel: 'web', metrics: fullMetrics, total_features: 65 },
+        score,
+      )
+    : {
+        typingCadenceDeviation: 0, preConfirmationPause: 0, preConfirmationPauseBaseline: 2.1,
+        scrollDepth: 0, activeCallDetected: false, remoteAccessDetected: false,
+        timeSinceLastCall: 0, typingCadenceTimeline: [], riskTimeline: [],
+        interventionLog: [], signalContributions: [],
+        explainabilityText: `SDK session from ${domain}`,
+      };
 
   return {
     _remote:   true,
     _page_url: p.page_url ?? '',
     _api_key:  p.api_key,
-    id:              p.session_id,
-    userId:          domain,
-    channel:         'web',
-    riskScore:       score,
-    status:          statusFromScore(score),
-    startTime:       p.receivedAt ?? p.captured_at,
+    _metrics:  fullMetrics,
+    id:               p.session_id,
+    userId:           domain,
+    channel:          'web',
+    riskScore:        score,
+    status:           statusFromScore(score),
+    startTime:        p.receivedAt ?? p.captured_at,
     transactionAmount: 0,
-    country:         'GB',
-    signals:         sdkSignals(p, score),
+    country:          'GB',
+    signals,
   };
 }
 
