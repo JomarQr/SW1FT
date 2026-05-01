@@ -14,7 +14,7 @@ import { getInterventionKPIs, getRiskLevel } from '../lib/interventionStore';
 import { getSessions as getBehaviorSessions } from '../lib/behaviorStore';
 import { getRole, getUsername } from '../lib/auth';
 import {
-  SESSIONS, ALERTS, DASHBOARD_KPIs, RISK_DISTRIBUTION_24H, COLORS,
+  ALERTS, DASHBOARD_KPIs, RISK_DISTRIBUTION_24H, COLORS,
   type Session, type SessionStatus,
 } from '../lib/mockData';
 
@@ -717,51 +717,28 @@ export default function Dashboard() {
   const isClient = getRole() === 'client';
   const currentUsername = getUsername();
 
-  // Clients see only their own captured sessions; analysts/admins see everything
+  // Only real sessions: captured locally or received remotely via SDK
   const [liveSessions, setLiveSessions] = useState<Session[]>(() => {
     const captured = getLiveSessions();
-    if (isClient) {
-      return captured.filter(s => s.userId === currentUsername || (s as any)._captured);
-    }
-    const mock = [...SESSIONS].slice(0, 20);
-    const ids = new Set(captured.map(s => s.id));
-    return [...captured, ...mock.filter(s => !ids.has(s.id))].slice(0, 25);
+    if (isClient) return captured.filter(s => s.userId === currentUsername || (s as any)._captured);
+    return captured;
   });
-  const [flashedId, setFlashedId] = useState<string | null>(null);
+  const [flashedId] = useState<string | null>(null);
   const [reviewSession, setReviewSession] = useState<Session | null>(null);
   const [detailSession, setDetailSession] = useState<Session | null>(null);
   const [feedbackCount, setFeedbackCount] = useState(() => countFeedbacks());
   const [intKpis, setIntKpis] = useState(() => getInterventionKPIs());
 
-  // Auto-refresh mock risk scores
-  useEffect(() => {
-    const id = setInterval(() => {
-      setLiveSessions(prev => {
-        // Only mutate mock sessions, not captured ones
-        const idx = prev.findIndex(s => !(s as any)._captured);
-        if (idx < 0) return prev;
-        const delta = Math.floor(Math.random() * 9) - 4;
-        const updated = { ...prev[idx], riskScore: Math.min(100, Math.max(0, prev[idx].riskScore + delta)) };
-        const next = [...prev]; next[idx] = updated;
-        setFlashedId(updated.id);
-        setTimeout(() => setFlashedId(null), 500);
-        return next;
-      });
-    }, 4000);
-    return () => clearInterval(id);
-  }, []);
 
   // Inject new captured sessions in real-time
   useEffect(() => {
     function onNewSession() {
       const captured = getLiveSessions();
       setLiveSessions(prev => {
-        if (isClient) {
-          return captured.filter(s => s.userId === currentUsername || (s as any)._captured);
-        }
-        const ids = new Set(captured.map(s => s.id));
-        const mock = prev.filter(s => !(s as any)._captured);
-        return [...captured, ...mock.filter(s => !ids.has(s.id))].slice(0, 25);
+        if (isClient) return captured.filter(s => s.userId === currentUsername || (s as any)._captured);
+        const remotes = prev.filter(s => (s as any)._remote);
+        const ids = new Set([...captured, ...remotes].map(s => s.id));
+        return [...captured, ...remotes.filter(s => !ids.has(s.id) || (s as any)._remote)].slice(0, 50);
       });
     }
     function onNewIntervention() {
@@ -797,7 +774,7 @@ export default function Dashboard() {
   }, [isClient]);
 
   const kpis = DASHBOARD_KPIs;
-  const topAlerts = [...ALERTS].sort((a, b) => b.riskScore - a.riskScore).slice(0, 8);
+  const topAlerts: typeof ALERTS = [];
   const highRiskCount = liveSessions.filter(s => s.riskScore >= 65).length;
   const blockedCount  = liveSessions.filter(s => s.status === 'BLOCKED').length;
   const unreviewedHighRisk = liveSessions.filter(s =>
@@ -827,7 +804,7 @@ export default function Dashboard() {
           label="Alerts Triggered"
           value={kpis.alertsTriggered}
           format={n => String(n)}
-          sub={`${ALERTS.filter(a => a.status === 'PENDING').length} pending`}
+          sub="active alerts"
           subColor={COLORS.warning}
         />
         <KpiCard
@@ -879,10 +856,7 @@ export default function Dashboard() {
                     {feedbackCount} labeled
                   </span>
                 )}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <div className="animate-pulse-dot" style={{ width: '5px', height: '5px', borderRadius: '50%', background: COLORS.accent }} />
-                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t4)' }}>refresh 4s · {liveSessions.length} sessions</span>
-                </div>
+                <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'var(--t4)' }}>{liveSessions.length} sessions</span>
               </div>
             }
           />
