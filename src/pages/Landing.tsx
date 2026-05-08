@@ -51,6 +51,19 @@ const HOW_COLS = [
   },
 ];
 
+const CHAT_MESSAGES: {
+  side: 'left' | 'right';
+  flag?: string; lang?: string; text: string;
+  label?: string; large?: boolean;
+}[] = [
+  { side: 'left',  flag: '🇩🇪', lang: 'DE', text: 'DEIN TEAM. DEINE REGELN.', large: true },
+  { side: 'right', text: 'Ihr Team. Ihre Regeln. Sprache erkannt ✓', label: 'Language detected: German' },
+  { side: 'left',  flag: '🇫🇷', lang: 'FR', text: 'Mon paiement a été refusé.' },
+  { side: 'right', text: 'Bonjour! Langue détectée. Analyse en cours.', label: 'Language detected: French' },
+  { side: 'left',  flag: '🇪🇸', lang: 'ES', text: '¿Hay actividad sospechosa en mi cuenta?' },
+  { side: 'right', text: 'Detectado. Verificando identidad en español. ✓', label: 'Language detected: Spanish' },
+];
+
 const PERSONAS = [
   {
     role: 'Head of Fraud',
@@ -454,11 +467,88 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ── Multi-language Support ──────────────────────────────────────────── */}
+      <section style={{ padding: `${sectionPad} 0`, background: '#080808' }}>
+        <div style={container}>
+          <div className="landing-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(48px, 6vw, 96px)', alignItems: 'center' }}>
+
+            {/* Left: copy */}
+            <div className="landing-fade-up">
+              <SectionLabel n="07" title="Multi-language support" />
+              <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(30px, 4vw, 50px)', color: C.white, maxWidth: '440px', lineHeight: 1.1, marginBottom: '24px' }}>
+                Fraud doesn't<br />pick a language.<br />Neither do we.
+              </h2>
+              <p style={{ fontFamily: 'Georgia, serif', fontSize: '17px', color: 'rgba(255,255,255,0.45)', lineHeight: 1.8, maxWidth: '400px' }}>
+                Behavioral signals are universal. The conversation isn't. SW1FT detects and matches the customer's language in real time — no configuration required.
+              </p>
+            </div>
+
+            {/* Right: chat widget */}
+            <div className="landing-fade-up" style={{ '--fd': '0.14s' } as React.CSSProperties}>
+              <div style={{ background: '#111', border: '1px solid #1E1E1E', borderRadius: '18px', overflow: 'hidden', fontFamily: '"Inter", sans-serif', boxShadow: '0 32px 80px rgba(0,0,0,0.6)' }}>
+
+                {/* Header */}
+                <div style={{ padding: '14px 18px', borderBottom: '1px solid #1A1A1A', display: 'flex', alignItems: 'center', gap: '10px', background: '#0A0A0A' }}>
+                  <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#00CC7A', boxShadow: '0 0 6px rgba(0,204,122,0.5)' }} />
+                  <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '9px', color: '#4A4A5A', letterSpacing: '0.14em', textTransform: 'uppercase' as const }}>
+                    AI Support · Adaptive Language
+                  </span>
+                </div>
+
+                {/* Messages */}
+                <div style={{ padding: '22px 18px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  {CHAT_MESSAGES.map((msg, i) => (
+                    <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: msg.side === 'right' ? 'flex-end' : 'flex-start' }}>
+                      {msg.side === 'left' && msg.flag && (
+                        <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '9px', color: '#3A3A4A', letterSpacing: '0.08em', marginBottom: '4px', paddingLeft: '4px' }}>
+                          {msg.flag} {msg.lang}
+                        </div>
+                      )}
+                      {msg.side === 'right' && msg.label && (
+                        <div style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '9px', color: `${C.accent}99`, letterSpacing: '0.06em', marginBottom: '4px', paddingRight: '4px' }}>
+                          {msg.label}
+                        </div>
+                      )}
+                      <div style={{
+                        maxWidth: '78%',
+                        padding: msg.large ? '14px 20px' : '10px 15px',
+                        borderRadius: msg.side === 'left' ? '4px 16px 16px 16px' : '16px 4px 16px 16px',
+                        background: msg.side === 'left' ? '#1C1C22' : C.accent,
+                        color: msg.side === 'left' ? '#A0A0B8' : '#FFFFFF',
+                        fontSize: msg.large ? '15px' : '13px',
+                        fontWeight: msg.large ? 700 : 400,
+                        lineHeight: 1.5,
+                        letterSpacing: msg.large ? '0.04em' : '0.01em',
+                      }}>
+                        {msg.text}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Input */}
+                <div style={{ padding: '12px 14px', borderTop: '1px solid #1A1A1A', background: '#0A0A0A', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ flex: 1, padding: '10px 14px', background: '#141418', border: '1px solid #242430', borderRadius: '12px' }}>
+                    <span style={{ fontFamily: 'Georgia, serif', fontSize: '12px', color: '#38383A', fontStyle: 'italic', lineHeight: 1.55 }}>
+                      AI agents that communicate in any language — detecting and matching the customer's language automatically for seamless global support.
+                    </span>
+                  </div>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: C.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: 0.35 }}>
+                    <span style={{ color: '#fff', fontSize: '15px', lineHeight: 1 }}>↑</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Contact ─────────────────────────────────────────────────── */}
       <section id="contact" style={{ padding: `${sectionPad} 0` }}>
         <div style={container}>
           <div className="landing-fade-up" style={{ maxWidth: '620px' }}>
-            <SectionLabel n="07" title="Contact" />
+            <SectionLabel n="08" title="Contact" />
             <h2 style={{ fontFamily: '"Inter", sans-serif', fontWeight: 700, fontSize: 'clamp(26px, 3.5vw, 42px)', marginBottom: '24px', lineHeight: 1.2 }}>
               Ready to evaluate SW1FT<br />for your institution?
             </h2>
