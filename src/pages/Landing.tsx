@@ -465,13 +465,13 @@ export default function Landing() {
             <p style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: C.g400, letterSpacing: '0.1em', marginBottom: '6px' }}>
               SW1FT · Behavioral fraud intelligence for European banks and PSPs
             </p>
-            <a href="mailto:contact@sentinellayer.eu" style={{ display: 'inline-block', fontFamily: '"JetBrains Mono", monospace', fontSize: '14px', color: C.black, textDecoration: 'none', borderBottom: `1px solid ${C.g200}`, paddingBottom: '2px', marginBottom: '36px', transition: 'border-color 0.2s' }}
+            <a href="mailto:jevgenij.springis@gmail.com" style={{ display: 'inline-block', fontFamily: '"JetBrains Mono", monospace', fontSize: '14px', color: C.black, textDecoration: 'none', borderBottom: `1px solid ${C.g200}`, paddingBottom: '2px', marginBottom: '36px', transition: 'border-color 0.2s' }}
               onMouseEnter={e => (e.currentTarget.style.borderBottomColor = C.accent)}
               onMouseLeave={e => (e.currentTarget.style.borderBottomColor = C.g200)}>
-              contact@sentinellayer.eu
+              jevgenij.springis@gmail.com
             </a>
             <br />
-            <a href="mailto:contact@sentinellayer.eu" className="landing-btn">Request access</a>
+            <a href="mailto:jevgenij.springis@gmail.com" className="landing-btn">Request access</a>
           </div>
         </div>
       </section>
@@ -483,7 +483,7 @@ export default function Landing() {
             © 2026 SW1FT. Incorporated in Latvia.
           </span>
           <span style={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '11px', color: C.g200, letterSpacing: '0.06em' }}>
-            contact@sentinellayer.eu
+            jevgenij.springis@gmail.com
           </span>
         </div>
       </footer>

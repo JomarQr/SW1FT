@@ -15,8 +15,7 @@ const KEY = 'sw1ft_users';
 function defaults(): AppUser[] {
   const now = new Date().toISOString();
   return [
-    { id: 'usr-admin',   username: 'admin',   password: 'admin',        role: 'superadmin', displayName: 'Admin',       createdAt: now, createdBy: 'system' },
-    { id: 'usr-analyst', username: 'analyst', password: 'sentinel2026', role: 'superadmin', displayName: 'J. Springis', createdAt: now, createdBy: 'system' },
+    { id: 'usr-analyst', username: 'jevgenijs', password: 'Sw1ft@2026', role: 'superadmin', displayName: 'J. Springis', createdAt: now, createdBy: 'system' },
   ];
 }
 
@@ -28,15 +27,33 @@ export function getUsers(): AppUser[] {
       localStorage.setItem(KEY, JSON.stringify(seed));
       return seed;
     }
-    const list: AppUser[] = JSON.parse(raw);
-    // Ensure the two built-in accounts always have superadmin role
+    let list: AppUser[] = JSON.parse(raw);
     let dirty = false;
+
+    // Remove legacy admin/admin account
+    const before = list.length;
+    list = list.filter(u => !(u.id === 'usr-admin' || u.password === 'admin'));
+    if (list.length !== before) dirty = true;
+
+    // Migrate old 'analyst' username to 'jevgenijs'
     for (const u of list) {
-      if ((u.id === 'usr-admin' || u.id === 'usr-analyst') && u.role !== 'superadmin') {
+      if (u.id === 'usr-analyst' && u.username === 'analyst') {
+        u.username = 'jevgenijs';
+        dirty = true;
+      }
+      // Ensure superadmin role on built-in account
+      if (u.id === 'usr-analyst' && u.role !== 'superadmin') {
         u.role = 'superadmin';
         dirty = true;
       }
     }
+
+    // If built-in account is missing, re-seed it
+    if (!list.find(u => u.id === 'usr-analyst')) {
+      list = [...defaults(), ...list];
+      dirty = true;
+    }
+
     if (dirty) localStorage.setItem(KEY, JSON.stringify(list));
     return list;
   } catch {

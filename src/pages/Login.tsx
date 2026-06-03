@@ -36,7 +36,9 @@ export default function Login() {
     width: '100%',
     background: '#0A0A0B',
     border: '1px solid #1E1E22',
-    color: COLORS.primary,
+    color: '#FFFFFF',
+    WebkitTextFillColor: '#FFFFFF',
+    caretColor: '#FFFFFF',
     fontFamily: 'JetBrains Mono',
     fontSize: '13px',
     padding: '12px 14px',
@@ -45,6 +47,16 @@ export default function Login() {
   };
 
   return (
+    <>
+    <style>{`
+      input:-webkit-autofill,
+      input:-webkit-autofill:hover,
+      input:-webkit-autofill:focus {
+        -webkit-text-fill-color: #fff !important;
+        -webkit-box-shadow: 0 0 0 1000px #0A0A0B inset !important;
+        caret-color: #fff !important;
+      }
+    `}</style>
     <div style={{
       minHeight: '100vh',
       background: '#0A0A0B',
@@ -101,7 +113,6 @@ export default function Login() {
                 style={inputStyle}
                 onFocus={e => (e.target.style.borderColor = COLORS.accent)}
                 onBlur={e => (e.target.style.borderColor = '#1E1E22')}
-                placeholder="username"
                 required
               />
             </div>
@@ -120,7 +131,6 @@ export default function Login() {
                   style={{ ...inputStyle, paddingRight: '44px' }}
                   onFocus={e => (e.target.style.borderColor = COLORS.accent)}
                   onBlur={e => (e.target.style.borderColor = '#1E1E22')}
-                  placeholder="••••••••••"
                   required
                 />
                 <button
@@ -172,5 +182,6 @@ export default function Login() {
         </div>
       </div>
     </div>
+    </>
   );
 }
